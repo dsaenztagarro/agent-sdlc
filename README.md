@@ -134,4 +134,4 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 ## License
 
-Add your own. This scaffold carries no code and no license by default.
+[MIT](LICENSE) © David Sáenz
