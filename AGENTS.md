@@ -63,15 +63,15 @@ Good (ASCII):
 
 ## Design workflow (Claude Design)
 
-**Do not hand-build UI without a design.** UI work follows a design produced with **Claude Design**, and this is enforced:
+**Do not hand-build UI without a design.** UI work follows a design produced with **Claude Design**, generated inside a **Claude Design project bound to this repo's design system** — so every design inherits the system's components *by construction*. This is enforced:
 
+0. **Bound project.** All UI designs are generated in the Claude Design project bound to this repo's design system. The project and design-system names, and the source of truth, are recorded in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md). Designs generated outside that project don't inherit the system and must not be used.
 1. **Brief.** A UI change starts as a short **design brief** in `docs/designs/briefs/proposed/<name>.brief.md` (see [`docs/designs/README.md`](docs/designs/README.md)) — the surface, its states, and the intent.
-2. **Canvas.** Use **Claude Design** to generate a high-fidelity, self-contained HTML **design canvas** under `docs/designs/`, rendered against the design system. The canvas is the visual source of truth.
-3. **Build to it.** Before implementing, (a) have the canvas for the surface, (b) reference the design system, and (c) **match it exactly** — no colors, spacing, radii, or components outside the token set. Follow the patterns the canvas shows.
+2. **Canvas.** Use **Claude Design** (in the bound project) to generate a high-fidelity, self-contained HTML **design canvas** under `docs/designs/`, rendered against the design system. The canvas is the visual source of truth.
+3. **Build to it.** Before implementing, (a) have the canvas for the surface, (b) reference the design system, and (c) **match it exactly** — reuse its components; no colors, spacing, radii, or components outside the token set. Follow the patterns the canvas shows.
 4. **Verify & promote.** Every interactive workflow the design specifies gets a test (design fidelity is verified, not assumed). When shipped, move the brief `proposed/ → shipped/`; a design decision worth keeping becomes an ADR.
 
-<!-- FILL: where your design system lives (tokens, components, typography) and the fonts to use.
-     If this project has no UI, delete this whole section. -->
+Set up the binding once per project in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md). If this project has no UI, delete this section and `docs/designs/`.
 
 ## Testing Guidelines
 

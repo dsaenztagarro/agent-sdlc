@@ -81,7 +81,8 @@ The skill names no language or tool: it defers to the gate and conventions in *y
 
 **Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.**
 
-- **Brief → canvas.** A UI change starts as a **design brief** (`docs/designs/briefs/proposed/<name>.brief.md`) — a short markdown statement of the surface, states, and intent. **Claude Design** turns that brief into a **high-fidelity, self-contained HTML design canvas** in `docs/designs/`, rendered against your **design system** (tokens, components, typography). The canvas is the visual source of truth.
+- **Bound to a design system.** Designs are generated in a **Claude Design project bound to the project's design system**, so every canvas inherits the same components, tokens, and typography **by construction** — consistency is enforced when the design is *created*, not hoped for at review. The binding (project name, design-system name, source of truth) is recorded once in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md), and works for a per-project *or* a shared system.
+- **Brief → canvas.** A UI change starts as a **design brief** (`docs/designs/briefs/proposed/<name>.brief.md`) — a short markdown statement of the surface, states, and intent. **Claude Design** turns that brief into a **high-fidelity, self-contained HTML design canvas** in `docs/designs/`, rendered against that design system. The canvas is the visual source of truth.
 - **Enforced before implementation.** `AGENTS.md`'s design rules require that, before building any UI, an agent (a) has a design canvas for the surface, (b) references the design system, and (c) **matches it exactly** — no ad-hoc colors, spacing, or components outside the token set. UI shipped without a design is an open gap, not done.
 - **Fed to `/epic`.** The design canvas is a first-class **design doc**: `/epic` decomposes its sections/workflows into tickets and verifies each against a test. Backend designs (plain markdown) flow through the same pipeline.
 - **Promoted to memory.** The brief moves `proposed/ → shipped/` when built; a design decision worth keeping becomes an ADR; the design system stays the canonical reference.
@@ -127,6 +128,7 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
     │   └── decisions/                # ADRs: README + template.md + 0001 meta-ADR
     ├── designs/
     │   ├── README.md                 # the Claude Design workflow
+    │   ├── DESIGN-SYSTEM.md           # the Claude Design project <-> design-system binding
     │   └── briefs/                    # brief conventions + template
     ├── guides/README.md              # how-to guide convention
     └── features/README.md            # feature-doc convention
