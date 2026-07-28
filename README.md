@@ -134,4 +134,4 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 ## License
 
-[MIT](LICENSE) © David Sáenz
+[MIT](LICENSE) © David Saenz
