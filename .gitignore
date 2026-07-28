@@ -1,0 +1,19 @@
+# Local Claude Code settings (copy settings.local.json.example to start)
+.claude/settings.local.json
+
+# Local environment / secrets — never commit
+.env
+.env.*
+*.local
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Add project build artifacts / dependency dirs below, e.g.:
+# target/
+# node_modules/
+# dist/
