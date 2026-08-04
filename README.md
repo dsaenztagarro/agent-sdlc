@@ -102,6 +102,10 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 `.claude/settings.local.json.example` is a committed template for local Claude Code permissions and attribution; the real `.claude/settings.local.json` is git-ignored. Copy the example to opt into an allowlist and to control commit/PR attribution.
 
+### 9. The `template-feedback` skill — a self-improvement loop
+
+A template only gets better if the improvements people discover while *using* it flow back. `.claude/skills/template-feedback/SKILL.md` is that return path: when an agent (or you) finds a **reusable, project-agnostic** improvement to the workflow — a rule that should exist in `AGENTS.md`, a skill step that misfires, a docs-taxonomy gap — the skill surfaces a concrete proposal and, on your OK, opens a GitHub **issue on this template repo** so every adopter inherits the fix. It never edits the template silently, and it's scoped to *generalizable* improvements (project-specific rules stay in that project's `AGENTS.md`). `AGENTS.md` primes agents to reach for it — the "raise the hand" rule under **Improving this workflow**.
+
 ## Applying the template to a new project
 
 1. **Create the repo** from this template (GitHub **Use this template**, or clone and re-init git).
@@ -119,7 +123,9 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 ├── CLAUDE.md                         # -> @AGENTS.md
 ├── .claude/
 │   ├── settings.local.json.example   # committed template; real file is git-ignored
-│   └── skills/epic/SKILL.md          # the design -> epic -> ship workflow
+│   └── skills/
+│       ├── epic/SKILL.md             # the design -> epic -> ship workflow
+│       └── template-feedback/SKILL.md # raise reusable workflow improvements upstream
 └── docs/
     ├── SECURITY.md                   # secret/key-handling note (template)
     ├── architecture/
