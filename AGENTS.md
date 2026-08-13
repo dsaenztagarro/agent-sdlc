@@ -43,7 +43,7 @@ This project runs on the [ai-engineering-template](https://github.com/dsaenztaga
 ## Documentation Conventions
 
 - **Architecture Decision Records** live in `docs/architecture/decisions/` — one decision per file, numbered, **immutable once accepted** (a changed decision is a new ADR that supersedes the old). Follow [`docs/architecture/decisions/template.md`](docs/architecture/decisions/template.md); the [README](docs/architecture/decisions/README.md) states the conventions. Record a decision that's architecturally meaningful (a data-model or interface contract, a cross-cutting integration choice, a security boundary) as an ADR — not local code choices.
-- **How-to guides** live in `docs/guides/`; **feature docs** in `docs/features/`; **how-it-works explainers** in `docs/architecture/*.md`. Keep them distinct: an ADR is *why we chose X*, an explainer is *how it works today*, a guide is *how you do X*.
+- **How-to guides** live in `docs/guides/`; **feature docs** in `docs/features/`; **how-it-works explainers** in `docs/architecture/*.md`; **feature specs** in `docs/specs/*.md`. Keep them distinct: an ADR is *why we chose X*, an explainer is *how it works today*, a guide is *how you do X*, a spec is *the behaviour contract of one feature — what it does — cited by code*.
 - **Markdown prose is one line per paragraph** (or semantic line breaks), never fixed-column hard wraps.
 
 ## Preserve Architectural Understanding
@@ -75,7 +75,22 @@ Good (ASCII):
 3. **Build to it.** Before implementing, (a) have the canvas for the surface, (b) reference the design system, and (c) **match it exactly** — reuse its components; no colors, spacing, radii, or components outside the token set. Follow the patterns the canvas shows.
 4. **Verify & promote.** Every interactive workflow the design specifies gets a test (design fidelity is verified, not assumed). When shipped, move the brief `proposed/ → shipped/`; a design decision worth keeping becomes an ADR.
 
+- **Validate the design against the codebase before building — raise the hand if it's wrong.** A design is the authority on *fidelity*, but it can contradict an established codebase convention, misname a pattern, or diverge from a sibling surface. Verify that what it proposes brings consistency with the existing code — it reuses the established component, matches sibling surfaces, respects the app's canonical names. If it does, build it faithfully. If it does **not**, do **not** silently implement a wrong design — and do **not** silently diverge from it in code either — surface it, sized to the discrepancy:
+  - **Small / localized** (a mislabel, a control that should reuse an existing helper) → a **comment** on the ticket/PR naming the inconsistency and the convention it should follow, for the user to relay to the design step. Don't hand-edit the regenerated design file.
+  - **Larger / structural** (a pattern that fights how a whole surface class works, a rename, a new grammar) → a **brief** in `docs/designs/briefs/proposed/` proposing the reconciliation for the design step to redraw, rather than baking the divergence into code.
+
 Set up the binding once per project in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md). If this project has no UI, delete this section and `docs/designs/`.
+
+## Feature specifications (`docs/specs/`)
+
+A substantial feature's **behaviour** is consolidated into one hand-owned `docs/specs/<feature>.md` — its rules, contracts, invariants, verbs, transactions and edge/empty states as shipped. This draws a boundary: the **design** (`docs/designs/*.html`) is the *surface* — layout and states, regenerated from the design tool; the **spec** is the *behaviour* — hand-owned and stable. See [`docs/specs/README.md`](docs/specs/README.md).
+
+- **Code cites the spec for behaviour, never a design file — universally.** Any comment explaining *why the logic behaves this way* points at `docs/specs/<feature>.md`; a design section anchor moves when the design is regenerated, a spec heading does not. No design reference appears anywhere in code.
+  - **The form is a relative markdown link to the heading: `(docs/specs/<file>.md#<anchor>)`.** ASCII, concise, navigable — a *pointer* stating only the **current** behaviour. Do **not** re-list or paraphrase the spec's rules inline, and do **not** explain what the code *no longer* does or *instead of* what — the spec is the single source. Keep spec **headings short + anchor-friendly** so the `#anchor` stays short.
+  - **Cross-cutting behaviour earns its own shared spec — don't inline the rule per surface.** When a rule holds across many surfaces, consolidate it in one `docs/specs/<shared>.md` that every instance cites; a per-feature spec links there for the shared rules and covers only what is specific to it.
+  - **No design reference in code — ever, comment or user-facing copy.** A design section (a `§D`-style anchor, or spelled out in plain words) points at a moving mock a reader can't resolve. **Always cite the spec anchor instead** — and if the feature has no spec yet, **generating `docs/specs/<feature>.md` is mandatory**. There is no "legitimate `§` reference" exception; a reference is always a spec anchor.
+- **Write or update the spec as part of shipping or materially changing the feature.** Keep it current — a stale spec is worse than none. It links out to the design (surface) and ADRs (why) rather than restating them.
+- It borrows [spec-kit](https://github.com/github/spec-kit)'s per-feature *shape*, not its toolchain.
 
 ## Testing Guidelines
 
@@ -94,6 +109,22 @@ The tell for an over-coupled test: refactoring a method's implementation, withou
 
 When a change has a runtime surface, **drive it and observe the behaviour** before considering it done — passing tests are necessary, not sufficient.
 
+### Smoke-test every interactive surface
+
+Every interactive frontend surface gets at least one end-to-end test proving the wiring connects — from the interaction through to the rendered result. Navigate to the page (via a real interaction, not a direct URL, when possible), trigger the interaction, and assert the **expected rendered outcome**. The goal is to confirm the gears connect, not to exercise every backend permutation — that belongs in unit/integration tests.
+
+**Assert what should render, not the absence of an error.** Prefer a positive assertion (the content, option, or row that should now be present or gone) over a negative one tied to a specific failure string. A positive assertion describes what the feature is supposed to do and still fails when the wiring breaks; negative error-string assertions are brittle regression guards that don't document the feature.
+
+## No fallbacks to legacy values
+
+Read a fact from its **current owner only** — never with a `|| <legacy_source>` fallback. When a fact has moved to a new home, reads point at the new owner and stop there.
+
+A fallback to the retired source is a defect, not a safety net: it keeps the dead field alive, hides that the migration is incomplete, and silently serves stale data whenever the two disagree.
+
+- **Read the new owner, full stop.** If the new owner has no value, render empty — do not reach back to the legacy source.
+- **Don't write the legacy field either.** New create/update paths write the fact to its current owner, never to the retired one.
+- **A legacy field with no readers is a field to drop.** The lifecycle is **re-point reads → stop writing → drop the field**, in that order — never leave it parked as a dormant fallback. "It still has data" is not a reason to keep reading it; migrate the data to the owner, then drop.
+
 ## CI / gate
 
 <!-- FILL: what must be green before a change ships (tests, lint, security scan) and where it runs.
@@ -110,3 +141,22 @@ For any new feature or significant change:
 5. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
 For larger, multi-ticket work, drive it with the **`/epic`** skill (`.claude/skills/epic/`): one design doc → a GitHub epic → phased sub-issues → shipped, one ticket at a time.
+
+### Incidental minor findings → the `chore` accumulator
+
+While doing a task you'll notice **minor, unrelated** defects — a stale label, a typo, a dead file, a tiny inconsistency — out of scope for what you're shipping. Don't fix it inline (bloats an unrelated diff), don't drop it (it's lost), and don't open a dedicated issue for a one-line fix (pure ceremony). Instead capture it in one rolling paper-cuts list and keep working.
+
+One open **`chore`**-labelled issue pools these. Find it, append the finding, move on (mirroring the `epic` skill's find-or-create-by-label):
+
+```bash
+gh issue list --label chore --state open        # find the open accumulator
+# none yet? create the label once, then the issue.
+```
+
+Append **one self-contained `- [ ]` item per finding** — enough for a later run to fix it without rediscovery: `file:line` — the symptom — the fix — provenance (found while doing #NNN).
+
+- **Belongs here:** minor, unrelated, low-urgency paper cuts.
+- **Does not:** a real bug or security issue gets its **own** issue — don't bury it in the list.
+- **Already in your blast radius:** a trivial fix in a file you're *already* editing just gets fixed and reported as a distinct change; the accumulator is only for what's **out of scope**.
+
+When worth a pass, the list ships as **one** PR that closes many items at once.
