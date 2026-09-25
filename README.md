@@ -17,24 +17,21 @@ This template fixes that with **written, discoverable institutional memory** and
 ## The workflow at a glance
 
 ```
-                        ┌──────────────────────────────────────────────┐
-                        │                 docs/  (memory)              │
-                        │  decisions (ADRs) · explainers · guides ·    │
-                        │  designs · features · SECURITY               │
-                        └──────────────────────────────────────────────┘
-                             ^            ^                    ^
-          write the "why"    │            │ read before work  │  write the "how"
-                             │            │                    │
-   design brief        Claude Design      AGENTS.md          /epic skill
-   (docs/designs/  ──▶  UI canvas OR  ──▶ (the rules    ──▶  design → GitHub epic
-    briefs/*.md)        md backend        every agent        → phased sub-issues
-                        design doc         obeys)            → one ticket at a time
-                                                             → branch · test · PR · merge
+  a design brief       Claude Design        AGENTS.md          /epic skill
+  (<project>-ds)  -->  draws the page  -->  the rules     -->  design -> GitHub epic
+                       (<project>-ds)       every agent        -> phased sub-issues
+                                            obeys              -> one ticket at a time
+                                                               -> branch, test, PR, merge
+                                                                        |
+                                                                        v
+                              docs/  (bounded memory)  <-------  tests state the rules;
+                              adr/ one record per theme          themes amended at close-out
+                              guide-<topic> + slides-<topic>
 ```
 
-1. **Design.** For UI, write a short **design brief**, then use **Claude Design** to generate a high-fidelity, self-contained design **canvas** under `docs/designs/`. For backend/architecture, author a markdown design under `docs/architecture/` or `docs/features/`. Either way you now have a **design doc** that is the source of truth for what to build.
-2. **Decompose & ship.** Run the **`/epic`** skill on that design doc. It opens a GitHub epic, splits the design into self-contained, dependency-ordered sub-issues, pauses once for your approval, then implements them **one ticket at a time** — branch → tests → PR → squash-merge — until done.
-3. **Remember.** As tickets land, the *why* becomes **ADRs**, new mechanisms get **how-it-works explainers**, and reusable know-how becomes **guides**. Pragmatic per-ticket decisions accumulate on the epic issue as shared memory.
+1. **Design.** For UI, a short **brief** goes to a **Claude Design** project, which draws the page. Briefs, pages and the export live in a sibling **`<project>-ds`** repository; one generated artefact crosses into the application. For backend work, write a markdown design — an input, deleted when it ships.
+2. **Decompose & ship.** Run **`/epic`** on the design. It opens a GitHub epic, splits the design into dependency-ordered sub-issues, pauses once for your approval, then implements them **one ticket at a time** — branch → tests → PR → squash-merge.
+3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of at most ten **themed decision records**, once, at close-out. A mechanism worth explaining amends its **topic guide**. Nothing in `docs/` grows one file per ticket, decision or feature.
 
 The human's only mid-run touch point is the single approval gate before issues are created; the finished work is reviewed at the end.
 
@@ -48,21 +45,21 @@ The human's only mid-run touch point is the single approval gate before issues a
 
 Every task carries an explicit `complexity · model · why` tag, so which model runs which work is a *deliberate, reviewable* choice — not a silent default. Correctness-critical, interdependent, or context-heavy work defaults to the most capable model; cheaper/faster models are an escalation you justify. This is what keeps a large autonomous run from quietly downgrading the hard parts.
 
-### 3. `docs/` — institutional memory, with a clear taxonomy
+### 3. `docs/` — institutional memory, bounded by design
 
-Each kind of knowledge has exactly one home, so nothing blurs:
+An agent reads the repository at the start of every task, and its context is finite. So every kind of document here grows with the product's **areas**, never with its **work items**:
 
-| Folder | Answers | Immutable? |
-| ------ | ------- | ---------- |
-| `docs/architecture/decisions/` | **Why** is it built this way? (ADRs) | Accepted ADRs are immutable — supersede, never rewrite |
-| `docs/architecture/*.md` | **How** does this mechanism work today? (explainers) | Living |
-| `docs/guides/` | **How do I** do X? (how-to) | Living |
-| `docs/features/` | What does this feature do, end to end? | Living |
-| `docs/designs/` | What should it look like? (Claude Design canvases + briefs) | Living |
-| `docs/SECURITY.md` | How are secrets/keys handled? | Living |
+| Home | Answers | Grows with |
+| ---- | ------- | ---------- |
+| tests | **What** does the code do? | the code |
+| `docs/adr/NNNN-<theme>.md` | **Why** is it built this way? | themes — capped at ten, amended in place |
+| `docs/guide-<topic>.md` + `docs/slides-<topic>.md` | **How** does this work here, and how do I operate it? | topics |
+| GitHub issues | What is still open? | the tracker, not the repository |
+| `docs/SECURITY.md` | How are secrets handled? | — |
 
-- **ADRs** capture one decision each — what, why, the rejected alternatives, the consequences — numbered and immutable once accepted. A changed decision is a *new* ADR that supersedes the old. `docs/architecture/decisions/` ships with the conventions, a `template.md`, and the meta-ADR `0001` that establishes the practice.
-- **How-it-works explainers** are the complement to ADRs: an ADR records *why a fork was chosen*; an explainer records *how the thing actually works now*, so a maintainer (or a future agent) rebuilds the mental model without reverse-engineering the code. `AGENTS.md` requires writing/updating the explainer in the *same* change that builds or alters a non-trivial mechanism.
+- **Decision records are themed.** A decision amends the record that owns its theme; it never opens a new file. The superseded reasoning moves to the theme's decision-log issue, and git keeps the text. `docs/adr/0001-decision-records.md` records why — one project using this workflow reached 64 per-decision records in three months before consolidating them into thirteen themes.
+- **Inputs are deleted when what they produced ships** — briefs, backend designs, reviews.
+- **`.github/workflows/docs.yml` enforces the bound**: more than ten records, a record over sixty lines, or a folder that grows per work item fails the build.
 
 ### 4. The `/epic` workflow skill
 
@@ -79,15 +76,12 @@ The skill names no language or tool: it defers to the gate and conventions in *y
 
 ### 5. Claude Design — where the design comes from
 
-**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.**
+**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.** [`docs/guide-design-handoff.md`](docs/guide-design-handoff.md) is the procedure, with its diagrams in `docs/slides-design-handoff.md`.
 
-- **Bound to a design system.** Designs are generated in a **Claude Design project bound to the project's design system**, so every canvas inherits the same components, tokens, and typography **by construction** — consistency is enforced when the design is *created*, not hoped for at review. The binding (project name, design-system name, source of truth) is recorded once in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md), and works for a per-project *or* a shared system.
-- **Brief → canvas.** A UI change starts as a **design brief** (`docs/designs/briefs/proposed/<name>.brief.md`) — a short markdown statement of the surface, states, and intent. **Claude Design** turns that brief into a **high-fidelity, self-contained HTML design canvas** in `docs/designs/`, rendered against that design system. The canvas is the visual source of truth.
-- **Enforced before implementation.** `AGENTS.md`'s design rules require that, before building any UI, an agent (a) has a design canvas for the surface, (b) references the design system, and (c) **matches it exactly** — no ad-hoc colors, spacing, or components outside the token set. UI shipped without a design is an open gap, not done.
-- **Fed to `/epic`.** The design canvas is a first-class **design doc**: `/epic` decomposes its sections/workflows into tickets and verifies each against a test. Backend designs (plain markdown) flow through the same pipeline.
-- **Promoted to memory.** The brief moves `proposed/ → shipped/` when built; a design decision worth keeping becomes an ADR; the design system stays the canonical reference.
-
-This closes the loop: **Claude Design** produces the *what-it-looks-like*, `AGENTS.md` enforces *build to it*, `/epic` drives *build it*, and `docs/` records *why and how*.
+- **Design content lives in `<project>-ds`**, a sibling repository — briefs, the pages Claude Design returns, and a mirror of its export. It grows without bound, and an application repository carrying it stops being code.
+- **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
+- **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** writes named files, including the project's own `readme.md` for rules that must hold in every export; and the downloaded **export** brings the whole project back to be mirrored.
+- **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
 
 ### 6. Documentation style
 
@@ -111,33 +105,28 @@ A template only gets better if the improvements people discover while *using* it
 1. **Create the repo** from this template (GitHub **Use this template**, or clone and re-init git).
 2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
 3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
-4. **Adapt `.claude/skills/epic/SKILL.md`'s gate** to your project's commands if you want them inlined; otherwise it already defers to `AGENTS.md`.
-5. **Start writing memory**: your first real decision → an ADR (copy `docs/architecture/decisions/template.md`); your first UI → a brief + a Claude Design canvas.
+4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a `decision-log` issue per theme.
+5. **For a UI**, create the `<project>-ds` repository and fill in the names in `docs/guide-design-handoff.md`; otherwise delete the guide and its slides.
 6. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
 
 ## Layout
 
 ```
 .
-├── AGENTS.md                         # the rules every agent reads (fill in the placeholders)
-├── CLAUDE.md                         # -> @AGENTS.md
-├── .claude/
-│   ├── settings.local.json.example   # committed template; real file is git-ignored
-│   └── skills/
-│       ├── epic/SKILL.md             # the design -> epic -> ship workflow
-│       └── template-feedback/SKILL.md # raise reusable workflow improvements upstream
-└── docs/
-    ├── SECURITY.md                   # secret/key-handling note (template)
-    ├── architecture/
-    │   ├── README.md                 # explainers vs decisions
-    │   ├── EXPLAINER-TEMPLATE.md      # how-it-works explainer scaffold
-    │   └── decisions/                # ADRs: README + template.md + 0001 meta-ADR
-    ├── designs/
-    │   ├── README.md                 # the Claude Design workflow
-    │   ├── DESIGN-SYSTEM.md           # the Claude Design project <-> design-system binding
-    │   └── briefs/                    # brief conventions + template
-    ├── guides/README.md              # how-to guide convention
-    └── features/README.md            # feature-doc convention
++-- AGENTS.md                          the rules every agent reads (fill in the placeholders)
++-- CLAUDE.md                          -> @AGENTS.md
++-- .github/workflows/docs.yml         the bound on docs/, enforced
++-- .claude/
+|   +-- settings.local.json.example    committed template; the real file is git-ignored
+|   +-- agents/brief-closer.md         closes a brief once its surface ships
+|   +-- skills/
+|       +-- epic/SKILL.md              design -> epic -> ship
+|       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
++-- docs/
+    +-- SECURITY.md                    secret and key handling
+    +-- adr/                           one record per theme, at most ten
+    +-- guide-design-handoff.md        the Claude Design procedure
+    +-- slides-design-handoff.md       its diagrams
 ```
 
 ## License

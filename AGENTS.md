@@ -38,19 +38,16 @@ This project runs on the [ai-engineering-template](https://github.com/dsaenztaga
 ## Architecture
 
 <!-- FILL: the mental model in a paragraph, then a "Key files" list mapping subsystems to paths.
-     For any non-trivial mechanism, link its how-it-works explainer under docs/architecture/. -->
+     For any non-trivial mechanism, link its topic guide, docs/guide-<topic>.md. -->
 
 ## Documentation Conventions
 
-- **Architecture Decision Records** live in `docs/architecture/decisions/` — one decision per file, numbered, **immutable once accepted** (a changed decision is a new ADR that supersedes the old). Follow [`docs/architecture/decisions/template.md`](docs/architecture/decisions/template.md); the [README](docs/architecture/decisions/README.md) states the conventions. Record a decision that's architecturally meaningful (a data-model or interface contract, a cross-cutting integration choice, a security boundary) as an ADR — not local code choices.
-- **How-to guides** live in `docs/guides/`; **feature docs** in `docs/features/`; **how-it-works explainers** in `docs/architecture/*.md`; **feature specs** in `docs/specs/*.md`. Keep them distinct: an ADR is *why we chose X*, an explainer is *how it works today*, a guide is *how you do X*, a spec is *the behaviour contract of one feature — what it does — cited by code*.
+- **Decision records** live in `docs/adr/` — **one record per theme, capped at ten, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/0001-decision-records.md`](docs/adr/0001-decision-records.md).
+- **Tests are the specification.** What the code does is stated by tests named for the rules they hold. Before writing a behaviour rule in prose, name the test that would fail if it were broken — then write that test and stop.
+- **A topic that needs explaining gets one pair**: `docs/guide-<topic>.md`, the procedure and the mechanism in this project's terms, and `docs/slides-<topic>.md`, the diagrams. A new mechanism amends the guide for its topic rather than adding a file; topics grow with the product's areas, never with its tickets.
+- **An input is deleted when what it produced ships** — a brief, a backend design, a review. Its durable half moves to a record, a test or an issue first.
+- **Never a document per work item.** A generator that writes one file per decision, feature, ticket or brief is a defect; `.github/workflows/docs.yml` fails the build on the folders that used to grow that way.
 - **Markdown prose is one line per paragraph** (or semantic line breaks), never fixed-column hard wraps.
-
-## Preserve Architectural Understanding
-
-For any non-trivial mechanism — how a subsystem is wired, the request/response dance behind a behavior, a cross-cutting convention that isn't obvious from any single file — keep a *how-it-works* explainer under `docs/architecture/` (a plain `*.md`). This is **complementary to ADRs, not a substitute**: the ADR records *why*; the explainer records *how it actually works today* so a maintainer (or a future agent) can rebuild the mental model without reverse-engineering the code.
-
-- **When you build or materially change such a mechanism, write or update its explainer as part of the same work** — don't wait to be asked, and cross-link the explainer and its ADR both ways. Use [`docs/architecture/EXPLAINER-TEMPLATE.md`](docs/architecture/EXPLAINER-TEMPLATE.md).
 
 ## Documentation Style
 
@@ -67,30 +64,14 @@ Good (ASCII):
 
 ## Design workflow (Claude Design)
 
-**Do not hand-build UI without a design.** UI work follows a design produced with **Claude Design**, generated inside a **Claude Design project bound to this repo's design system** — so every design inherits the system's components *by construction*. This is enforced:
+**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are [`docs/guide-design-handoff.md`](docs/guide-design-handoff.md).
 
-0. **Bound project.** All UI designs are generated in the Claude Design project bound to this repo's design system. The project and design-system names, and the source of truth, are recorded in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md). Designs generated outside that project don't inherit the system and must not be used.
-1. **Brief.** A UI change starts as a short **design brief** in `docs/designs/briefs/proposed/<name>.brief.md` (see [`docs/designs/README.md`](docs/designs/README.md)) — the surface, its states, and the intent.
-2. **Canvas.** Use **Claude Design** (in the bound project) to generate a high-fidelity, self-contained HTML **design canvas** under `docs/designs/`, rendered against the design system. The canvas is the visual source of truth.
-3. **Build to it.** Before implementing, (a) have the canvas for the surface, (b) reference the design system, and (c) **match it exactly** — reuse its components; no colors, spacing, radii, or components outside the token set. Follow the patterns the canvas shows.
-4. **Verify & promote.** Every interactive workflow the design specifies gets a test (design fidelity is verified, not assumed). When shipped, move the brief `proposed/ → shipped/`; a design decision worth keeping becomes an ADR.
+- **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
+- **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
+- **Validate the design against the codebase before building — raise the hand if it's wrong.** If it brings consistency, build it faithfully. If it does **not**, neither implement it silently nor diverge from it silently: a **comment** on the ticket for something localised, a **brief** in the design repository for something structural.
+- **A behaviour a page draws that nothing here has settled is an open question**, answered by a test and, where it is a real fork, the theme's decision record — then sent back through a brief.
 
-- **Validate the design against the codebase before building — raise the hand if it's wrong.** A design is the authority on *fidelity*, but it can contradict an established codebase convention, misname a pattern, or diverge from a sibling surface. Verify that what it proposes brings consistency with the existing code — it reuses the established component, matches sibling surfaces, respects the app's canonical names. If it does, build it faithfully. If it does **not**, do **not** silently implement a wrong design — and do **not** silently diverge from it in code either — surface it, sized to the discrepancy:
-  - **Small / localized** (a mislabel, a control that should reuse an existing helper) → a **comment** on the ticket/PR naming the inconsistency and the convention it should follow, for the user to relay to the design step. Don't hand-edit the regenerated design file.
-  - **Larger / structural** (a pattern that fights how a whole surface class works, a rename, a new grammar) → a **brief** in `docs/designs/briefs/proposed/` proposing the reconciliation for the design step to redraw, rather than baking the divergence into code.
-
-Set up the binding once per project in [`docs/designs/DESIGN-SYSTEM.md`](docs/designs/DESIGN-SYSTEM.md). If this project has no UI, delete this section and `docs/designs/`.
-
-## Feature specifications (`docs/specs/`)
-
-A substantial feature's **behaviour** is consolidated into one hand-owned `docs/specs/<feature>.md` — its rules, contracts, invariants, verbs, transactions and edge/empty states as shipped. This draws a boundary: the **design** (`docs/designs/*.html`) is the *surface* — layout and states, regenerated from the design tool; the **spec** is the *behaviour* — hand-owned and stable. See [`docs/specs/README.md`](docs/specs/README.md).
-
-- **Code cites the spec for behaviour, never a design file — universally.** Any comment explaining *why the logic behaves this way* points at `docs/specs/<feature>.md`; a design section anchor moves when the design is regenerated, a spec heading does not. No design reference appears anywhere in code.
-  - **The form is a relative markdown link to the heading: `(docs/specs/<file>.md#<anchor>)`.** ASCII, concise, navigable — a *pointer* stating only the **current** behaviour. Do **not** re-list or paraphrase the spec's rules inline, and do **not** explain what the code *no longer* does or *instead of* what — the spec is the single source. Keep spec **headings short + anchor-friendly** so the `#anchor` stays short.
-  - **Cross-cutting behaviour earns its own shared spec — don't inline the rule per surface.** When a rule holds across many surfaces, consolidate it in one `docs/specs/<shared>.md` that every instance cites; a per-feature spec links there for the shared rules and covers only what is specific to it.
-  - **No design reference in code — ever, comment or user-facing copy.** A design section (a `§D`-style anchor, or spelled out in plain words) points at a moving mock a reader can't resolve. **Always cite the spec anchor instead** — and if the feature has no spec yet, **generating `docs/specs/<feature>.md` is mandatory**. There is no "legitimate `§` reference" exception; a reference is always a spec anchor.
-- **Write or update the spec as part of shipping or materially changing the feature.** Keep it current — a stale spec is worse than none. It links out to the design (surface) and ADRs (why) rather than restating them.
-- It borrows [spec-kit](https://github.com/github/spec-kit)'s per-feature *shape*, not its toolchain.
+If this project has no UI, delete this section and the handoff guide.
 
 ## Testing Guidelines
 
@@ -137,7 +118,7 @@ For any new feature or significant change:
 1. **Create a GitHub issue** documenting the change (summary, acceptance criteria, technical notes).
 2. **Create a feature branch** named after the issue: `git checkout -b <issue>-<slug>`.
 3. **Implement & test** — write tests alongside the change; run the gate frequently; drive the runtime surface.
-4. **Record decisions** — architecturally meaningful decision → an ADR; new/changed mechanism → its explainer.
+4. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`; a new or changed mechanism amends its topic guide.
 5. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
 For larger, multi-ticket work, drive it with the **`/epic`** skill (`.claude/skills/epic/`): one design doc → a GitHub epic → phased sub-issues → shipped, one ticket at a time.
