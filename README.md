@@ -1,6 +1,6 @@
-# AI Engineering Template
+# Agentic Engineering Template
 
-A project-agnostic scaffold for running **AI-first, agent-driven engineering** on any codebase.
+A project-agnostic scaffold for **agentic engineering** — building software with coding agents — on any codebase.
 
 It is the connective tissue that makes heavy AI workflows reliable: a single source of truth agents read (`AGENTS.md`), a decision/knowledge system that survives closed pull requests (`docs/`), a **design → epic → ship** pipeline that turns a design into merged code one ticket at a time, and the **Claude Design** step that produces the design in the first place.
 
