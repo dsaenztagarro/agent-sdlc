@@ -31,7 +31,7 @@ This template fixes that with **written, discoverable institutional memory** and
 
 1. **Design.** For UI, a short **brief** goes to a **Claude Design** project, which draws the page. Briefs, pages and the export live in a sibling **`<project>-ds`** repository; one generated artefact crosses into the application. For backend work, write a markdown design — an input, deleted when it ships.
 2. **Decompose & ship.** Run **`/epic`** on the design. It opens a GitHub epic, splits the design into dependency-ordered sub-issues, pauses once for your approval, then implements them **one ticket at a time** — branch → tests → PR → squash-merge.
-3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of at most ten **themed decision records**, once, at close-out. A mechanism worth explaining amends its **topic guide**. Nothing in `docs/` grows one file per ticket, decision or feature.
+3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of a few broad **themed decision records**, once, at close-out. A mechanism worth explaining amends its **topic guide**. Nothing in `docs/` grows one file per ticket, decision or feature.
 
 The human's only mid-run touch point is the single approval gate before issues are created; the finished work is reviewed at the end.
 
@@ -52,14 +52,14 @@ An agent reads the repository at the start of every task, and its context is fin
 | Home | Answers | Grows with |
 | ---- | ------- | ---------- |
 | tests | **What** does the code do? | the code |
-| `docs/adr/NNNN-<theme>.md` | **Why** is it built this way? | themes — capped at ten, amended in place |
+| `docs/adr/<theme>.md` | **Why** is it built this way? | themes — a few broad ones, amended in place |
 | `docs/guide-<topic>.md` + `docs/slides-<topic>.md` | **How** does this work here, and how do I operate it? | topics |
 | GitHub issues | What is still open? | the tracker, not the repository |
 | `docs/SECURITY.md` | How are secrets handled? | — |
 
-- **Decision records are themed.** A decision amends the record that owns its theme; it never opens a new file. The superseded reasoning moves to the theme's decision-log issue, and git keeps the text. `docs/adr/0001-decision-records.md` records why — one project using this workflow reached 64 per-decision records in three months before consolidating them into thirteen themes.
+- **Decision records are themed.** A decision amends the record that owns its theme; it never opens a new file. The superseded reasoning moves to the theme's decision-log issue, and git keeps the text. `docs/adr/decision-records.md` records why — one project using this workflow reached 64 per-decision records in three months before consolidating them into thirteen themes.
 - **Inputs are deleted when what they produced ships** — briefs, backend designs, reviews.
-- **`.github/workflows/docs.yml` enforces the bound**: more than ten records, a record over sixty lines, or a folder that grows per work item fails the build.
+- **Themes are drawn wide, and named rather than numbered.** A new record argues why no existing theme fits; nothing counts the files or their lines, because a count cannot tell a broad theme from a narrow one.
 
 ### 4. The `/epic` workflow skill
 
@@ -115,7 +115,6 @@ A template only gets better if the improvements people discover while *using* it
 .
 +-- AGENTS.md                          the rules every agent reads (fill in the placeholders)
 +-- CLAUDE.md                          -> @AGENTS.md
-+-- .github/workflows/docs.yml         the bound on docs/, enforced
 +-- .claude/
 |   +-- settings.local.json.example    committed template; the real file is git-ignored
 |   +-- agents/brief-closer.md         closes a brief once its surface ships
@@ -124,7 +123,7 @@ A template only gets better if the improvements people discover while *using* it
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- docs/
     +-- SECURITY.md                    secret and key handling
-    +-- adr/                           one record per theme, at most ten
+    +-- adr/                           one record per theme, named for it
     +-- guide-design-handoff.md        the Claude Design procedure
     +-- slides-design-handoff.md       its diagrams
 ```

@@ -42,11 +42,11 @@ This project runs on the [agentic-engineering-template](https://github.com/dsaen
 
 ## Documentation Conventions
 
-- **Decision records** live in `docs/adr/` — **one record per theme, capped at ten, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/0001-decision-records.md`](docs/adr/0001-decision-records.md).
-- **Tests are the specification.** What the code does is stated by tests named for the rules they hold. Before writing a behaviour rule in prose, name the test that would fail if it were broken — then write that test and stop.
+- **Decision records** live in `docs/adr/` — **a few broad themes, one record each, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/decision-records.md`](docs/adr/decision-records.md).
+- **Tests are the specification.** What the code does is stated by tests named for the rules they hold. Before writing a behaviour rule in prose, name the test that would fail if it were broken — then write that test and stop. A test states what the product does, never what the repository contains: that a file exists, a document has a section, or a folder holds fewer than some number of files specifies nothing, and review holds it.
 - **A topic that needs explaining gets one pair**: `docs/guide-<topic>.md`, the procedure and the mechanism in this project's terms, and `docs/slides-<topic>.md`, the diagrams. A new mechanism amends the guide for its topic rather than adding a file; topics grow with the product's areas, never with its tickets.
 - **An input is deleted when what it produced ships** — a brief, a backend design, a review. Its durable half moves to a record, a test or an issue first.
-- **Never a document per work item.** A generator that writes one file per decision, feature, ticket or brief is a defect; `.github/workflows/docs.yml` fails the build on the folders that used to grow that way.
+- **Never a document per work item.** A generator that writes one file per decision, feature, ticket or brief is a defect.
 - **Markdown prose is one line per paragraph** (or semantic line breaks), never fixed-column hard wraps.
 
 ## Documentation Style

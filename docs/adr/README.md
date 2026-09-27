@@ -1,10 +1,10 @@
 # Decision records
 
-One record per **theme**, capped at ten.
+One record per **theme**, and a few broad themes rather than many narrow ones.
 Each answers the question a future maintainer actually asks — *"why is it built this way?"* — which is the one thing a closed pull request throws away.
 
 A reader asking what has been decided about anything opens **one** file and reads the current position.
-That only stays true while the set is small enough to read, which is why it is capped rather than merely organised.
+That only stays true while the set is small enough to read, so a theme is drawn wide enough that the next decision in its area lands in it.
 
 ## The bar
 
@@ -20,20 +20,20 @@ A decision record holds reasoning that is not recoverable from the code. Before 
 
 A decision **amends the record that owns its theme**. It never opens a second file — not for a reversal, not for an extension, not for a decision that builds on an earlier one.
 
-| # | Theme | Owns |
-|---|---|---|
-| [0001](0001-decision-records.md) | Decision records | how this project records decisions, what goes where, and why it is bounded |
+| Record | Owns |
+|---|---|
+| [Decision records](decision-records.md) | how this project records decisions, what goes where, and why it is bounded |
 
-<!-- FILL: one row per theme, added when the project's first decision in that area is made. Name a theme for an area of the product — storage, the wire contract, the terminal surface — never for a single decision. -->
+<!-- FILL: one row per theme, added when the project's first decision in that area is made. Name a theme for an area of the product — storage, the wire contract, the terminal surface — never for a single decision, and name its file for the theme: `docs/adr/storage.md`. -->
 
 A decision that fits no theme is the maintainer's call, not an agent's: **stop and ask.**
-An eleventh record must argue, in its own context section, which themes were considered and why the decision fits none of them.
+A new record must argue, in its own context section, which themes were considered and why the decision fits none of them.
 
 ## Amending a record
 
 1. Open the theme's record and change the rule. An amendment usually **replaces** a rule; it rarely appends one.
 2. Record the change as one line on the theme's `decision-log` issue — the date, what changed, why — linking the commit rather than pasting the displaced passage. Git holds the prose; the issue is the findable index.
-3. Stay under **sixty lines**. If the record will not fit, something in it has stopped being a decision — find it and move it out.
+3. Keep it to what is currently decided. A record that keeps growing holds something that has stopped being a decision — a mechanism for the topic guide, a lost option for the log — find it and move it out.
 
 The log lives on the tracker rather than at the foot of the record because a log inside the record grows for as long as the theme is alive, and every line of it is loaded by every reader who opens the record for its current position.
 
@@ -47,5 +47,5 @@ The log lives on the tracker rather than at the foot of the record because a log
 - **Sections:** Context · Decisions · Rejected · Left open · References. Copy [`template.md`](template.md).
 - **Diagrams are ASCII** (`+ - | v ^ >`).
 - **Prose is one line per paragraph, or semantic line breaks**, never hard-wrapped at a column.
+- **A record is named for its theme, not numbered** — `docs/adr/storage.md`.
 - **Code cites a record by theme, in words** — "the storage record" — never by quoting a passage that an amendment will change.
-- **The cap and the ceiling are checked** by `.github/workflows/docs.yml`, so an eleventh record or a seventy-line one fails the build rather than a review.

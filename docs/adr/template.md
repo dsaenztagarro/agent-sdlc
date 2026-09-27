@@ -1,4 +1,4 @@
-# NNNN — Theme name
+# Theme name
 
 **Status:** Live · **Decision log:** <!-- FILL: the theme's decision-log issue -->
 
@@ -26,4 +26,4 @@
 
 <The decision-log issue, the tests that enforce these decisions, the topic guide that explains the mechanism.>
 
-<!-- Ceiling: sixty lines. Delete on sight: a schema, a list of files, a rollout plan, "not yet built", a ticket list, a rejected option nobody would reach for again. -->
+<!-- Delete on sight: a schema, a list of files, a rollout plan, "not yet built", a ticket list, a rejected option nobody would reach for again. -->
