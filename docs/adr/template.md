@@ -1,6 +1,6 @@
 # Theme name
 
-**Status:** Live · **Decision log:** <!-- FILL: the theme's decision-log issue -->
+**Status:** Accepted · **Decision log:** <!-- FILL: the theme's decision-log issue -->
 
 <One or two sentences: what this theme decides, and why it needed deciding.>
 
@@ -12,7 +12,7 @@
 
 ### <The position, stated as a rule>
 
-<A few sentences: the position, and what it rules out. More than about ten lines usually means two decisions, or an explainer wearing a record's clothes — the latter belongs in a topic guide.>
+<A few sentences: the position, and what it rules out. More than about ten lines usually means two decisions, or a description of how the code works, which the code and its tests already give.>
 
 ## Rejected
 
@@ -24,6 +24,6 @@
 
 ## References
 
-<The decision-log issue, the tests that enforce these decisions, the topic guide that explains the mechanism.>
+<The decision-log issue, and the tests that enforce these decisions.>
 
 <!-- Delete on sight: a schema, a list of files, a rollout plan, "not yet built", a ticket list, a rejected option nobody would reach for again. -->

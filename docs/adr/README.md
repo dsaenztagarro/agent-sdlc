@@ -12,7 +12,7 @@ A decision record holds reasoning that is not recoverable from the code. Before 
 
 - **A real fork.** There were at least two defensible options and one was chosen. If there was only ever one way to do it, the code says so better than prose can.
 - **Consequence beyond the change.** A data-model contract, a cross-cutting convention, a security boundary, a wire promise, a thing deliberately *not* built. Not a local code choice, however careful.
-- **Nothing else can hold it.** Behaviour belongs in tests, the mechanism in a topic guide (`docs/guide-<topic>.md`). A decision record is for the part none of those record: the reasoning.
+- **Nothing else can hold it.** Behaviour belongs in tests, a command in the README, a procedure in a skill. A decision record is for the part none of those hold: the reasoning.
 
 **A record is not** a schema, a census of the current code, a rollout plan or a ticket list. Prose records *why*, never *what the code currently does*.
 
@@ -33,7 +33,7 @@ A new record must argue, in its own context section, which themes were considere
 
 1. Open the theme's record and change the rule. An amendment usually **replaces** a rule; it rarely appends one.
 2. Record the change as one line on the theme's `decision-log` issue — the date, what changed, why — linking the commit rather than pasting the displaced passage. Git holds the prose; the issue is the findable index.
-3. Keep it to what is currently decided. A record that keeps growing holds something that has stopped being a decision — a mechanism for the topic guide, a lost option for the log — find it and move it out.
+3. Keep it to what is currently decided. A record that keeps growing holds something that has stopped being a decision — a description of the code, which the code and its tests already give, or a lost option for the log — find it and move it out.
 
 The log lives on the tracker rather than at the foot of the record because a log inside the record grows for as long as the theme is alive, and every line of it is loaded by every reader who opens the record for its current position.
 

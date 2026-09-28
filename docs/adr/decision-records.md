@@ -1,6 +1,6 @@
 # Decision records
 
-**Status:** Live · **Decision log:** <!-- FILL: this theme's decision-log issue -->
+**Status:** Accepted · **Decision log:** <!-- FILL: this theme's decision-log issue -->
 
 How this project writes things down: which artefact owns which fact, and why every corpus an agent reads has a bound.
 
@@ -14,7 +14,7 @@ The corpora that fail are the ones whose file count grows with the work: a decis
 
 ### Every corpus an agent reads is bounded by design, not by discipline
 
-A kind of document may grow with the product's *areas* — themes, topics — but never with its *work items* — decisions, features, tickets, briefs. A generator that writes one file per work item is a defect in the generator.
+A kind of document may grow with the product's *areas* — its themes — but never with its *work items* — decisions, features, tickets, briefs. A generator that writes one file per work item is a defect in the generator.
 
 ### One owner per fact
 
@@ -22,11 +22,11 @@ A kind of document may grow with the product's *areas* — themes, topics — bu
 |---|---|
 | what the code does | a test, named for the rule it states |
 | why it is built this way | the decision record for its theme |
-| how a mechanism works | the topic guide, `docs/guide-<topic>.md`, with its slides |
+| how to run, set up or operate it | a command in the README; a multi-step procedure in a skill |
 | work still open | an issue |
 | what a surface looks like | the design repository's page |
 
-Prose never records what the code currently does. A claim about code state in a durable document is born rotting; "not yet built" is work status and belongs on an issue.
+Prose never records what the code currently does — no explainer, topic guide or slide deck; a mechanism that is hard to follow is made clear in the code, and a non-obvious failure mode gets a test named for it. A claim about code state in a durable document is born rotting; "not yet built" is work status and belongs on an issue.
 
 ### Records are a few broad themes, named for the theme, and amended in place
 
@@ -44,11 +44,17 @@ A brief, a backend design, a review — each is written in the future tense, so 
 
 `AGENTS.md` holds only what applies to every task. What applies to one area is a path-scoped rule in `.claude/rules/`, which loads when a matching file is read; a procedure is a skill, whose body loads only when invoked. Before writing a rule down, name the test that would fail if it were broken, and write that instead.
 
+### An unwanted behaviour is fixed by deleting the instruction that produces it
+
+When agents keep doing something they should not, find the instruction that asks for it and delete it. A counter-instruction — "never write X" — negates text that is no longer there, spends context on every task and names the thing it forbids; the reason it lost is a Rejected line in the theme's record, read when the question comes up.
+
 ## Rejected
 
 - **Immutable records superseded by new files.** Optimises for an audit trail git already keeps, and shelves a wrong decision beside the right one.
 - **A feature page per capability.** Its whole content is a narrative of current behaviour, so the folder is born rotting.
 - **A behaviour spec per feature, cited from code.** Duplicates the tests in prose that cannot fail, and grows with every feature.
+- **Explainers, topic guides and slide decks describing how the code works.** A third copy beside the code and its tests that nothing checks; rewriting thirty of them in one project surfaced some twenty-five false claims they carried. An agent reads the code when it needs it.
+- **Guard tests that list forbidden spellings in code.** The list is never complete — the next variant walks past it — and it states nothing the product does. A source guard checks a closed property the code defines (every Y declares Z, every path named resolves); a rule about what must not appear is held by the feature's own test or a platform control.
 - **A fixed cap on the number of records, or a line ceiling per record, enforced by a check.** A count says nothing about whether the themes are broad, and a ceiling pushes a growing theme to split into narrow ones — the per-decision ledger again, one step removed.
 - **Numbering records.** Numbers order immutable per-decision records; a theme record is amended in place, so the number carries nothing and a merged theme leaves a gap to explain.
 

@@ -26,12 +26,11 @@ This template fixes that with **written, discoverable institutional memory** and
                                                                         v
                               docs/  (bounded memory)  <-------  tests state the rules;
                               adr/ one record per theme          themes amended at close-out
-                              guide-<topic> + slides-<topic>
 ```
 
 1. **Design.** For UI, a short **brief** goes to a **Claude Design** project, which draws the page. Briefs, pages and the export live in a sibling **`<project>-ds`** repository; one generated artefact crosses into the application. For backend work, write a markdown design — an input, deleted when it ships.
 2. **Decompose & ship.** Run **`/epic`** on the design. It opens a GitHub epic, splits the design into dependency-ordered sub-issues, pauses once for your approval, then implements them **one ticket at a time** — branch → tests → PR → squash-merge.
-3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of a few broad **themed decision records**, once, at close-out. A mechanism worth explaining amends its **topic guide**. Nothing in `docs/` grows one file per ticket, decision or feature.
+3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of a few broad **themed decision records**, once, at close-out. Commands live in the README and procedures in skills. Nothing in `docs/` grows one file per ticket, decision or feature.
 
 The human's only mid-run touch point is the single approval gate before issues are created; the finished work is reviewed at the end.
 
@@ -53,7 +52,7 @@ An agent reads the repository at the start of every task, and its context is fin
 | ---- | ------- | ---------- |
 | tests | **What** does the code do? | the code |
 | `docs/adr/<theme>.md` | **Why** is it built this way? | themes — a few broad ones, amended in place |
-| `docs/guide-<topic>.md` + `docs/slides-<topic>.md` | **How** does this work here, and how do I operate it? | topics |
+| the README, and `.claude/skills/` | **How** do I run, set up or operate it? | commands; one skill per procedure |
 | GitHub issues | What is still open? | the tracker, not the repository |
 | `docs/SECURITY.md` | How are secrets handled? | — |
 
@@ -76,7 +75,7 @@ The skill names no language or tool: it defers to the gate and conventions in *y
 
 ### 5. Claude Design — where the design comes from
 
-**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.** [`docs/guide-design-handoff.md`](docs/guide-design-handoff.md) is the procedure, with its diagrams in `docs/slides-design-handoff.md`.
+**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.** The [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill is the procedure.
 
 - **Design content lives in `<project>-ds`**, a sibling repository — briefs, the pages Claude Design returns, and a mirror of its export. It grows without bound, and an application repository carrying it stops being code.
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
@@ -100,14 +99,57 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 A template only gets better if the improvements people discover while *using* it flow back. `.claude/skills/template-feedback/SKILL.md` is that return path: when an agent (or you) finds a **reusable, project-agnostic** improvement to the workflow — a rule that should exist in `AGENTS.md`, a skill step that misfires, a docs-taxonomy gap — the skill surfaces a concrete proposal and, on your OK, opens a GitHub **issue on this template repo** so every adopter inherits the fix. It never edits the template silently, and it's scoped to *generalizable* improvements (project-specific rules stay in that project's `AGENTS.md`). `AGENTS.md` primes agents to reach for it — the "raise the hand" rule under **Improving this workflow**.
 
+### 10. Skills and agents — what ships, and what to create
+
+A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses three kinds.
+
+**Shipped here** — generic, in `.claude/`:
+
+| | Does |
+|---|---|
+| `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
+| `design-handoff` | the Claude Design procedure: which repository is which, the three routes into the project, writing a brief, reading an export back |
+| `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
+| `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
+
+**Create per project** — they name the project's own artefact, so the template cannot ship them:
+
+| | Does |
+|---|---|
+| `read-designs` | vendors the one generated artefact from `<project>-ds`, reports what changed, and hands any satisfied brief to `brief-closer` |
+| `design-curator` (agent, UI projects) | adopts a design that has shipped: deletes the app's copies of what the bundle now provides, and writes the components it ships but the app never uses |
+
+**Create once, at user level** — shared by every project (for instance in a dotfiles repository), never copied into each one, because a copy per project drifts:
+
+| | Does |
+|---|---|
+| `tracker-plan` | publishes a confirmed plan as a marked section of the epic's description, and files or amends the sub-issues it calls for — the tracker is the only record of what is planned |
+| `tracker-resume` | briefs the project from the tracker and git at the start of a session, leading with the note the last pause left, and reports where the two disagree |
+| `tracker-pause` | writes a "where I stopped" note — branch, the step reached, the one next action, open questions — into the in-progress ticket, replaced on every pause |
+| `tracker-close` | closes a ticket only with evidence: each done-when line checked against a named test or a command's output, live checks handed to a person |
+| `deps-upgrade` | lands a backlog of dependency pull requests: audits the lock, sorts by risk, batches the safe ones through the real gate |
+| a knowledge-capture skill | files a reusable, project-agnostic lesson into a notes repository, so it outlives the project that taught it |
+
+**Where each phase of the work lives:**
+
+```
+  Plan      research, then /tracker-plan            -> the epic's description
+  Build     one ticket at a time, one worktree each  (claude --worktree issue-<N>)
+            /epic drives a multi-ticket design
+  Verify    the ticket's own procedure, lower levels first; a live check goes to a person
+  Close     /tracker-close; amend the theme's record; brief-closer deletes a shipped brief
+  Resume    /tracker-resume; /tracker-pause before stopping
+```
+
 ## Applying the template to a new project
 
 1. **Create the repo** from this template (GitHub **Use this template**, or clone and re-init git).
 2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
 3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
-4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a `decision-log` issue per theme.
-5. **For a UI**, create the `<project>-ds` repository and fill in the names in `docs/guide-design-handoff.md`; otherwise delete the guide and its slides.
+4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a `decision-log` issue per theme (`gh label create decision-log` once, then one issue per record).
+5. **For a UI**, create the `<project>-ds` repository and fill in the names in the `design-handoff` skill; otherwise delete the skill.
 6. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
+7. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
 
 ## Layout
 
@@ -119,13 +161,12 @@ A template only gets better if the improvements people discover while *using* it
 |   +-- settings.local.json.example    committed template; the real file is git-ignored
 |   +-- agents/brief-closer.md         closes a brief once its surface ships
 |   +-- skills/
+|       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- epic/SKILL.md              design -> epic -> ship
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- docs/
     +-- SECURITY.md                    secret and key handling
     +-- adr/                           one record per theme, named for it
-    +-- guide-design-handoff.md        the Claude Design procedure
-    +-- slides-design-handoff.md       its diagrams
 ```
 
 ## License

@@ -1,6 +1,9 @@
 # Local Claude Code settings (copy settings.local.json.example to start)
 .claude/settings.local.json
 
+# One checkout per ticket (`claude --worktree issue-<N>`)
+.claude/worktrees/
+
 # Local environment / secrets — never commit
 .env
 .env.*

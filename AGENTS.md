@@ -37,14 +37,13 @@ This project runs on the [agentic-engineering-template](https://github.com/dsaen
 
 ## Architecture
 
-<!-- FILL: the mental model in a paragraph, then a "Key files" list mapping subsystems to paths.
-     For any non-trivial mechanism, link its topic guide, docs/guide-<topic>.md. -->
+<!-- FILL: the mental model in a paragraph, then a "Key files" list mapping subsystems to paths. -->
 
 ## Documentation Conventions
 
 - **Decision records** live in `docs/adr/` — **a few broad themes, one record each, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/decision-records.md`](docs/adr/decision-records.md).
 - **Tests are the specification.** What the code does is stated by tests named for the rules they hold. Before writing a behaviour rule in prose, name the test that would fail if it were broken — then write that test and stop. A test states what the product does, never what the repository contains: that a file exists, a document has a section, or a folder holds fewer than some number of files specifies nothing, and review holds it.
-- **A topic that needs explaining gets one pair**: `docs/guide-<topic>.md`, the procedure and the mechanism in this project's terms, and `docs/slides-<topic>.md`, the diagrams. A new mechanism amends the guide for its topic rather than adding a file; topics grow with the product's areas, never with its tickets.
+- **How to run, set up or operate it** is a command in the README; a multi-step procedure an agent follows is a skill in `.claude/skills/`, loaded when it is invoked.
 - **An input is deleted when what it produced ships** — a brief, a backend design, a review. Its durable half moves to a record, a test or an issue first.
 - **Never a document per work item.** A generator that writes one file per decision, feature, ticket or brief is a defect.
 - **Markdown prose is one line per paragraph** (or semantic line breaks), never fixed-column hard wraps.
@@ -64,7 +63,7 @@ Good (ASCII):
 
 ## Design workflow (Claude Design)
 
-**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are [`docs/guide-design-handoff.md`](docs/guide-design-handoff.md).
+**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
 
 - **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
 - **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
@@ -116,9 +115,9 @@ A fallback to the retired source is a defect, not a safety net: it keeps the dea
 For any new feature or significant change:
 
 1. **Create a GitHub issue** documenting the change (summary, acceptance criteria, technical notes).
-2. **Create a feature branch** named after the issue: `git checkout -b <issue>-<slug>`.
+2. **Work in the issue's own worktree**: `claude --worktree issue-<issue>` checks out `.claude/worktrees/issue-<issue>`, and the same command re-enters it later. Rename its branch to `<issue>-<slug>` before the first push. Two agents never share a checkout — they race on HEAD.
 3. **Implement & test** — write tests alongside the change; run the gate frequently; drive the runtime surface.
-4. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`; a new or changed mechanism amends its topic guide.
+4. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
 5. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
 For larger, multi-ticket work, drive it with the **`/epic`** skill (`.claude/skills/epic/`): one design doc → a GitHub epic → phased sub-issues → shipped, one ticket at a time.
