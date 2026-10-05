@@ -110,6 +110,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | | Does |
 |---|---|
 | `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
+| `design-repo` | creates a design repository from one skeleton, in the layout every design repository keeps, and adopts the layout check in an existing one |
 | `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
 | `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
@@ -149,7 +150,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
 3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
 4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a `decision-log` issue per theme (`gh label create decision-log` once, then one issue per record).
-5. **For a UI**, create the `<project>-ds` repository and fill in the names in the `design-handoff` skill; otherwise delete the skill.
+5. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in the `design-handoff` skill; otherwise delete both.
 6. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
 7. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
 
@@ -165,6 +166,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 |   +-- skills/
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
+|       +-- design-repo/SKILL.md       creates a design repository from skeleton/, held to the layout by its layout_test.rb
 |       +-- epic/SKILL.md              design -> epic -> ship
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- docs/
