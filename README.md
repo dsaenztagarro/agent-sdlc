@@ -79,6 +79,7 @@ The skill names no language or tool: it defers to the gate and conventions in *y
 
 - **Design content lives in `<project>-ds`**, a sibling repository — briefs, the pages Claude Design returns, and a mirror of its export. It grows without bound, and an application repository carrying it stops being code.
 - **A page draws the surface, never the application.** Every state of a screen, animated where it helps — but no validation, save rule or data model, because the application changes and the page does not. A sentence someone could find false in the running application comes out.
+- **Every design repository has one layout** — `briefs/`, `pages/` or `system/` for the export, `references/`, `dist/`, `bin/sync` — whether it holds a product's design or a shared design system; [`layout.md`](.claude/skills/design-handoff/layout.md) states it folder by folder.
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
 - **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** writes named files, including the project's own `readme.md` for rules that must hold in every export; and the downloaded **export** brings the whole project back to be mirrored.
 - **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
@@ -109,7 +110,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | | Does |
 |---|---|
 | `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
-| `design-handoff` | the Claude Design procedure: which repository is which, the three routes into the project, writing a brief, reading an export back |
+| `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
 | `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
 
@@ -163,6 +164,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 |   +-- agents/brief-closer.md         closes a brief once its surface ships
 |   +-- skills/
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
+|       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
 |       +-- epic/SKILL.md              design -> epic -> ship
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- docs/
