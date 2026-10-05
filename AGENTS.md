@@ -65,6 +65,7 @@ Good (ASCII):
 
 **Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
 
+- **A design page shows the surface, never the application's rules.** Interaction is drawn; validations, save rules, time windows and the data model are not. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
 - **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
 - **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
 - **Validate the design against the codebase before building — raise the hand if it's wrong.** If it brings consistency, build it faithfully. If it does **not**, neither implement it silently nor diverge from it silently: a **comment** on the ticket for something localised, a **brief** in the design repository for something structural.
