@@ -149,7 +149,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 1. **Create the repo** from this template (GitHub **Use this template**, or clone and re-init git).
 2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
 3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
-4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a `decision-log` issue per theme (`gh label create decision-log` once, then one issue per record).
+4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a decision-log issue per theme, titled `decision-log: <theme>` and labelled `decision-log` (`gh label create decision-log` once, then one issue per record), so `gh issue list --label decision-log` finds every theme's history.
 5. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in the `design-handoff` skill; otherwise delete both.
 6. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
 7. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
