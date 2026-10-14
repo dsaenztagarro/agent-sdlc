@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **Renamed to `agentic-sdlc`.** The template covers the whole lifecycle of building software with agents — plan, design, build, verify, release, decide — and the shorter name says so; GitHub's template flag already marks it as a template.
+
 ## [0.4.2] - 2026-10-08
 
 ### Added
@@ -72,10 +76,10 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.4.2...HEAD
-[0.4.2]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.4.1...v0.4.2
-[0.4.1]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.4.0...v0.4.1
-[0.4.0]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/dsaenztagarro/agentic-engineering-template/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/dsaenztagarro/agentic-engineering-template/releases/tag/v0.1.0
+[Unreleased]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.4.1...v0.4.2
+[0.4.1]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/dsaenztagarro/agentic-sdlc/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/dsaenztagarro/agentic-sdlc/releases/tag/v0.1.0

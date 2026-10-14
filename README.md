@@ -1,4 +1,4 @@
-# Agentic Engineering Template
+# Agentic SDLC
 
 A project-agnostic scaffold for **agentic engineering** — building software with coding agents — on any codebase.
 
