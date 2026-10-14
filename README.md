@@ -36,9 +36,9 @@ The human's only mid-run touch point is the single approval gate before issues a
 
 ## What's in the box
 
-### 1. `AGENTS.md` + `CLAUDE.md` — the single source of truth
+### 1. `AGENTS.md` + `CLAUDE.md` — the rules every task needs
 
-`AGENTS.md` is the one file every agent reads before doing anything. It states the project overview, the build/test/lint gate, the architecture map, the documentation and testing rules, the design workflow, and the development workflow. `CLAUDE.md` is a one-line pointer (`@AGENTS.md`) so Claude Code loads the same rules. **You fill in the project-specific placeholders once; everything else is portable.**
+`AGENTS.md` loads in every session, so it holds only what applies to every task — the rules an agent can break before it knows they exist — and a routing table to the rest: a procedure is a skill, loaded when invoked, and a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened. It states the project overview, the build/test/lint gate, the architecture map, the documentation and testing rules, the design workflow, and the development workflow. `CLAUDE.md` is a one-line pointer (`@AGENTS.md`) so Claude Code loads the same rules. **You fill in the project-specific placeholders once; everything else is portable.**
 
 ### 2. Model selection & task tracking
 
@@ -132,6 +132,10 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | `tracker-close` | closes a ticket only with evidence: each done-when line checked against a named test or a command's output, live checks handed to a person |
 | `deps-upgrade` | lands a backlog of dependency pull requests: audits the lock, sorts by risk, batches the safe ones through the real gate |
 | a knowledge-capture skill | files a reusable, project-agnostic lesson into a notes repository, so it outlives the project that taught it |
+| `tracker-review` (workflow) | reviews a ticket's or pull request's work against its requirements, tries to refute each gap, and publishes what holds: one review per pull request with an inline comment per finding, each labelled with a stable id, and one `QA:` comment on the ticket for what no line of the diff shows — never only a file in the session |
+| `tracker-fix` (workflow) | fixes published findings test first, one commit per finding naming its id, starting from the unresolved threads and the `QA:` notes, so a fresh session can run it |
+
+A `QA:` comment on a ticket is a correction a builder applies before its next commit, or rejects with a stated reason.
 
 **Where each phase of the work lives:**
 
@@ -140,6 +144,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
   Build     one ticket at a time, one worktree each  (claude --worktree issue-<N>)
             /epic drives a multi-ticket design
   Verify    the ticket's own procedure, lower levels first; a live check goes to a person
+  Review    tracker-review -> PR threads + one QA: note; tracker-fix closes them, a thread resolved per pushed fix
   Close     /tracker-close; amend the theme's record; brief-closer deletes a shipped brief
   Resume    /tracker-resume; /tracker-pause before stopping
 ```

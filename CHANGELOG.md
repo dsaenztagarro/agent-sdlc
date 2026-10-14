@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **A review is published where a fresh session finds it.** README §10 lists the user-level `tracker-review` and `tracker-fix` workflows: findings go on the pull request as threads, each labelled with a stable id, and what no line of the diff shows goes in one `QA:` comment on the ticket; the fix commit names the id, and resolving a thread records the fix. The phase map gains a Review line.
+
+### Changed
+
+- **`AGENTS.md` holds only what every task needs, and routes to the rest.** Instead of a single source of truth read before anything, it keeps the rules an agent can break before it knows they exist, and a routing table points at the skills and path-scoped rules that hold procedures, loaded only when their task runs. README §1 says the same.
+
 ## [0.4.2] - 2026-10-08
 
 ### Added
