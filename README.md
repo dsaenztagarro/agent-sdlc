@@ -1,4 +1,4 @@
-# Agentic SDLC
+# agent-sdlc
 
 A project-agnostic scaffold for **agentic engineering** — building software with coding agents — on any codebase.
 
@@ -62,7 +62,7 @@ An agent reads the repository at the start of every task, and its context is fin
 
 ### 4. The `/epic` workflow skill
 
-`.claude/skills/epic/SKILL.md` is a complete, user-invoked orchestration for taking one design doc to shipped code:
+`.apm/skills/epic/SKILL.md` is a complete, user-invoked orchestration for taking one design doc to shipped code:
 
 - opens a GitHub **epic** issue and decomposes the design into **self-contained, phased sub-issues**;
 - **one approval gate**, then runs autonomously;
@@ -75,11 +75,11 @@ The skill names no language or tool: it defers to the gate and conventions in *y
 
 ### 5. Claude Design — where the design comes from
 
-**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.** The [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill is the procedure.
+**Claude Design is the first stage of the workflow, and `AGENTS.md` enforces it: you do not hand-build UI without a design.** The [`design-handoff`](.apm/skills/design-handoff/SKILL.md) skill is the procedure.
 
 - **Design content lives in `<project>-ds`**, a sibling repository — briefs, the pages Claude Design returns, and a mirror of its export. It grows without bound, and an application repository carrying it stops being code.
 - **A page draws the surface, never the application.** Every state of a screen on one page, reached through a state switcher and animated where it helps — but no validation, save rule or data model, because the application changes and the page does not. A sentence someone could find false in the running application comes out.
-- **Every design repository has one layout** — `briefs/`, `pages/` or `system/` for the export, `references/`, `dist/`, `bin/sync` — whether it holds a product's design or a shared design system; [`layout.md`](.claude/skills/design-handoff/layout.md) states it folder by folder.
+- **Every design repository has one layout** — `briefs/`, `pages/` or `system/` for the export, `references/`, `dist/`, `bin/sync` — whether it holds a product's design or a shared design system; [`layout.md`](.apm/skills/design-handoff/layout.md) states it folder by folder.
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
 - **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** writes named files, including the project's own `readme.md` for rules that must hold in every export; and the downloaded **export** brings the whole project back to be mirrored.
 - **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
@@ -99,13 +99,13 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 ### 9. The `template-feedback` skill — a self-improvement loop
 
-A template only gets better if the improvements people discover while *using* it flow back. `.claude/skills/template-feedback/SKILL.md` is that return path: when an agent (or you) finds a **reusable, project-agnostic** improvement to the workflow — a rule that should exist in `AGENTS.md`, a skill step that misfires, a docs-taxonomy gap — the skill surfaces a concrete proposal and, on your OK, opens a GitHub **issue on this template repo** so every adopter inherits the fix. It never edits the template silently, and it's scoped to *generalizable* improvements (project-specific rules stay in that project's `AGENTS.md`). `AGENTS.md` primes agents to reach for it — the "raise the hand" rule under **Improving this workflow**.
+A template only gets better if the improvements people discover while *using* it flow back. `.apm/skills/template-feedback/SKILL.md` is that return path: when an agent (or you) finds a **reusable, project-agnostic** improvement to the workflow — a rule that should exist in `AGENTS.md`, a skill step that misfires, a docs-taxonomy gap — the skill surfaces a concrete proposal and, on your OK, opens a GitHub **issue on this template repo** so every adopter inherits the fix. It never edits the template silently, and it's scoped to *generalizable* improvements (project-specific rules stay in that project's `AGENTS.md`). `AGENTS.md` primes agents to reach for it — the "raise the hand" rule under **Improving this workflow**.
 
 ### 10. Skills and agents — what ships, and what to create
 
 A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses three kinds.
 
-**Shipped here** — generic, in `.claude/`:
+**Shipped here** — generic, as an [APM](https://github.com/microsoft/apm) package in `.apm/`. A project depends on it in its own `apm.yml`, and `apm install` deploys the skills to `.claude/skills/` and the agent to `.claude/agents/`; `apm.lock.yaml` pins the commit, and `apm update` takes a newer one. Nothing in the package names the project: what it needs to know about one, it reads from that project's `AGENTS.md`.
 
 | | Does |
 |---|---|
@@ -122,7 +122,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | `read-designs` | vendors the one generated artefact from `<project>-ds`, reports what changed, and hands any satisfied brief to `brief-closer` |
 | `design-curator` (agent, UI projects) | adopts a design that has shipped: deletes the app's copies of what the bundle now provides, and writes the components it ships but the app never uses |
 
-**Create once, at user level** — shared by every project (for instance in a dotfiles repository), never copied into each one, because a copy per project drifts:
+**Create once, at user level** — shared by every project (for instance a personal APM package installed with `apm install -g`), never copied into each one, because a copy per project drifts:
 
 | | Does |
 |---|---|
@@ -150,9 +150,10 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
 3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
 4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a decision-log issue per theme, titled `decision-log: <theme>` and labelled `decision-log` (`gh label create decision-log` once, then one issue per record), so `gh issue list --label decision-log` finds every theme's history.
-5. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in the `design-handoff` skill; otherwise delete both.
-6. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
-7. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
+5. **Install the skills.** Delete `.apm/`, replace `apm.yml` with the project's own — `apm init`, then `apm install dsaenztagarro/agent-sdlc` — and commit `apm.yml`, `apm.lock.yaml` and what it deploys into `.claude/`, so a clone has the skills without APM. Add `apm_modules/` to `.gitignore` if `apm install` did not.
+6. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in `AGENTS.md`'s design section, which `design-handoff` reads; otherwise delete that section.
+7. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
+8. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
 
 ## Layout
 
@@ -160,15 +161,17 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 .
 +-- AGENTS.md                          the rules every agent reads (fill in the placeholders)
 +-- CLAUDE.md                          -> @AGENTS.md
-+-- .claude/
-|   +-- settings.local.json.example    committed template; the real file is git-ignored
-|   +-- agents/brief-closer.md         closes a brief once its surface ships
++-- apm.yml                            the APM package an adopter depends on (an adopter replaces it with its own)
++-- .apm/                              the package's contents; an adopter deletes it and installs the package
+|   +-- agents/brief-closer.agent.md   closes a brief once its surface ships
 |   +-- skills/
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
 |       +-- design-repo/SKILL.md       creates a design repository from skeleton/, held to the layout by its layout_test.rb
 |       +-- epic/SKILL.md              design -> epic -> ship
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
++-- .claude/
+|   +-- settings.local.json.example    committed template; the real file is git-ignored
 +-- docs/
     +-- SECURITY.md                    secret and key handling
     +-- adr/                           one record per theme, named for it

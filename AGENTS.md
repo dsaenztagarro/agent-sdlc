@@ -14,7 +14,7 @@ Every task you plan or pick up carries an explicit **complexity** rating and the
 
 ## Improving this workflow (raise the hand)
 
-This project runs on the [agentic-sdlc](https://github.com/dsaenztagarro/agentic-sdlc) template. When you discover a **reusable, project-agnostic** improvement to the workflow itself — a rule that should exist here, a skill step that misfires, a docs-taxonomy gap, a principle worth stating — don't silently apply it only to this repo. **Raise the hand:** run the **`template-feedback`** skill (`.claude/skills/template-feedback/`) to surface a concrete proposal and, on the maintainer's OK, open an issue on the upstream template so every adopter benefits. Keep project-specific rules in this repo; send generalizable ones upstream.
+This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. When you discover a **reusable, project-agnostic** improvement to the workflow itself — a rule that should exist here, a skill step that misfires, a docs-taxonomy gap, a principle worth stating — don't silently apply it only to this repo. **Raise the hand:** run the **`template-feedback`** skill (`.claude/skills/template-feedback/`) to surface a concrete proposal and, on the maintainer's OK, open an issue on the upstream template so every adopter benefits. Keep project-specific rules in this repo; send generalizable ones upstream.
 
 ## Project Overview
 
@@ -65,13 +65,15 @@ Good (ASCII):
 
 **Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
 
+<!-- FILL: the design repository's name, the shared design system it extends if any, the one artefact that crosses, its path here, and the command that vendors it. The `design-handoff` skill reads these names from here. -->
+
 - **A design page shows the surface, never the application's rules.** Interaction is drawn; validations, save rules, time windows and the data model are not. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
 - **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
 - **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
 - **Validate the design against the codebase before building — raise the hand if it's wrong.** If it brings consistency, build it faithfully. If it does **not**, neither implement it silently nor diverge from it silently: a **comment** on the ticket for something localised, a **brief** in the design repository for something structural.
 - **A behaviour a page draws that nothing here has settled is an open question**, answered by a test and, where it is a real fork, the theme's decision record — then sent back through a brief.
 
-If this project has no UI, delete this section and the handoff guide.
+If this project has no UI, delete this section.
 
 ## Testing Guidelines
 
