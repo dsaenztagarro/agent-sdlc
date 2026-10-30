@@ -9,7 +9,7 @@ require "open3"
 # its repository. Each test below is one closed rule of that layout with a real failure behind it;
 # whether a given file exists is left to the skill that creates a repository.
 #
-# Copied from the agentic-sdlc `design-repo` skill. Change it there and copy it
+# Copied from the agent-sdlc `design-repo` skill. Change it there and copy it
 # again; a local edit here forks the rule from every other design repository.
 class LayoutTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)

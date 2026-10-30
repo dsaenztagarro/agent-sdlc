@@ -33,10 +33,13 @@ Always `--private` unless the person asked for a public one in this conversation
 ```bash
 cp -R <this skill>/skeleton/. <name>/
 cd <name>
+mv _bin bin
 grep -rl '__NAME__' . | xargs sed -i '' 's/__NAME__/<name>/g'     # GNU sed: -i without ''
 sed -i '' 's/^KIND="__KIND__"$/KIND="<project|system>"/' bin/sync
 chmod +x bin/sync bin/ds-status bin/shots
 ```
+
+The skeleton keeps its scripts in `_bin/` because APM does not deploy a folder named `bin` inside a skill; the copy renames it.
 
 A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name. A shared system, or a product bound to none, deletes `bin/ds-status` and `test/ds_status_test.rb`.
 A shared system deletes `bin/shots`, `lib/shots.js` and `test/shots_test.rb` too: it has no pages to shoot.
