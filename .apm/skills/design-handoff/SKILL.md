@@ -8,7 +8,7 @@ description: The Claude Design handoff loop — which repository is which, how a
 How a design change gets from an idea to something this application renders, and what an agent may and may not touch on the way.
 This is an operating procedure — the order matters, and two of its steps exist to stop a class of silent loss.
 
-If this project has no user interface, delete this skill and the Design workflow section of `AGENTS.md`.
+If this project has no user interface, this skill does not apply.
 
 ## 1. Three names, and which one you are in
 
@@ -18,7 +18,7 @@ If this project has no user interface, delete this skill and the Design workflow
 | **`<project>-ds`** (the design repository) | the briefs, the pages Claude Design returns, a mirror of the design project's export, and the generator for the one artefact that crosses | the briefs and what the repository authors — yes; the export mirror, never (§3) |
 | **`<project>-ds`**, the Claude Design project | where pages, components and specimens are drawn | through the three routes in §2, never directly |
 
-<!-- FILL: the real names, and a fourth row if a shared design system is vendored into the design repository. -->
+`AGENTS.md`'s design section names the real repositories, and the shared design system vendored into the design repository when there is one — a fourth name, edited only in its own repository, where a request for a shared widget is a brief.
 
 **A design project is named for the codebase it draws for** — `<project>-ds` beside `<project>` — so the name says which checkout its export syncs into.
 A design system shared by several projects is named for its brand or the package that ships it, never for its platform: a `web-ds` points at no repository, and stops being true the day a second web system exists.
@@ -32,7 +32,7 @@ Design content lives outside this repository because it grows without bound, and
 ## 2. What crosses, and by which route
 
 **Exactly one generated artefact reaches this application**, and it is data — a token set, or a stylesheet bundle.
-<!-- FILL: the artefact, its path here, and the command that vendors it. -->
+`AGENTS.md`'s design section names it, its path here, and the command that vendors it.
 A page is read by a person designing or building a surface; it is never a build input, and code never cites one.
 
 The design project holds its own files and nothing else — it cannot open either repository. Everything it knows arrives by one of three routes, each started by a person:
