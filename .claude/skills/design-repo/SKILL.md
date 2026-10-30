@@ -35,10 +35,11 @@ cp -R <this skill>/skeleton/. <name>/
 cd <name>
 grep -rl '__NAME__' . | xargs sed -i '' 's/__NAME__/<name>/g'     # GNU sed: -i without ''
 sed -i '' 's/^KIND="__KIND__"$/KIND="<project|system>"/' bin/sync
-chmod +x bin/sync bin/ds-status
+chmod +x bin/sync bin/ds-status bin/shots
 ```
 
 A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name. A shared system, or a product bound to none, deletes `bin/ds-status` and `test/ds_status_test.rb`.
+A shared system deletes `bin/shots`, `lib/shots.js` and `test/shots_test.rb` too: it has no pages to shoot.
 
 Then resolve every `FILL` marker (`grep -rn FILL .`):
 
@@ -51,19 +52,19 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 ## 4. Add the generator
 
 `lib/` holds it, `dist/` its committed output, and `rake` fails when the two disagree — that check is what makes *generated, not copied* true.
-It is plain Ruby with no gems, so the repository clones and runs with nothing installed.
+It is plain Ruby with no gems, so `rake` runs on a clone with nothing installed. `lib/shots.js` beside it is not a generator: it writes only `tmp/shots/`, needs node and a browser, and its test skips without them.
 A product's stylesheet bundle is wrapped in its own cascade layer, declared after the shared system's.
 Each refusal or guarantee it adds gets a test named for the rule.
 
 ## 5. Create the Claude Design project
 
-Same name as the repository. Seed its own `readme.md` through `/design-sync` with the rules that must hold in every export — for a product's project, the surface-only rule (`design-handoff` §4).
+Same name as the repository. Seed its own `readme.md` through `/design-sync` with the rules that must hold in every export — for a product's project, the surface-only rule and its markup contract (`design-handoff` §4), so that `bin/shots` can shoot every page and no brief has to restate it.
 When paths flow upstream, record the project's id and namespace in `.design-sync/config.json`, and what a future `/design-sync` must know in `.design-sync/NOTES.md`.
 
 ## 6. First export, then the gate
 
 ```bash
-bin/sync       # mirror the first export
+bin/sync       # mirror the first export; a product's also shoots every page into tmp/shots/
 rake           # the generator's check, then every test — layout_test.rb included
 ```
 
