@@ -8,7 +8,7 @@ description: The Claude Design handoff loop — which repository is which, how a
 How a design change gets from an idea to something this application renders, and what an agent may and may not touch on the way.
 This is an operating procedure — the order matters, and two of its steps exist to stop a class of silent loss.
 
-If this project has no user interface, delete this skill and the design row of `AGENTS.md`.
+If this project has no user interface, delete this skill and the Design workflow section of `AGENTS.md`.
 
 ## 1. Three names, and which one you are in
 
@@ -27,7 +27,7 @@ A design system shared by several projects is named for its brand or the package
 
 The design repository and the design project share a name. Say *repository* or *project*: the difference decides whether an edit survives.
 
-Design content lives outside this repository because it grows without bound, and an application repository carrying it stops being code — one terminal client's pages reached 920 KB before they were moved out.
+Design content lives outside this repository because it grows without bound, and an application repository carrying it stops being code.
 
 ## 2. What crosses, and by which route
 
@@ -66,7 +66,7 @@ A sentence on a page about how the application behaves is true the day it is dra
 - **The page says so in its markup, so a generator can read it.** One `[data-surface]` element is the application as it renders, chrome included; each state is a `[data-state="<Name>"]` element inside it; the switcher is `[role="tablist"][aria-label="State"]`, one `[role="tab"]` per state, labelled with its name. The design repository's `bin/shots` walks that bar on every page after each sync and captures the surface alone in each state — what a reader looks at is the application, never what was drawn around it — and names every page that breaks the contract, for a brief to fix.
 - **A page with many states groups them into families.** A family is one situation of the surface — the list, a record, a form in one of its cases — and its states are that situation's variants. The bar gets a Family row above the State row: the Family row picks a family, and the State row shows that family's states alone. A family's states sit together, in the order a reader meets them, so stepping through the bar finishes one family before the next. Each state is named `<Family> · <state>`, or the bare family for its first, and the state part never repeats the family, since the row above already names it. In the markup every state carries `[data-family="<Family>"]`, or none does; each tab is labelled with the state part, `Default` for the bare one, and the State row may hide the tabs of every family but the one shown. A state generated from another — loading, error, long data — is named into the family it varies, never left bare under it. `bin/shots` names a split family, a state outside its family's name and one repeating it.
 - **Interaction belongs on a web page; the business does not.** A prototype may animate a drawer opening, a row expanding, a toast arriving — that is the surface. Validations, save rules, time windows, who may write what and the data model belong to the application, stated by its tests and decision records.
-- **A terminal client's page is snapshots only.** A terminal redraws a whole grid of cells on each key press, with no hover, transition or reflow between, so one frame per state is everything the user sees. Interaction there is the key map, which is the application's behaviour: a page that answers keys writes it a second time, unchecked. A step through the surface is a run of named states instead — `Cockpit`, `Filter typing`, `Filtered to one`, `Legend open` — each one frame.
+- **A terminal client's page is snapshots only.** A terminal redraws a whole grid of cells on each key press, with no hover, transition or reflow between, so one frame per state is everything the user sees. Interaction there is the key map, which is the application's behaviour: a page that answers keys writes it a second time, unchecked. A step through the surface is a run of named states instead, one frame each, named for what the user sees at that point.
 - **The test for a sentence on a page: could someone open the running application and find it false?** Then it comes out.
 - **The design project keeps no decision log, rulings page or behaviour hand-off.** Each is a second copy of an application record, and drifts from it.
 - **A behaviour question raised by drawing goes back as a question.** Each candidate is drawn as its own state, named for what it shows; the question is raised in the design chat, never written on the page, and answered here (§7).

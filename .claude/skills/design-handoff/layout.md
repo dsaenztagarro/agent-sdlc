@@ -19,7 +19,7 @@ A product may also own a Design System project of its own, when it extends a sha
 
 - **The repository, the Claude Design project, the generated bundle and its cascade layer all take one name.** A product's is `<project>-ds`, beside the application `<project>`; a shared system's is `<brand>-ds`, named for its brand or the package that ships it.
 - **Never a platform name** (`web-ds`): it points at no repository, and stops being true the day a second system for the same platform exists.
-- **Never a folder named after the repository** inside it (`engineer-ds/engineer-ds/`). The export folder is `pages/` or `system/`.
+- **Never a folder named after the repository** inside it (`<name>-ds/<name>-ds/`). The export folder is `pages/` or `system/`.
 - **A Claude Design project that is renamed takes its old name with it.** Every document saying the old name means the new owner of that name from then on; date a reference before trusting it, and rewrite the ones you touch.
 
 ## The tree

@@ -35,7 +35,7 @@ cp -R <this skill>/skeleton/. <name>/
 cd <name>
 grep -rl '__NAME__' . | xargs sed -i '' 's/__NAME__/<name>/g'     # GNU sed: -i without ''
 sed -i '' 's/^KIND="__KIND__"$/KIND="<project|system>"/' bin/sync
-chmod +x bin/sync bin/ds-status
+chmod +x bin/sync bin/ds-status bin/shots
 ```
 
 A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name. A shared system, or a product bound to none, deletes `bin/ds-status` and `test/ds_status_test.rb`.
@@ -52,7 +52,7 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 ## 4. Add the generator
 
 `lib/` holds it, `dist/` its committed output, and `rake` fails when the two disagree — that check is what makes *generated, not copied* true.
-It is plain Ruby with no gems, so the repository clones and runs with nothing installed.
+It is plain Ruby with no gems, so `rake` runs on a clone with nothing installed. `lib/shots.js` beside it is not a generator: it writes only `tmp/shots/`, needs node and a browser, and its test skips without them.
 A product's stylesheet bundle is wrapped in its own cascade layer, declared after the shared system's.
 Each refusal or guarantee it adds gets a test named for the rule.
 
