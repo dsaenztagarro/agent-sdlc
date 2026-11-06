@@ -1,8 +1,19 @@
 # AGENTS.md
 
-Instructions for AI agents working on this codebase. This is the single source of truth agents read before doing anything; keep it current.
+Instructions for AI agents working on this codebase. This file holds only what applies to **every** task — the rules an agent can break before it knows they exist — and a routing table to the rest. A procedure is a skill in `.claude/skills/`, loaded when it is invoked; a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened.
 
 > This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (model selection, documentation, testing, design workflow, development workflow) are portable as-is.
+
+## Where the rest of the instructions live
+
+| when you are… | load | how it fires |
+|---|---|---|
+| <!-- FILL: writing or changing a test --> | <!-- FILL: `.claude/rules/testing.md` --> | <!-- FILL: opening `test/**` --> |
+| decomposing a design into an epic | the `/epic` skill | invoke it |
+| handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
+| raising a workflow improvement upstream | the `template-feedback` skill | invoke it |
+
+A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
 ## Model selection & task tracking
 
