@@ -100,7 +100,7 @@ The copy does not follow the shared system: a request that lands there reaches t
 **Whether the copy is current is read from the manifests Claude Design writes**, never from a file someone keeps by hand. The shared system's `_ds_manifest.json` and the copy's each list the tokens and components they carry, and Claude Design rewrites both on every export, so neither can fall behind what it describes.
 
 - **`bin/ds-status`** in the product's design repository compares `pages/_ds/<id>/_ds_manifest.json` with the shared system's `system/_ds_manifest.json`, and names every token and component the copy lacks, and every token whose value moved. It sees names and values, not a component whose files changed under the same name.
-- **The landing, in order** — skipping the second step is how a landed component goes on reading as missing:
+- **The landing, in order** — skipping the second step is how a landed component goes on reading as missing. The `adopt-shared-release` skill runs it, from the release's pin bump in the application to the stand-in's deletion:
   1. the request lands in the shared system's project, and its repository syncs the export;
   2. the product's project refreshes its copy, and its repository syncs that export;
   3. `bin/ds-status` reports the copy current;

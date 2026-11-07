@@ -76,7 +76,7 @@ Good (ASCII):
 
 **Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
 
-<!-- FILL: the design repository's name, the shared design system it extends if any, the one artefact that crosses, its path here, and the command that vendors it. The `design-handoff` skill reads these names from here. -->
+<!-- FILL: the design repository's name, its checkout path, the command that regenerates its artefact and its suite; the one artefact that crosses, its path here, and the command that vendors it; where this application's own component styles live. If it extends a shared design system: the system's name, its package, its repository's checkout path, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens if this project does. The `design-handoff` and `adopt-shared-release` skills read these names from here. -->
 
 - **A design page shows the surface, never the application's rules.** Interaction is drawn; validations, save rules, time windows and the data model are not. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
 - **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
