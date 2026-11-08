@@ -13,7 +13,7 @@ If the project vendors no shared design system, this skill does not apply.
 
 ## Names
 
-Every name comes from `AGENTS.md`'s design section and its Common Commands; none is guessed:
+Every name comes from `AGENTS.md`: its design section, and the gate from its CI / gate section. None is guessed:
 
 - the shared design system, its package, its repository's checkout path, the ref of that repository a released version corresponds to, and where it publishes release notes;
 - the command that moves its pin, and the one that syncs its tokens, if the project syncs them;
