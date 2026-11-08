@@ -15,7 +15,7 @@ If the project vendors no shared design system, this skill does not apply.
 
 Every name comes from `AGENTS.md`'s design section and its Common Commands; none is guessed:
 
-- the shared design system, its package, its repository's checkout path, and where it publishes release notes;
+- the shared design system, its package, its repository's checkout path, the ref of that repository a released version corresponds to, and where it publishes release notes;
 - the command that moves its pin, and the one that syncs its tokens, if the project syncs them;
 - the gate;
 - the design repository, its checkout path, the command that regenerates its artefact, and its suite;
@@ -28,7 +28,7 @@ A name the section does not give: stop and ask the person for it, then offer to 
 1. **Move the pin, conservatively.** Update only the shared system's package, with the project's own update command and its flag for leaving every other dependency where it is. If the release moved tokens, sync them the project's way.
 2. **Read the release's notes for consumers.** Each selector, class or token the release removed or renamed is fixed in the application's markup against the new pin. A removal with no replacement the product needs is a brief to the shared system's repository, never a local rule.
 3. **Run the gate, then drive one surface** that renders the shared system's components, and look at it. A green gate does not show a lost style.
-4. **Check the design copy.** Check out the shared system's repository at the release just pinned, and run the design repository's `bin/ds-status` against it.
+4. **Check the design copy.** Check out the shared system's repository at the ref the design section maps the pinned version to, and run the design repository's `bin/ds-status` against it.
    - **Stale:** stop the landing. Delete nothing. Hand the person, in order: refresh the copy in the product's Claude Design project, download the export, run `bin/sync` in the design repository. Then compare each stand-in's selectors with the stylesheet the new pin ships. If any stand-in redeclares one, the pin stays too: undo steps 1-3, because a stand-in wins only for the properties it sets and the bundle's other properties stack on it. Only when none does may steps 1-3 ship alone as the application's pull request. Run this skill again once the copy is current.
    - **Current:** a component has landed only when both the shared system's manifest and the copy's list it. `current` alone proves nothing for a component the shared repository never synced: then neither manifest lists it, its stand-in stays, and the person is told the shared repository's export is behind. For each landed component, delete the block marked `STAND-IN — delete when the design system lands <Component>` where the design repository authors it. A stand-in that exists only in the export mirror is never hand-edited (`design-handoff` §3): its deletion is a brief to the product's design project. Then regenerate the artefact, run the design repository's suite, and re-vendor it into the application through `adopt-designs`.
 5. **Delete the unmarked copies.** A local rule for a landed component, marked or not, goes — in the design repository's authored sources and in the application's own component styles. A variant the shared system does not ship stays local, and is named in the pull request as the subject of a brief to the shared system.
