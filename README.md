@@ -103,7 +103,7 @@ A template only gets better if the improvements people discover while *using* it
 
 ### 10. Skills and agents — what ships, and what to create
 
-A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses three kinds.
+A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses two kinds.
 
 **Shipped here** — generic, as an [APM](https://github.com/microsoft/apm) package in `.apm/`. A project depends on it in its own `apm.yml`, and `apm install` deploys the skills to `.claude/skills/` and the agent to `.claude/agents/`; `apm.lock.yaml` pins the commit, and `apm update` takes a newer one. Nothing in the package names the project: what it needs to know about one, it reads from that project's `AGENTS.md`.
 
@@ -112,16 +112,11 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
 | `design-repo` | creates a design repository from one skeleton, in the layout every design repository keeps, and adopts the layout check in an existing one |
 | `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
+| `adopt-designs` | reads what the design project published — vendors the one generated bundle, reports what moved by selector, triages it — and hands the adoption to `design-curator` and any satisfied brief to `brief-closer` |
 | `adopt-shared-release` | lands a shared design system's release in a product: moves the pin, fixes what the release removed, and deletes a stand-in only once the product's design-system copy is current |
 | `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
+| `design-curator` (agent) | adopts a design that has shipped: deletes the application's copies of what the bundle now provides, and writes the components it ships but the application never uses |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
-
-**Create per project** — they name the project's own artefact, so the template cannot ship them:
-
-| | Does |
-|---|---|
-| `read-designs` | vendors the one generated artefact from `<project>-ds`, reports what changed, and hands any satisfied brief to `brief-closer` |
-| `design-curator` (agent, UI projects) | adopts a design that has shipped: deletes the app's copies of what the bundle now provides, and writes the components it ships but the app never uses |
 
 **Create once, at user level** — shared by every project (for instance a personal APM package installed with `apm install -g`), never copied into each one, because a copy per project drifts:
 
@@ -159,7 +154,7 @@ A `QA:` comment on a ticket is a correction a builder applies before its next co
 5. **Install the skills.** Delete `.apm/`, replace `apm.yml` with the project's own — `apm init`, then `apm install dsaenztagarro/agent-sdlc` — and commit `apm.yml`, `apm.lock.yaml` and what it deploys into `.claude/`, so a clone has the skills without APM. Add `apm_modules/` to `.gitignore` if `apm install` did not.
 6. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in `AGENTS.md`'s design section, which `design-handoff` reads; otherwise delete that section.
 7. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
-8. **Install the user-level skills** in §10 if you do not have them yet, and create the per-project ones when the project first has a design to read.
+8. **Install the user-level skills** in §10 if you do not have them yet.
 
 ## Layout
 
@@ -169,8 +164,11 @@ A `QA:` comment on a ticket is a correction a builder applies before its next co
 +-- CLAUDE.md                          -> @AGENTS.md
 +-- apm.yml                            the APM package an adopter depends on (an adopter replaces it with its own)
 +-- .apm/                              the package's contents; an adopter deletes it and installs the package
-|   +-- agents/brief-closer.agent.md   closes a brief once its surface ships
+|   +-- agents/
+|   |   +-- brief-closer.agent.md      closes a brief once its surface ships
+|   |   +-- design-curator.agent.md    adopts a shipped design: the app's copy goes, the design's class gets written
 |   +-- skills/
+|       +-- adopt-designs/SKILL.md     vendors the design's one bundle, triages it, hands adoption to design-curator
 |       +-- adopt-shared-release/SKILL.md lands a shared design system's release, stand-ins last
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
