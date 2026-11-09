@@ -112,6 +112,7 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
 | `design-repo` | creates a design repository from one skeleton, in the layout every design repository keeps, and adopts the layout check in an existing one |
 | `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
+| `adopt-shared-release` | lands a shared design system's release in a product: moves the pin, fixes what the release removed, and deletes a stand-in only once the product's design-system copy is current |
 | `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
 
@@ -170,6 +171,7 @@ A `QA:` comment on a ticket is a correction a builder applies before its next co
 +-- .apm/                              the package's contents; an adopter deletes it and installs the package
 |   +-- agents/brief-closer.agent.md   closes a brief once its surface ships
 |   +-- skills/
+|       +-- adopt-shared-release/SKILL.md lands a shared design system's release, stand-ins last
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
 |       +-- design-repo/SKILL.md       creates a design repository from skeleton/, held to the layout by its layout_test.rb
