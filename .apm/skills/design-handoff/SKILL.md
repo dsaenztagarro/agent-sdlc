@@ -20,6 +20,16 @@ If this project has no user interface, this skill does not apply.
 
 `AGENTS.md`'s design section names the real repositories, and the shared design system vendored into the design repository when there is one — a fourth name, edited only in its own repository, where a request for a shared widget is a brief.
 
+**The names a project fills in**, in that section, and the skills and agents that read them. A name the section does not give is asked for, never guessed; one that does not apply is written `none`.
+
+- the design repository, its checkout path, the command that regenerates its artefact, and its suite — this skill, `adopt-designs`, `adopt-shared-release`, and the checkout for `design-curator` too;
+- the artefact that crosses, its path in the design repository, and the command that vendors it — `adopt-designs`;
+- its vendored path here — `adopt-designs`, `design-curator`;
+- the cascade layer it is loaded in — `design-curator`;
+- the command that triages it against the markup — `adopt-designs`, `design-curator`;
+- where the application's own component styles live — `adopt-designs`, `design-curator`, `adopt-shared-release`;
+- for a shared design system: its name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens — `adopt-shared-release`, and the checkout path for `adopt-designs` too.
+
 **A design project is named for the codebase it draws for** — `<project>-ds` beside `<project>` — so the name says which checkout its export syncs into.
 A design system shared by several projects is named for its brand or the package that ships it, never for its platform: a `web-ds` points at no repository, and stops being true the day a second web system exists.
 
@@ -133,7 +143,7 @@ The copy does not follow the shared system: a request that lands there reaches t
   commit the mirror, as produced; a defect becomes a new brief
         |
         v
-  in this repository: vendor the artefact
+  in this repository: vendor the artefact         adopt-designs
         |
         v
   build the surface against the page; tests hold the behaviour
