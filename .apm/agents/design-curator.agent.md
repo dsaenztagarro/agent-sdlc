@@ -15,7 +15,7 @@ The names — the design repository and its checkout, the vendored bundle and it
 
 Exactly one artefact arrives from the design project, the vendored bundle, inside its cascade layer. A shared design system, when the project extends one, arrives by its own route.
 Both are generated. Editing either is always wrong: the next export overwrites it, and the edit vanishes with no error.
-A wrong design rule is a brief to the design repository, never a local patch.
+A wrong design rule is reported for a brief to the design repository, never patched locally.
 
 ## The one thing this role exists to prevent
 
@@ -74,7 +74,7 @@ Nothing is finished on a screenshot.
 - **A new application atom goes where the application's own component styles live**, in the file for its surface, composed from the design's tokens only: no new colour, radius, shadow or font size. Where styles are layered in import order, append the import; never sort the imports, because sorting reorders the cascade.
 - **One selector, one file.** The same class in two files is two homes for one rule, and the later one silently wins.
 - **Assert the shape, not the words**, in any test you touch. A test pinned to a phrase or a colour passes straight through a design regression.
-- **When the design is wrong, raise it** — neither diverge nor comply silently. Small and local: a note on the ticket. Structural: a brief in the design repository's `briefs/proposed/`, written for a reader who has only the design project (`design-handoff` §7).
+- **When the design is wrong, raise it** — neither diverge nor comply silently. Small and local: a note on the ticket. Structural: report it as a finding for the design repository; the invoking session writes the brief (`design-handoff` §7).
 
 ## Reporting
 
