@@ -1,6 +1,6 @@
 ---
 name: adopt-designs
-description: Read what the product's design project published and adopt it — publish in the design checkout, vendor the one generated bundle, report what moved by selector, triage it against the markup, hand the reconciliation to the design-curator agent, and close the briefs it satisfied with brief-closer. Use when the design project has published a new export, when asked to read in, vendor, refresh or adopt a design, or when adopt-shared-release re-vendors.
+description: Read what the product's design project published and adopt it — publish in the design checkout, vendor the one generated bundle, report what moved by selector, triage it against the markup, hand the reconciliation to the design-curator agent, and close the briefs it satisfied with brief-closer. Use when the design project has published a new export, when asked to read in, vendor, refresh or adopt a design, or when adopt-shared-release re-vendors. Not for a release of the shared design system: that is adopt-shared-release, which moves the pin and checks the stand-ins before it re-vendors through this skill.
 argument-hint: "[optional path to the design checkout]"
 ---
 
