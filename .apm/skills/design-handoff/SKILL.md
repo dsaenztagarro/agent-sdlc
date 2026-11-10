@@ -23,8 +23,10 @@ If this project has no user interface, this skill does not apply.
 **The names a project fills in**, in that section, and the skills and agents that read them. A name the section does not give is asked for, never guessed; one that does not apply is written `none`.
 
 - the design repository, its checkout path, the command that regenerates its artefact, and its suite — this skill, `adopt-designs`, `adopt-shared-release`, and the checkout for `design-curator` too;
-- the artefact that crosses, its path in the design repository, its vendored path here, and the cascade layer it is loaded in — `adopt-designs`, `design-curator`;
-- the command that vendors the artefact, and the one that triages it against the markup — `adopt-designs`, `design-curator`;
+- the artefact that crosses, its path in the design repository, and the command that vendors it — `adopt-designs`;
+- its vendored path here — `adopt-designs`, `design-curator`;
+- the cascade layer it is loaded in — `design-curator`;
+- the command that triages it against the markup — `adopt-designs`, `design-curator`;
 - where the application's own component styles live — `adopt-designs`, `design-curator`, `adopt-shared-release`;
 - for a shared design system: its name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens — `adopt-shared-release`, and the checkout path for `adopt-designs` too.
 

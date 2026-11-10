@@ -20,13 +20,12 @@ Every name comes from `AGENTS.md`'s design section, the way `design-handoff` rea
 
 - the design repository, its checkout path, the command that regenerates its bundle, and its suite;
 - the bundle, its path in the design repository, and its vendored path here;
-- the cascade layer the vendored bundle is loaded in;
 - the command that vendors the bundle, and the command that triages it against the markup;
 - where the application's own component styles live;
 - the shared design system's repository checkout path, if the project extends one, for a brief step 4 sends there.
 
 A name the section does not give: stop, ask the person for it, and offer to add it to the section. Do not read on with a guessed one.
-A name the section gives as `none` — no cascade layer for a token set, no triage command — skips what needs it, and the report says so.
+A name the section gives as `none` — no triage command, no shared design system — skips what needs it, and the report says so.
 If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for this run.
 
 ## Steps
