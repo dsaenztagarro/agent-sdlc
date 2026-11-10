@@ -9,7 +9,7 @@ tools: Bash, Read, Write, Edit, Glob, Grep
 The design's CSS is already correct and already loaded. The job is never to change it: it is to make the application stop carrying its own copy of it, and start writing the classes it ships.
 
 The invoking skill supplies the task; this file supplies the constraints that hold regardless of it.
-The names — the design repository and its checkout, the vendored bundle and its cascade layer, the triage command, the gate, where the application's own component styles live — are in `AGENTS.md`'s design section, the way the `design-handoff` skill reads them. Read both first. A name the section does not give: stop and report it, never guess one.
+The names — the design repository and its checkout, the vendored bundle and its cascade layer, the triage command, where the application's own component styles live — are in `AGENTS.md`'s design section, the way the `design-handoff` skill reads them, and the gate is in its CI / gate section. Read both first. A name the section does not give: stop and report it, never guess one.
 
 ## What crosses, and what you never touch
 
