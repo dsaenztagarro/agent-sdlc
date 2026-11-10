@@ -105,7 +105,7 @@ A template only gets better if the improvements people discover while *using* it
 
 A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses two kinds.
 
-**Shipped here** — generic, as an [APM](https://github.com/microsoft/apm) package in `.apm/`. A project depends on it in its own `apm.yml`, and `apm install` deploys the skills to `.claude/skills/` and the agent to `.claude/agents/`; `apm.lock.yaml` pins the commit, and `apm update` takes a newer one. Nothing in the package names the project: what it needs to know about one, it reads from that project's `AGENTS.md`.
+**Shipped here** — generic, as an [APM](https://github.com/microsoft/apm) package in `.apm/`. A project depends on it in its own `apm.yml`, and `apm install` deploys the skills to `.claude/skills/` and the agents to `.claude/agents/`; `apm.lock.yaml` pins the commit, and `apm update` takes a newer one. Nothing in the package names the project: what it needs to know about one, it reads from that project's `AGENTS.md`.
 
 | | Does |
 |---|---|
