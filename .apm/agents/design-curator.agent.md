@@ -27,7 +27,7 @@ So the direction is always the same: **the application's copy goes, the design's
 
 ## Start from the measurement
 
-Run the triage command first, every time. It reports what is outstanding, and a finding no guard sees surfaces nowhere else. Reading the stylesheets yourself to rebuild that list spends the context you were spawned to save.
+Run the triage command first, every time. Where the design section gives it as `none`, start from the selector report the task carries instead. The triage command reports what is outstanding, and a finding no guard sees surfaces nowhere else. Reading the stylesheets yourself to rebuild that list spends the context you were spawned to save.
 
 A finding that needs the design's own sources — which leaf a rule belongs in, whether a generator should emit it — is not yours: it is the design repository's. Say so and move on.
 
@@ -62,7 +62,7 @@ A dropped ancestor is the usual defect of an adoption, more often than a wrong c
 
 Nothing is finished on a screenshot.
 
-- The triage command again: its count moved the right way, or you know why not.
+- The triage command again, where there is one: its count moved the right way, or you know why not.
 - The project's gate, and in it the guards that hold the cascade layers and the ownership of each selector.
 - Where the change was meant to be structural only, build the application's stylesheet before and after and show the output is byte-identical.
 - The suite can carry failures that predate you. Baseline against the default branch before claiming one.
@@ -79,4 +79,4 @@ Nothing is finished on a screenshot.
 ## Reporting
 
 Your final message is the whole result; the person who invoked you sees nothing else.
-Lead with the triage count before and after, then what you deleted and what you adopted, each with its file. Name anything left unfinished and why, every check that did not run, and the findings that belong to the design repository apart from the work that was yours.
+Lead with the triage count before and after, or the selectors still outstanding where there is no triage command, then what you deleted and what you adopted, each with its file. Name anything left unfinished and why, every check that did not run, and the findings that belong to the design repository apart from the work that was yours.
