@@ -74,7 +74,7 @@ Nothing is finished on a screenshot.
 - **A new application atom goes where the application's own component styles live**, in the file for its surface, composed from the design's tokens only: no new colour, radius, shadow or font size. Where styles are layered in import order, append the import; never sort the imports, because sorting reorders the cascade.
 - **One selector, one file.** The same class in two files is two homes for one rule, and the later one silently wins.
 - **Assert the shape, not the words**, in any test you touch. A test pinned to a phrase or a colour passes straight through a design regression.
-- **When the design is wrong, raise it** — neither diverge nor comply silently. Small and local: a note on the ticket. Structural: report it as a finding for the design repository; the invoking session writes the brief (`design-handoff` §7).
+- **When the design is wrong, raise it** — neither diverge nor comply silently. Small and local: a note for the ticket, returned in your report for the invoking session to raise; never post to the tracker yourself. Structural: report it as a finding for the design repository; the invoking session writes the brief (`design-handoff` §7).
 
 ## Reporting
 
