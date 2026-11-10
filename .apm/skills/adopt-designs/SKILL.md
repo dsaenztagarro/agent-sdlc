@@ -30,7 +30,7 @@ If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for th
 
 ## Steps
 
-0. **Publish in the design checkout**, only when the person has downloaded a new export. A re-vendor of a design revision that has already merged, as `adopt-shared-release` sends, starts at step 1: `bin/sync` would mirror whatever export is lying in the download folder. In the design repository, mirror the export with its `bin/sync`, regenerate the bundle, and run its suite. The export mirror is generated: never hand-edit it (`design-handoff` §3). Review the sync diff by selector and by section, never by file, since it is the one moment a defect in an export is cheap to catch:
+0. **Publish in the design checkout**, only when the person has downloaded a new export. A re-vendor of a design revision that has already merged, as `adopt-shared-release` sends, starts at step 1: `bin/sync` would mirror whatever export is lying in the download folder. If the design checkout has uncommitted work, or sits on a branch whose work has not merged, stop and ask rather than move it; otherwise branch from its default branch. Then mirror the export with its `bin/sync`, regenerate the bundle, and run its suite. The export mirror is generated: never hand-edit it (`design-handoff` §3). Review the sync diff by selector and by section, never by file, since it is the one moment a defect in an export is cheap to catch:
    - a rule changed, or only a comment? A comment moves no pixel; a rule wants a look at what consumes it;
    - is every changed page still well-formed, and did a removal orphan a heading or take a drawing with the prose around it?
    - did the manifest gain or lose a component? A component lost is a class the application may still write;
