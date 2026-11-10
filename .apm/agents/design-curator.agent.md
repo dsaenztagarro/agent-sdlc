@@ -27,7 +27,7 @@ So the direction is always the same: **the application's copy goes, the design's
 
 ## Start from the measurement
 
-Run the triage command first, every time. Where the design section gives it as `none`, start from the selector report the task carries instead. The triage command reports what is outstanding, and a finding no guard sees surfaces nowhere else. Reading the stylesheets yourself to rebuild that list spends the context you were spawned to save.
+Run the triage command first, every time. Where the design section gives it as `none`, start from the selector report the task carries instead; either way, act on every disappeared selector that report names, since triage cannot see a name built in code. The triage command reports what is outstanding, and a finding no guard sees surfaces nowhere else. Reading the stylesheets yourself to rebuild that list spends the context you were spawned to save.
 
 A finding that needs the design's own sources — which leaf a rule belongs in, whether a generator should emit it — is not yours: it is the design repository's. Say so and move on.
 
