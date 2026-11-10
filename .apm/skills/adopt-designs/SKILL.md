@@ -36,7 +36,7 @@ If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for th
    - did the manifest gain or lose a component? A component lost is a class the application may still write;
    - did `bin/shots` name a page that breaks the markup contract?
 
-   What you find becomes a brief in the design repository's `briefs/proposed/`, never a fix. Commit the mirror as produced, defects named in the message, and push.
+   What you find becomes a brief in the design repository's `briefs/proposed/`, never a fix. On a branch of the design repository, commit the mirror as produced, defects named in the message, push, and open its pull request; vendor once it has merged.
 1. **Read — vendor the bundle.** Pull the design checkout, so you read what was published and not a stale clone, then run the vendor command. Never copy the bundle by hand: the vendor command pins the revision it read, and a copy pins nothing. To see whether the design has moved since the last read, compare that pinned revision with the design repository's default branch for the bundle's path; nothing else checks it.
 2. **Report — what changed, by selector.** A file-level diff says the bundle changed, which decides nothing. Diff the selectors of the vendored bundle and name the ones that **appeared**, **changed** and **disappeared**. The third is the dangerous one: a selector the application still writes and the design no longer ships is an unstyled element that raises nothing, and a name built in code rather than written in markup is seen by nothing but this diff.
 3. **Triage.** Run the triage command. Every decision a new design creates is selector-level: triage reads the vendored bundle against the markup, reports coverage and each outstanding finding, and edits nothing. A finding no guard sees surfaces only in this report.
@@ -44,7 +44,7 @@ If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for th
    - **A fix that belongs in the design project** — a wrong rule, a selector to rename, a component that cannot express what a surface needs — is a brief to the design repository, or to the shared design system's when the component is generic (`design-handoff` §5). Report it; never patch it locally.
    - **The inline fallback.** If the agent cannot be spawned, read `design-curator` in full and work its procedure in order yourself.
 5. **Close out, through `brief-closer`.** An export usually lands because a brief asked for it, and a brief ends when its surface ships. Check the design repository's `briefs/proposed/` against what just arrived and what this application now writes; for each brief whose ask looks landed, spawn the `brief-closer` agent with the brief's name and the export's diff. A brief left after its surface is live goes on telling its reader to build what exists, and nothing fails. If the agent stops with asks outstanding, the brief stays.
-6. **Leave the tree uncommitted** for the person to review. Its two halves review separately: the vendored bundle is what arrived, everything else is what this application changed to use it.
+6. **Leave the application's tree uncommitted** for the person to review. Its two halves review separately: the vendored bundle is what arrived, everything else is what this application changed to use it.
 
 ## Must not
 
@@ -52,4 +52,4 @@ If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for th
 - Translate a design rule into the application's own styles. That is what `design-curator` exists to undo.
 - Vendor from a design checkout whose suite is red or whose bundle has uncommitted changes.
 - Skip step 5 because nothing fails without it.
-- Commit.
+- Commit in the application.
