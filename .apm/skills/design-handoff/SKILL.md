@@ -26,7 +26,7 @@ If this project has no user interface, this skill does not apply.
 - the artefact that crosses, its path in the design repository, its vendored path here, and the cascade layer it is loaded in — `adopt-designs`, `design-curator`;
 - the command that vendors the artefact, and the one that triages it against the markup — `adopt-designs`, `design-curator`;
 - where the application's own component styles live — `adopt-designs`, `design-curator`, `adopt-shared-release`;
-- for a shared design system: its name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens — `adopt-shared-release`.
+- for a shared design system: its name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens — `adopt-shared-release`, and the checkout path for `adopt-designs` too.
 
 **A design project is named for the codebase it draws for** — `<project>-ds` beside `<project>` — so the name says which checkout its export syncs into.
 A design system shared by several projects is named for its brand or the package that ships it, never for its platform: a `web-ds` points at no repository, and stops being true the day a second web system exists.
