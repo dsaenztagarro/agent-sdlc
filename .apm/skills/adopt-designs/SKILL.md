@@ -12,7 +12,7 @@ Two steps, kept apart on purpose.
 Exactly one generated artefact crosses the boundary, and adoption is a named step with a performer.
 The application holds no mirror of the export: a mirror invites reading behaviour out of a mockup, an export's own agent instructions would outrank this repository's, any edit to it is destroyed by the next refresh, and a refreshed mirror changes nothing about whether the application writes the classes the design ships.
 
-If the project has no design repository, this skill does not apply.
+If `AGENTS.md` has no design section, this skill does not apply. A section that exists but names nothing is not that case: it is the missing names below.
 
 ## Names
 
