@@ -82,6 +82,23 @@ class ShotsTest < Minitest::Test
     assert_equal [600, 4000], png_size(File.join(@out, "surface/01-list.png")), "the 2000px state at 2x"
   end
 
+  test "a surface taller than one screenshot can hold is shot to that height, and the run finishes" do
+    File.write(File.join(@pages, "surface.html"), <<~HTML)
+      <!doctype html><meta charset="utf-8"><body style="margin:0">
+      <main data-surface style="width:300px;height:100vh;overflow-y:auto">
+        <section data-state="List" style="height:24000px">List</section>
+      </main>
+    HTML
+    File.write(File.join(@pages, "later.html"), %(<!doctype html><main data-surface><section data-state="Empty">Empty</section></main>))
+
+    out, status = shots
+
+    assert status.success?, out
+    assert_path_exists File.join(@out, "surface/01-list.png")
+    assert_path_exists File.join(@out, "later/01-empty.png")
+    assert_includes out, "surface.html: the List state is cut"
+  end
+
   test "a page with several states and no state bar is refused and named" do
     page "surface.html", states: %w[Empty Error], bar: false
 

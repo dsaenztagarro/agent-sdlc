@@ -31,6 +31,8 @@ const { chromium } = require("playwright-core");
 const [pagesDir, outDir] = process.argv.slice(2).map((p) => path.resolve(p));
 const SCALE = 2;
 const VIEWPORT = { width: 1440, height: 900 };
+// Chrome refuses a screenshot taller than about 32,000 device pixels; a taller surface is cut here.
+const MAX_HEIGHT = Math.floor(32000 / SCALE);
 const BAR = '[role="tablist"][aria-label="State"]';
 const CHROME = "[data-design-chrome]";
 const SEP = " · ";
@@ -121,6 +123,7 @@ function breaches({ surfaces, states, hasBar }) {
 // while the surface is captured, on a page with one state as on one with many.
 async function shoot(page, rel, states, hasBar) {
   const shots = [];
+  const cut = [];
   for (const [i, name] of states.entries()) {
     if (hasBar) {
       await page.evaluate((hash) => { location.hash = hash; }, `state=${address(name)}`);
@@ -148,13 +151,15 @@ async function shoot(page, rel, states, hasBar) {
         .filter((el) => /auto|scroll/.test(getComputedStyle(el).overflowY))
         .map((el) => el.scrollHeight - el.clientHeight));
     });
-    await page.setViewportSize({ ...VIEWPORT, height: VIEWPORT.height + overflow });
+    const height = VIEWPORT.height + overflow;
+    if (height > MAX_HEIGHT) cut.push(name);
+    await page.setViewportSize({ ...VIEWPORT, height: Math.min(height, MAX_HEIGHT) });
     await page.locator("[data-surface]").screenshot({ path: path.join(outDir, file), animations: "disabled" });
     await page.setViewportSize(VIEWPORT);
     await page.evaluate((chrome) => document.querySelectorAll(chrome).forEach((c) => { c.style.visibility = ""; }), CHROME);
     shots.push({ name, file });
   }
-  return { shots };
+  return { shots, cut };
 }
 
 function index(shot) {
@@ -184,6 +189,7 @@ ${sections.join("\n")}\n`;
   const base = `http://127.0.0.1:${server.address().port}/`;
   const shot = {};
   const broken = [];
+  const cuts = [];
 
   for (const file of pages(pagesDir)) {
     const rel = path.relative(pagesDir, file);
@@ -197,6 +203,7 @@ ${sections.join("\n")}\n`;
       const result = await shoot(page, rel, found.states, found.hasBar);
       if (result.breach) broken.push(`${rel}: ${result.breach}`);
       else shot[rel] = result.shots;
+      result.cut?.forEach((name) => cuts.push(`${rel}: the ${name} state is cut at ${MAX_HEIGHT}px, taller than one screenshot holds`));
     }
     await page.close();
   }
@@ -207,6 +214,7 @@ ${sections.join("\n")}\n`;
 
   const count = Object.values(shot).reduce((n, s) => n + s.length, 0);
   console.log(`${count} shots of ${Object.keys(shot).length} pages — open ${path.join(outDir, "index.html")}`);
+  cuts.forEach((c) => console.log(`  ${c}`));
   if (broken.length) {
     console.error(`${broken.length} page contract breach(es) — a brief fixes them, never an edit in the mirror:`);
     broken.forEach((b) => console.error(`  ${b}`));
