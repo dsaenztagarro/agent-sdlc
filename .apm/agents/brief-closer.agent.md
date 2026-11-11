@@ -22,7 +22,7 @@ Never close a brief on someone's word, including an export's commit message. Che
 |---|---|
 | every ask landed, cleanly | work the steps below; the last deletes it |
 | some landed, others did not | stays: work the steps below for the asks that landed; the last amends it to list only what remains |
-| every ask landed, but the doing broke something | stays, amended to list only what broke |
+| every ask landed, but the doing broke something | stays: work the steps below for the asks that landed; the last amends it to drop them and list only what broke |
 
 Read the diff of the export that satisfied the brief, not only its end state. Look for **collateral removal** — a drawing gone with the prose that was asked to go — and **orphaned structure** — a subheading left by a removed section. Neither fails a check. A defect found this way joins the theme's brief; it is never a brief of its own.
 
@@ -35,7 +35,7 @@ Work these in order. The last one is the deletion, and a step that does not hold
 3. **Guard exemptions whose condition the brief met are retired.** A guard may exempt a file because a brief was outstanding; once the brief lands the condition is met, and an exemption left behind keeps the guard weaker than it was built to be. Search the guards for the brief's name and the artefact it concerned, and read the condition each exemption states.
 4. **The tracking issue is closed**, on the repository that owns the fix.
 5. **The epic is ticked**, with one clause of what shipped, and the ticket's checkbox for its ask leaving the brief with it.
-6. **The landed asks leave the brief: it is deleted when nothing remains, or amended to drop them when the theme's other asks stay pending**, in a commit in the repository that holds the brief, on a branch cut from its default branch, never the default branch itself, and not pushed. A brief in the shared system's repository is changed in a new worktree of the repository whose checkout the design section gives for it, on a branch cut from its default branch, never moving the person's own checkout; your report names the worktree's path. Its index row, if the briefs README keeps one, goes in the same commit.
+6. **The landed asks leave the brief: it is deleted when nothing remains, or amended to drop them when the theme's other asks stay pending or the doing broke something; a defect found in the diff is added in the same amendment**, in a commit in the repository that holds the brief, on a branch cut from its default branch, never the default branch itself, and not pushed. A brief in the shared system's repository is changed in a new worktree of the repository whose checkout the design section gives for it, on a branch cut from its default branch, never moving the person's own checkout; your report names the worktree's path. Its index row, if the briefs README keeps one, goes in the same commit.
 
 ## Must not
 
