@@ -50,7 +50,7 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 - **`README.md`** — the opening paragraph, and the tree: keep the lines that apply, delete the rest.
 - **`AGENTS.md`** — the consuming application, and which paths flow which way.
 - **`briefs/README.md`** — what belongs here, for this kind.
-- **`bin/sync`** — `REQUIRED_ROOT_FILES` lists what a complete export carries at its root: a web export's root stylesheet, nothing for a terminal client's. `UPSTREAM` lists each authored file as `<path in this repository>:<path in the export>`, so a product's palette authored under `system/` is compared with the copy its export carries. `EXCLUDES` keeps its default unless the project carries other authoring noise.
+- **`bin/sync`** — `REQUIRED_ROOT_FILES` lists what a complete export carries at its root: a web export's root stylesheet, nothing for a terminal client's. `UPSTREAM` lists each authored file as `<path in this repository>:<path in the export>`, so a product's palette authored under `system/` is compared with the copy its export carries. `PROJECT_FILES` lists the Markdown files the project keeps as its own — by default `readme.md`, `AGENTS.md` and `CLAUDE.md` — each a path in the export or a pattern; a shared system adds the patterns its export uses for its component and skill documents. Any other Markdown outside `_ds/` is a note, and the export is refused. `EXCLUDES` keeps its default unless the project carries other authoring noise.
 - **`Rakefile`** — the generator's task and its `:check`, ahead of `:test`.
 
 ## 4. Add the generator
@@ -62,7 +62,11 @@ Each refusal or guarantee it adds gets a test named for the rule.
 
 ## 5. Create the Claude Design project
 
-Same name as the repository. Seed its own `readme.md` through `/design-sync` with the rules that must hold in every export — for a product's project, the surface-only rule and its markup contract (`design-handoff` §4), so that `bin/shots` can shoot every page and no brief has to restate it.
+Same name as the repository. Seed its own `readme.md` through `/design-sync` with the rules that must hold in every export, so that no brief has to restate them:
+
+- for a product's project, the surface-only rule and its markup contract (`design-handoff` §4), so that `bin/shots` can shoot every page;
+- for every project, that it never writes a request, a note or a plan into its files: a component it thinks every application should share is raised in the design chat, and `bin/sync` refuses an export carrying such a file;
+- for a product's project bound to a shared system, that a stand-in's marker reads `STAND-IN — delete when the design system lands <Component>`, where `<Component>` is the one PascalCase name the shared system will list it under, so that `bin/stand-ins` looks it up by that name.
 When paths flow upstream, record the project's id and namespace in `.design-sync/config.json`, and what a future `/design-sync` must know in `.design-sync/NOTES.md`.
 
 ## 6. First export, then the gate
@@ -82,4 +86,4 @@ Commit the mirror as produced, as the repository's `AGENTS.md` states the publis
 
 ## Refreshing the check
 
-`layout_test.rb` is copied, not shared: when a rule changes here, copy it again into each design repository, and fix what the new rule finds there. A local edit forks the rule from every other repository.
+`layout_test.rb` is copied, not shared: when a rule changes here, copy it again into each design repository, and fix what the new rule finds there. A local edit forks the rule from every other repository. `layout_check_test.rb`, which runs the check against throwaway checkouts, is copied with it wherever the repository carries `test_helper.rb`.

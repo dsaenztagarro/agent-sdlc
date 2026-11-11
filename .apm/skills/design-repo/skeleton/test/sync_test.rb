@@ -9,8 +9,8 @@ require "tmpdir"
 #
 # The mirror is `rsync --delete`, so whatever an export carries becomes this repository's truth,
 # and every refusal has to happen before anything is copied: an incomplete export, the other kind,
-# a page that is not one canonical prototype, an edit to a file this repository authors. Authoring
-# screenshots never cross.
+# a page that is not one canonical prototype, a note beside the pages, an edit to a file this
+# repository authors. Authoring screenshots never cross.
 # Each test runs a copy of bin/sync in a throwaway checkout, set to the export kind under test,
 # because the script resolves its target from its own location and a real run would mirror over
 # this repository.
@@ -102,6 +102,82 @@ class SyncTest < Minitest::Test
     refute status.success?
     pages.each { |page| assert_includes out, page }
     refute_path_exists File.join(@root, "pages")
+  end
+
+  # A request written into the export reaches no brief, and the next export can delete it unseen.
+  test "an export carrying a note beside its pages is refused, and nothing is mirrored" do
+    checkout(kind: "project")
+    project_export
+    File.write(File.join(@export, "promote-table-loading.md"), "# Promote the loading rows\n")
+    write(File.join(@export, "notes/plan.md"), "")
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "promote-table-loading.md"
+    assert_includes out, "notes/plan.md"
+    assert_includes out, "open brief"
+    assert_includes out, "PROJECT_FILES", "a file the project keeps on purpose has a remedy besides deletion"
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "a note is refused whatever its Markdown extension is spelled" do
+    checkout(kind: "project")
+    project_export
+    write(File.join(@export, "home/PLAN.MD"), "")
+    write(File.join(@export, "home/plan.markdown"), "")
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "home/PLAN.MD"
+    assert_includes out, "home/plan.markdown"
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "the project's own readme, AGENTS and CLAUDE files are mirrored" do
+    checkout(kind: "project")
+    project_export
+    %w[readme.md AGENTS.md CLAUDE.md].each { |file| File.write(File.join(@export, file), "") }
+
+    status, out = sync
+
+    assert status.success?, out
+    %w[readme.md AGENTS.md CLAUDE.md].each { |file| assert_path_exists File.join(@root, "pages", file) }
+  end
+
+  test "the project's own files are recognised whatever their case" do
+    checkout(kind: "project")
+    project_export
+    File.write(File.join(@export, "README.md"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/README.md")
+  end
+
+  test "a note inside the design-system snapshot is mirrored" do
+    checkout(kind: "project")
+    project_export
+    write(File.join(@export, "_ds/shared/components/tables/Table.prompt.md"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/_ds/shared/components/tables/Table.prompt.md")
+  end
+
+  # A design system's export documents each component in Markdown of its own, wherever it sits.
+  test "a pattern in the project's own files reaches every folder" do
+    checkout(kind: "system", project_files: ["readme.md", "*.prompt.md"])
+    system_export
+    write(File.join(@export, "components/buttons/Button.prompt.md"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "system/components/buttons/Button.prompt.md")
   end
 
   test "a file the mirror never copies is not judged as a prototype" do
@@ -229,13 +305,14 @@ class SyncTest < Minitest::Test
 
   private
 
-  def checkout(kind:, upstream: [], required: [])
+  def checkout(kind:, upstream: [], required: [], project_files: nil)
     @root = Dir.mktmpdir("design-repo-sync")
     FileUtils.mkdir_p(File.join(@root, "bin"))
     script = File.read(SCRIPT)
       .sub(/^KIND=".*"$/, %(KIND="#{kind}"))
       .sub(/^UPSTREAM=\(.*\)$/, "UPSTREAM=(#{upstream.map { |entry| %("#{entry}") }.join(' ')})")
       .sub(/^REQUIRED_ROOT_FILES=\(.*\)$/, "REQUIRED_ROOT_FILES=(#{required.join(' ')})")
+    script = script.sub(/^PROJECT_FILES=\(.*\)$/, "PROJECT_FILES=(#{project_files.map { |p| %('#{p}') }.join(' ')})") if project_files
     File.write(File.join(@root, "bin/sync"), script)
     File.chmod(0o755, File.join(@root, "bin/sync"))
     @export = File.join(@root, "export")
