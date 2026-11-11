@@ -55,7 +55,32 @@ class SyncTest < Minitest::Test
     assert_path_exists File.join(@root, "system/components/button.css")
   end
 
-  test "an export of the other kind is refused" do
+  # templates/ holds the starter layouts a Design System offers the projects that use it: it is
+  # part of the system, never one application's pages.
+  test "a design system export carrying templates/ is mirrored into system/" do
+    checkout(kind: "system")
+    system_export
+    write(File.join(@export, "templates/app.html"), "<main></main>")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "system/templates/app.html")
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "a design system export is refused by a project repository" do
+    checkout(kind: "project")
+    system_export
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "system export"
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "a project export is refused by a design system repository" do
     checkout(kind: "system")
     project_export
 

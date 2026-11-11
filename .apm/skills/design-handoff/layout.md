@@ -9,11 +9,20 @@ Read this file before creating a design repository, adding a folder to one, or r
 | kind | what it designs | its Claude Design project | who consumes what it generates |
 |---|---|---|---|
 | **a product's design** — `<project>-ds` | one application's own surfaces | a **Project**: pages, plus a `_ds/` snapshot of the design system it is bound to | that application |
-| **a shared design system** — `<brand>-ds` | what every application in a family shares: components, tokens, patterns | a **Design System**: `components/`, `tokens/`, `guidelines/`, `docs/`, `assets/` | each product design, and each application in the family |
+| **a shared design system** — `<brand>-ds` | what every application in a family shares: components, tokens, patterns | a **Design System**, which each product's Project is linked to | each product design, and each application in the family |
 
-A product may also own a Design System project of its own, when it extends a shared system with tokens or components only it uses. It then has both `pages/` and `system/`.
+**A product's design is a Project linked to the shared Design System; anything several applications share is a Design System, in a repository of its own.**
+One `bin/sync` mirrors one Claude Design project, so a repository is one kind: a Project export lands in `pages/`, a Design System export in `system/`.
+The kind is stated three times, each checked against the others: `bin/sync`'s `KIND`, the README's first line, and the export folder — the layout check fails when the repository holds the other kind's folder.
+A Project's repository may keep files under `system/` only when it authors them and `bin/sync` pushes them upstream, such as a checked palette.
 
-**The project type decides only which folder an export lands in**: a Project export in `pages/`, a Design System export in `system/`. It never decides what a folder is called or what else the repository holds.
+**What a Design System export holds**, as observed in exports:
+
+- `_ds_manifest.json`, the index of every token and component, which a Project's `_ds/` snapshot carries too;
+- `components/`, `tokens/` and `guidelines/`, the system itself;
+- `templates/`, starter layouts the system offers the Projects linked to it — never an application's pages, which are that application's Project, in its own repository;
+- `_ds_bundle.js`, the compiled components the design agent renders;
+- beside them, the project's own `readme.md`, and the stylesheets, previews and skill file it keeps at its root.
 
 ## Names
 
@@ -26,7 +35,7 @@ A product may also own a Design System project of its own, when it extends a sha
 
 ```
 <name>-ds/
-+-- README.md               what this repository is, the tree below filled in, the commands
++-- README.md               its kind, the Claude Design content, the git wrapper, the commands
 +-- AGENTS.md               the rules an agent working here needs; CLAUDE.md is `@AGENTS.md`
 +-- CLAUDE.md
 +-- Rakefile                `rake` is the gate: every check, then the tests
@@ -39,7 +48,7 @@ A product may also own a Design System project of its own, when it extends a sha
 |   +-- proposed/           <theme>.brief.md, one open brief per theme
 +-- pages/                  a Project export, mirrored                     (product)
 |   +-- _ds/<project-id>/   the design-system snapshot the pages render against, committed
-+-- system/                 a Design System export, mirrored; or authored and pushed up
++-- system/                 a Design System export, mirrored; authored and pushed up  (a Project's: upstream files only)
 +-- references/             hand-authored material the projects draw on; never touched by bin/sync
 +-- vendor/<shared>-ds/     the shared system's build inputs, copied whole  (when the generator needs them)
 +-- docs/                   the contract the generated artefact keeps, one file per theme
@@ -59,7 +68,7 @@ A product may also own a Design System project of its own, when it extends a sha
 
 A folder that does not apply is absent, never empty. A folder not in this tree is not added without amending this file first.
 
-**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, no symlinks, nothing in an export ignored, how briefs and vendored systems are named, no rule repeated across two open briefs, `CLAUDE.md` as an import, scratch kept untracked. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
+**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, `bin/sync` naming a kind and the export folder matching it, no symlinks, nothing in an export ignored, how briefs and vendored systems are named, no rule repeated across two open briefs, `CLAUDE.md` as an import, scratch kept untracked. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
 
 ## Folder by folder
 
@@ -85,7 +94,7 @@ The requests made **to this repository's Claude Design project**, and nothing el
 
 ### `system/` — a Design System project
 
-Two directions, and the README says which path goes which way:
+Two directions, and the README says which path goes which way. By default everything but `templates/` is authored here, and `templates/` is drawn in the Design System:
 
 - **Downstream** — drawn in the project, exported, mirrored by `bin/sync`. A hand edit is reverted by the next sync.
 - **Upstream** — authored here, checked by `rake`, pushed to the project with `/design-sync` (a palette, a component tier, the project's own `readme.md`). `bin/sync` **refuses an export whose copy of an upstream file differs or is missing**, because `--delete` would otherwise overwrite the only copy the checks ran against. Each upstream entry names the file's path in the repository and its path in the export, so a product repository's palette, authored under `system/` while its export lands in `pages/`, is compared with the copy its export carries.
@@ -116,7 +125,7 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
 
 - **`sync`** mirrors a fresh export. Its refusals are the review gate, each leaves the mirror untouched, and each has a test:
   - an incomplete export — no `_ds_manifest.json`, or a root file the repository lists as required missing: a web export's root stylesheet, while a terminal client's export lists none;
-  - an export of the wrong kind — a consuming product's export into a shared system;
+  - an export of the other kind — a Project's export into a Design System's repository, or a Design System's into a Project's;
   - an export whose copy of a file this repository authors upstream differs or is missing;
   - a page that is not one canonical prototype per surface — a versioned copy, an audit, a rationale or an options page;
   - a note beside the pages — any Markdown file outside `_ds/` other than the project's own files the repository lists, by default `readme.md`, `AGENTS.md` and `CLAUDE.md`: a request it carries belongs in the open brief of the repository whose project will draw it.
@@ -134,7 +143,7 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
 
 ### Root files
 
-- **`README.md`** opens with what the repository is and who consumes it, then the tree above with this repository's folders filled in, then the commands.
+- **`README.md`** opens with its Claude Design kind — a Project and the Design System it is linked to, or a Design System — then what the repository is and who consumes it, then two parts: the Claude Design content, the export folder and which paths flow which way; and the git wrapper, each folder around the export and what it does. Then the commands. It states the kind and the link, never the clicks that create them in Claude Design.
 - **`AGENTS.md`** holds the rules an agent needs here and nowhere else — which files flow which way, what the generator guarantees; `CLAUDE.md` is the one line `@AGENTS.md`. The application's own rules stay in the application's `AGENTS.md`, linked.
 - **`Rakefile`**: `rake` runs every check, then the tests, and is the gate before every merge. CI runs the same `rake`, weekly and by hand; the local run is what guards a merge.
 
