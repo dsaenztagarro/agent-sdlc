@@ -126,8 +126,20 @@ fi
 # --- Files this repository authors -------------------------------------------
 # Compared where each one is authored, which in a product repository is outside the export folder.
 for entry in "${UPSTREAM[@]+"${UPSTREAM[@]}"}"; do
+  if [[ "$entry" != *:* ]]; then
+    echo "error: UPSTREAM entry $entry is not <path in this repository>:<path in the export>. Nothing was mirrored." >&2
+    exit 1
+  fi
   authored=${entry%%:*}
   exported=${entry#*:}
+  if [[ ! -f "$repo_root/$authored" ]]; then
+    echo "error: $authored is missing from this repository, which authors it. Nothing was mirrored." >&2
+    exit 1
+  fi
+  if [[ ! -f "$export_root/$exported" ]]; then
+    echo "error: the export is missing $exported, which this repository authors as $authored. Nothing was mirrored." >&2
+    exit 1
+  fi
   if ! cmp -s "$repo_root/$authored" "$export_root/$exported"; then
     echo "error: the export's $exported differs from $authored, which this repository authors." >&2
     echo "  It flows up with /design-sync; the design project must not edit it. Nothing was mirrored." >&2

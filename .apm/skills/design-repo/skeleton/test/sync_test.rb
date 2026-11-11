@@ -185,6 +185,37 @@ class SyncTest < Minitest::Test
     refute_path_exists File.join(@root, "pages")
   end
 
+  test "an authored file missing on either side is named as missing" do
+    checkout(kind: "system", upstream: ["system/tokens/colors.css:tokens/colors.css"])
+    system_export
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "system/tokens/colors.css is missing from this repository"
+    refute_path_exists File.join(@root, "system/components")
+
+    write(File.join(@root, "system/tokens/colors.css"), "--accent: blue;")
+    FileUtils.rm(File.join(@export, "tokens/colors.css"))
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "the export is missing tokens/colors.css"
+    refute_path_exists File.join(@root, "system/components")
+  end
+
+  test "an upstream entry that does not name its path in the export is refused" do
+    checkout(kind: "system", upstream: ["tokens/colors.css"])
+    system_export
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "<path in this repository>:<path in the export>"
+    refute_path_exists File.join(@root, "system/components")
+  end
+
   private
 
   def checkout(kind:, upstream: [], required: [])
