@@ -36,6 +36,7 @@ A name the section does not give: stop and ask the person for it, then offer to 
 6. **Pull requests, each opening with `## Sequence`:** its ticket, and its neighbours across both repositories as the previous and next ones.
    - The design repository gets one, and it merges before the application's re-vendor, since the application vendors what it generates.
    - The application gets one holding the pin, the re-vendor and the deletions from its own component styles whenever a local rule deleted in step 4 or 5 redeclared a selector in the new pin's stylesheet. Only when none did may the pin go first as its own pull request, with the re-vendor and those deletions in a second one after the design repository's.
+7. **Close out, through `brief-closer`.** A shared-system ask reaches this application only through the pin, so its brief can close only once the pin has moved. Check the shared system's `briefs/proposed/`, in its checkout from the design section, against what the release landed; for each brief whose ask looks landed, spawn the `brief-closer` agent with the brief's name and the release that carries the export. If the agent stops with asks outstanding, the brief stays.
 
 ## Must not
 
