@@ -52,6 +52,13 @@ class ServeTest < Minitest::Test
     assert_equal "<main>the list</main>", response.body
   end
 
+  test "a page whose name holds a plus is served from the link the index gives it" do
+    write("pages/a+b.html", "<main>a and b</main>")
+
+    assert_includes get("/").body, %(href="/pages/a+b.html")
+    assert_equal "<main>a and b</main>", get("/pages/a+b.html").body
+  end
+
   test "a path outside the repository is never served" do
     assert_equal "404", get("/../../../../../../etc/hosts").code
     assert_equal "404", get("/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/hosts").code

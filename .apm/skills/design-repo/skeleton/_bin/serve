@@ -59,7 +59,7 @@ end
 
 # The file a request names, only if it is inside this checkout.
 def file_for(request_path)
-  path = File.expand_path(".#{URI.decode_www_form_component(request_path)}", ROOT)
+  path = File.expand_path(".#{URI.decode_uri_component(request_path)}", ROOT)
   path if path.start_with?("#{ROOT}/") && File.file?(path)
 end
 
