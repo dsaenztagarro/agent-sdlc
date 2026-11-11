@@ -8,9 +8,12 @@
 #
 # The mirror is `rsync -a --delete`: a hand edit inside it is reverted without warning, and
 # whatever the export carries becomes this repository's truth. So the export is checked first,
-# and refused — with nothing copied — when it is the wrong kind, when a page is not one
-# canonical prototype per surface, or when it disagrees with a file this repository authors and
-# pushes up (UPSTREAM below). Every delete is confined to this checkout.
+# and refused — with nothing copied — when it is incomplete, when it is the wrong kind, when a
+# page is not one canonical prototype per surface, or when it disagrees with a file this
+# repository authors and pushes up (UPSTREAM below). Every delete is confined to this checkout.
+#
+# Authoring screenshots never cross. Behaviour artefacts do, and are reported: the design project
+# ships the surface only, and filtering them here would hide that it stopped doing so.
 #
 # Usage:
 #   bin/sync [SOURCE]   SOURCE is the export as a zip or a directory.
@@ -21,12 +24,17 @@ set -euo pipefail
 KIND="__KIND__"
 NAME="__NAME__"
 
-# Paths under the export folder that this repository authors and pushes up with /design-sync.
-# An export whose copy differs, or lacks one, is refused. Empty when nothing flows upstream.
+# Files this repository authors and pushes up with /design-sync, each as
+# "<path in this repository>:<path in the export>". An export whose copy differs, or lacks one,
+# is refused. Empty when nothing flows upstream.
 UPSTREAM=()
 
+# Files the export root must carry, or it is incomplete. FILL: a web export lists its root
+# stylesheet (styles.css); a terminal client's export carries none, and lists nothing.
+REQUIRED_ROOT_FILES=()
+
 # Authoring noise a designer leaves in a project, referenced by nothing.
-EXCLUDES=(uploads/ scraps/ '*.png' .thumbnail)
+EXCLUDES=(uploads/ scraps/ screenshots/ '*.png' '*.jpg' .thumbnail)
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 case "$KIND" in
@@ -57,6 +65,10 @@ if [[ -z "$source" ]]; then
     exit 1
   fi
 fi
+if [[ ! -e "$source" ]]; then
+  echo "error: source does not exist: $source" >&2
+  exit 1
+fi
 
 if [[ -f "$source" ]]; then
   mkdir -p "$repo_root/tmp"
@@ -70,12 +82,12 @@ else
   search_root="$source"
 fi
 
-# --- Locate the export root, and refuse the other kind -----------------------
+# --- Locate the export root, and refuse an incomplete one or the other kind --
 # Both kinds carry _ds_manifest.json: a Design System at its root, a Project nested under
 # _ds/<project>/, the snapshot of the design system its pages are bound to.
 manifest=$(find "$search_root" -type f -name _ds_manifest.json -print | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-)
 if [[ -z "$manifest" ]]; then
-  echo "error: no _ds_manifest.json under $source — is this a Claude Design export?" >&2
+  echo "error: no _ds_manifest.json under $source — an incomplete export, or not a Claude Design one. Nothing was mirrored." >&2
   exit 1
 fi
 manifest_dir=$(dirname "$manifest")
@@ -90,6 +102,12 @@ if [[ "$export_kind" != "$KIND" ]]; then
   echo "error: this is a $export_kind export, and this repository mirrors a $KIND export. Nothing was mirrored." >&2
   exit 1
 fi
+for file in "${REQUIRED_ROOT_FILES[@]+"${REQUIRED_ROOT_FILES[@]}"}"; do
+  if [[ ! -f "$export_root/$file" ]]; then
+    echo "error: the export root is missing $file — an incomplete export. Nothing was mirrored." >&2
+    exit 1
+  fi
+done
 
 # --- One canonical prototype per surface -------------------------------------
 off_format=$(cd "$export_root" && find . \( -name _ds -o -name uploads -o -name scraps \) -prune -o \
@@ -104,23 +122,39 @@ if [[ -n "$off_format" ]]; then
 fi
 
 # --- Files this repository authors -------------------------------------------
-for path in "${UPSTREAM[@]+"${UPSTREAM[@]}"}"; do
-  if ! cmp -s "$target/$path" "$export_root/$path"; then
-    echo "error: the export's $path differs from the one this repository authors." >&2
+# Compared where each one is authored, which in a product repository is outside the export folder.
+for entry in "${UPSTREAM[@]+"${UPSTREAM[@]}"}"; do
+  authored=${entry%%:*}
+  exported=${entry#*:}
+  if ! cmp -s "$repo_root/$authored" "$export_root/$exported"; then
+    echo "error: the export's $exported differs from $authored, which this repository authors." >&2
     echo "  It flows up with /design-sync; the design project must not edit it. Nothing was mirrored." >&2
     exit 1
   fi
 done
 
 # --- Mirror ------------------------------------------------------------------
+# A link in the mirror — a snapshot pointed at a local checkout — is replaced by the export's own
+# files, never followed: the link's target is another checkout.
 mkdir -p "$target"
 target=$(canonicalize_within_repo "$target")
 exclude_args=()
 for pattern in "${EXCLUDES[@]}"; do exclude_args+=(--exclude "$pattern"); done
 rsync -a --delete "${exclude_args[@]}" "$export_root/" "$target/"
 
-# --- Report; committing is a person's call -----------------------------------
+# --- Behaviour artefacts: report, never filter -------------------------------
+# The design project ships the surface only: behaviour reaches it as a brief and comes back as an
+# open question, decided in the application. A spec-notes folder or a rulings page means it has
+# regressed; excluding them here would keep it authoring behaviour that nobody receives.
 folder=$(basename "$target")
+behaviour=$(cd "$target" && find . \( -name _ds -prune \) -o \( -name spec-notes -o -name '*rulings*' \) -print | sed "s|^\./|$folder/|" | sort)
+if [[ -n "$behaviour" ]]; then
+  echo "warning: the export carries behaviour artefacts, a regression of the surface-only contract:"
+  printf '%s\n' "$behaviour" | sed 's/^/    /'
+  echo "  Behaviour lives in the application's tests and decision records: brief the project to remove them."
+fi
+
+# --- Report; committing is a person's call -----------------------------------
 if git -C "$repo_root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   changes=$(git -C "$repo_root" status --short -- "$folder" 2>/dev/null)
   if [[ -z "$changes" ]]; then
