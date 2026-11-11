@@ -133,7 +133,7 @@ Claude Design ships surface only; the last rule below says where a behaviour it 
 - **Application labels use the full canonical noun** the design names a thing by.
 - **Before writing a style, search both design projects by name, shape and value.** Search for what the thing is, not the name you were about to type. If neither draws it, brief it, with no local stand-in meanwhile.
 - **Never hand-edit the design mirror or the vendored artefact.** Both are generated, and the next sync or vendor destroys the edit without an error. This rule lives here because the mirror is in another repository, where nothing in this one fires.
-- **Read a design in its own checkout**, on its default branch, never from a copy.
+- **Read a design in its own checkout**, at the revision being built against, never from a copy.
 - **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
 - **Validate the design against the codebase before building — raise the hand if it's wrong.** If it brings consistency, build it faithfully. If it does **not**, neither implement it silently nor diverge from it silently: a **comment** on the ticket for something localised, a **brief** in the design repository for something structural.
 - **A behaviour a page draws that nothing here has settled is an open question**, answered by a test and, where it is a real fork, the theme's decision record — then sent back through a brief.
