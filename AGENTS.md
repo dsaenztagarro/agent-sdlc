@@ -125,8 +125,8 @@ Claude Design ships surface only; the last rule below says where a behaviour it 
 
 - **A design page shows the surface, never the application's rules.** Interaction is drawn; validations, save rules, time windows and the data model are not. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
 - **Build to the page, with the vendored artefact only.**
-  - *Web:* no colour, spacing or component outside the artefact's cascade layer and the classes it owns.
-  - *Terminal:* no colour or glyph outside the token set, the user's overrides and the renderer's defaults; a full-screen interface degrades to the line renderer.
+  - *Web:* no colour, spacing or component outside the artefact's cascade layer, the classes it owns and the classes the shared system's package ships.
+  - *Terminal:* no colour or glyph outside the vendored token set, the shared system's tokens, the user's overrides and the renderer's defaults; a full-screen interface degrades to the line renderer.
 - **Never work around a design defect in the application.** Write the design as it ships, and brief the defect in the same change. A state the design cannot show yet is said in content, never in style.
 - **A page's markup and styles are what it specifies; its prose is intent.** Prose that contradicts its own markup is surfaced, never implemented.
 - **When a local restatement and the canonical shared system disagree, the canonical one wins.**
