@@ -4,7 +4,8 @@
 # One checkout per ticket (`claude --worktree issue-<N>`)
 .claude/worktrees/
 
-# Local environment / secrets — never commit
+# Local environment / secrets — never commit.
+# List the ones a worktree needs in .worktreeinclude; Claude Code copies them into each new worktree.
 .env
 .env.*
 *.local
