@@ -52,7 +52,7 @@ The design project holds its own files and nothing else — it cannot open eithe
 
 | route | carries | lifetime |
 |---|---|---|
-| **a brief**, pasted into the project | one ask | spent on arrival; deleted when its surface ships (§8) |
+| **a brief**, pasted into the project | its theme's pending asks | spent on arrival; each ask leaves it when its surface ships, and the brief is deleted when none remains (§8) |
 | **`/design-sync`**, from Claude Code | a repository's React design system, converted and uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
 | **the export**, the project's Export menu, *Download as .zip* | the whole project, back to the design repository | a commit of the mirror |
 
