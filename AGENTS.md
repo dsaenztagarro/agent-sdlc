@@ -79,15 +79,68 @@ Good (ASCII):
 
 **Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
 
-<!-- FILL: the design repository's name, its checkout path, the command that regenerates its artefact and its suite; the one artefact that crosses, its path in the design repository and its path here, the cascade layer it is loaded in, the command that vendors it and the one that triages it against the markup; where this application's own component styles live. If it extends a shared design system: the system's name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens if this project does. The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the `design-curator` agent read these names from here; write `none` for one that does not apply. -->
+### The names the design skills read
 
-- **A design page shows the surface, never the application's rules.** Interaction is drawn; validations, save rules, time windows and the data model are not. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
-- **Build to the page, with the vendored artefact only.** No colour, spacing or component outside it.
+The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the `design-curator` and `brief-closer` agents read these names and no others. One name per line; write `none` for one that does not apply. A name missing here is asked for, never guessed.
+
+- **Design repository:** <!-- FILL: its name, `<project>-ds` -->
+- **Design checkout:** <!-- FILL: its path on disk -->
+- **Regenerate command:** <!-- FILL: the command, run in the design checkout, that regenerates the artefact -->
+- **Design suite:** <!-- FILL: the design repository's test command -->
+- **Artefact form:** <!-- FILL: `stylesheet bundle` or `token set` -->
+- **Artefact source:** <!-- FILL: its path in the design repository -->
+- **Artefact vendored at:** <!-- FILL: its path here, or `nothing is vendored yet` and why -->
+- **Cascade layer:** <!-- FILL: the layer the bundle is loaded in; `none` for a token set -->
+- **Vendor command:** <!-- FILL: the command that vendors the artefact and pins the revision it read -->
+- **Triage command:** <!-- FILL: the command that reads the vendored artefact against the markup and edits nothing -->
+- **Own component styles:** <!-- FILL: where this application's own component styles live -->
+- **Shared design system:** <!-- FILL: the system this design extends, or `none` -->
+- **Shared system channel:** <!-- FILL: the package that brings it here; it never arrives through this application's design repository -->
+- **Shared system checkout:** <!-- FILL: an environment variable and its default, `$<VAR>` (default `<path>`) -->
+- **Shared release ref:** <!-- FILL: the ref of its repository that a released version corresponds to -->
+- **Shared release notes:** <!-- FILL: where it publishes them -->
+- **Pin command:** <!-- FILL: the command that moves the shared system's pin and nothing else -->
+- **Token sync command:** <!-- FILL: the command that syncs its tokens, or `none` -->
+- **Decision records:** <!-- FILL: where they live, `docs/adr/` -->
+
+### Who owns what
+
+```
+  <project>-ds  (design repository)             <project>  (this repository)
+  owns how a surface LOOKS and is COMPOSED      owns how it BEHAVES
+  +----------------------------------+          +-------------------------------------+
+  | briefs/proposed/                 |          | code                                |
+  | pages, components, tokens        |   one    | tests               -> what         |
+  | the export mirror   (generated)  | -------> | decision records    -> why          |
+  | the artefact's generator         | artefact | the vendored artefact (generated)   |
+  +----------------------------------+          +-------------------------------------+
+                 ^                                                 |
+                 |                                                 |
+                 +-------------------- briefs ---------------------+
+```
+
+Claude Design ships surface only; the last rule below says where a behaviour it draws is decided.
+
+### The rules
+
+- **A design page shows the surface, never the application's rules.** Validations, save rules, time windows and the data model are not drawn. The test for a sentence on a page: could someone open the running application and find it false? The design project's own `readme.md` carries the rule.
+  - *Web:* interaction is drawn — a drawer opening, a row expanding.
+  - *Terminal:* snapshots only, one named frame per state; the key map is the application's behaviour, and stays out of the page.
+- **Build to the page, with the vendored artefact only.**
+  - *Web:* no colour, spacing or component outside the artefact's cascade layer, the classes it owns and the classes the shared system's package ships.
+  - *Terminal:* no colour or glyph outside the vendored token set, the shared system's tokens, the user's overrides and the renderer's defaults; a full-screen interface degrades to the line renderer.
+- **Never work around a design defect in the application.** Write the design as it ships, and raise the defect in the same change, as the validation rule below routes it. A state the design cannot show yet is said in content, never in style.
+- **A page's markup and styles are what it specifies; its prose is intent.** Prose that contradicts its own markup is surfaced, never implemented.
+- **When a local restatement and the canonical shared system disagree, the canonical one wins.**
+- **Application labels use the full canonical noun** the design names a thing by.
+- **Before writing a style, search both design projects by name, shape and value.** Search for what the thing is, not the name you were about to type. If neither draws it, brief it, with no local stand-in meanwhile.
+- **Never hand-edit the design mirror or the vendored artefact.** Both are generated, and the next sync or vendor destroys the edit without an error. This rule lives here because the mirror is in another repository, where nothing in this one fires.
+- **Read a design in its own checkout**, at the revision being built against, never from a copy.
 - **Code never cites a design page or a brief**, in any form — a path, a section label, or the same thing in words. A page regenerates and a brief is deleted; cite the decision record for *why* and the test for *what*.
 - **Validate the design against the codebase before building — raise the hand if it's wrong.** If it brings consistency, build it faithfully. If it does **not**, neither implement it silently nor diverge from it silently: a **comment** on the ticket for something localised, a **brief** in the design repository for something structural.
 - **A behaviour a page draws that nothing here has settled is an open question**, answered by a test and, where it is a real fork, the theme's decision record — then sent back through a brief.
 
-If this project has no UI, delete this section.
+If this project has no UI, or its UI takes all its colours from its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — delete this section, and record why in the theme's decision record, with the condition that reopens it.
 
 ## Testing Guidelines
 
