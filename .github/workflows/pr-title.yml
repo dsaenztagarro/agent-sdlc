@@ -18,3 +18,10 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: .github/scripts/pr-title "$TITLE"
+
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test the title check
+        run: ruby test/pr_title_test.rb
