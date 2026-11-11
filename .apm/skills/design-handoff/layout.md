@@ -34,7 +34,7 @@ A product may also own a Design System project of its own, when it extends a sha
 +-- .github/workflows/      the gate, weekly on the default branch and by hand
 +-- briefs/
 |   +-- README.md           what belongs here, the lifecycle, how to write one
-|   +-- proposed/           <topic>.brief.md, one per open request
+|   +-- proposed/           <theme>.brief.md, one open brief per theme
 +-- pages/                  a Project export, mirrored                     (product)
 |   +-- _ds/<project-id>/   the design-system snapshot the pages render against, committed
 +-- system/                 a Design System export, mirrored; or authored and pushed up
@@ -65,9 +65,10 @@ The requests made **to this repository's Claude Design project**, and nothing el
 
 - A product's `briefs/` asks its own project for surfaces; a shared system's asks for what every application shares.
 - **A request belongs to the repository whose project will draw it.** A product that needs a shared component writes the brief in the shared system's `briefs/proposed/`, not its own, and not inside its project.
-- One self-contained `<topic>.brief.md` per request. A request that carries code — a component's complete files — is still a brief.
-- Deleted once what it asked for has landed and its durable half has a home elsewhere (the `brief-closer` agent and §8 of the skill). `git log --diff-filter=D -- briefs/` finds one again.
-- `briefs/README.md` states what belongs here, the lifecycle and the writing rules, in the words of this repository.
+- **One open brief per theme**, a self-contained `<theme>.brief.md` named for the theme and amended in place: a new ask joins the open brief for its theme, and a brief opens only for a theme none covers. A request that carries code — a component's complete files — is still a brief.
+- A theme that landed partly, or landed with a defect, keeps its brief, listing only what remains.
+- Deleted once everything it asked for has landed and its durable half has a home elsewhere (the `brief-closer` agent and §8 of the skill). `git log --diff-filter=D -- briefs/` finds one again.
+- `briefs/README.md` states what belongs here, the lifecycle, the house format and the reader rule, in the words of this repository.
 
 ### `pages/` — a Project export
 

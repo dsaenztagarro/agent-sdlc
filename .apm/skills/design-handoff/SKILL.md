@@ -52,7 +52,7 @@ The design project holds its own files and nothing else — it cannot open eithe
 
 | route | carries | lifetime |
 |---|---|---|
-| **a brief**, pasted into the project | one ask | spent on arrival; deleted when its surface ships (§8) |
+| **a brief**, pasted into the project | its theme's pending asks | spent on arrival; each ask leaves it when its surface ships, and the brief is deleted when none remains (§8) |
 | **`/design-sync`**, from Claude Code | a repository's React design system, converted and uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
 | **the export**, the project's Export menu, *Download as .zip* | the whole project, back to the design repository | a commit of the mirror |
 
@@ -100,10 +100,10 @@ Only where a shared design system is vendored (§1).
 
 ### Promoting a component: one stand-in, landed by deletion
 
-The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
+The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and the request goes in the **shared system's repository**: it amends that repository's open brief for the component's theme in `briefs/proposed/`, or opens `<theme>.brief.md` when none covers it, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
 
 - **Byte-identical is the point.** When the component lands, the stand-in is deleted — the classes, or the local definition of the token or glyph — and no markup or renderer call changes; a stand-in that drifted from its brief turns landing into a migration.
-- **The request lives with the system that will draw it.** One brief per component, attached to the shared system's project one at a time, and deleted once it lands.
+- **The request lives with the system that will draw it.** It joins the shared system's open brief for its theme, one theme attached to that project at a time, and leaves the brief once it lands.
 - **Delete the stand-in only against a snapshot that carries the component.** Removed against a stale copy of the shared system, the surface loses its styling and nothing fails.
 
 ### The project's copy of the shared system, and how it stays current
@@ -144,7 +144,7 @@ The copy does not follow the shared system: a request that lands there reaches t
   a drawing gone with the prose around it? a page bin/shots named?
         |
         v
-  commit the mirror, as produced; a defect becomes a new brief
+  commit the mirror, as produced; a defect joins its theme's brief
         |
         v
   in this repository: vendor the artefact         adopt-designs
@@ -160,27 +160,29 @@ The copy does not follow the shared system: a request that lands there reaches t
 
 ## 7. Writing a brief
 
+**One open brief per theme, named for the theme and amended in place.** A new ask joins the open brief for its theme; a brief opens only for a theme none covers. Briefs opened request by request grow with the work and stop being read. The design repository's `briefs/README.md` carries the house format and the reader rule.
+
 1. **State the constraint; do not cite the artefact.** A decision's ruling is written out as a sentence, with its theme named beside it; the record itself lives where `AGENTS.md`'s design section says decision records do. A link out of the design repository resolves to nothing at the far end.
-2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no.
+2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no, except on the brief's Do-not-edit line, where application paths, issue numbers, checkouts and framework names constrain the deliverable rather than explain it.
 3. **A brief never cites another brief.** Each is deleted on its own schedule.
 4. **A technical decision belongs in a decision record here, not in the design.** The brief asks Design to *depict* a ruling, never to make it. A behaviour the page must show that nothing has settled is drawn and labelled as an **open question**, never as a rule.
 
 ## 8. Closing a brief out
 
-A brief ends when its surface ships here, so the ticket that ships a surface carries a checkbox to delete its brief. Before the deletion: verify each ask in the design project's export, re-point everything that cited the brief, rewrite future-tense prose about it, and close the tracking issue.
+An ask ends when its surface ships here, so the ticket that ships a surface carries a checkbox for its own ask leaving the theme's brief: ticked when the brief is deleted, or amended to drop that ask while the theme's other asks stay pending. Before either: verify each ask in the design project's export, re-point everything that cited it, rewrite future-tense prose about it, and close its tracking issue; the issue tracking the theme's brief closes only when the brief is deleted.
 
-A brief whose asks all landed closes. One where some did not stays, with the remainder reported. One that got what it asked for while the doing broke something else closes, and owes a follow-up brief. The **`brief-closer`** agent does this, and verifies before it deletes.
+A brief whose asks all landed closes. One where some did not stays, listing only the remainder. One that got what it asked for while the doing broke something else stays too, listing only what broke: what remains for a theme never opens a brief of its own. The **`brief-closer`** agent does this, in a fixed order that deletes last, when an export lands that may satisfy an open brief as well as at a ticket's checkbox for its ask leaving the brief.
 
 ### Before a reshape, triage the queue
 
-A reshape — a sweep or redraw across many pages of the design project — starts only once every open brief has been checked against the current export. A brief is written against the pages as they stood; a reshape that moves them leaves each one describing a page that no longer exists, and nobody notices until someone pastes it. So, for every brief in `briefs/proposed/`, before the reshape is asked for:
+A reshape — a sweep or redraw across many pages of the design project — starts only once every open ask has been checked against the current export. An ask is written against the pages as they stood; a reshape that moves them leaves it describing a page that no longer exists, and nobody notices until someone pastes it. So, ask by ask, for every theme's brief in `briefs/proposed/`, before the reshape is asked for:
 
-- **landed** — delete it;
-- **outdated** — its premise is gone: delete it, or rewrite it against the current pages;
-- **in the wrong repository** — it changes a shared component: move it to the shared system's `briefs/proposed/`, rewritten for that project;
-- **still open** — carry it into the reshape's brief, or keep it and check it again once the reshape's export lands.
+- **landed** — it leaves its brief through `brief-closer`'s close-out, never a direct delete;
+- **outdated** — its premise is gone: drop it from its brief, or rewrite it against the current pages;
+- **in the wrong repository** — it changes a shared component: it joins the shared system's open brief for its theme, rewritten for that project, or opens one there only when none covers the theme;
+- **still open** — carry it into the brief of the reshape's theme, never a brief spanning themes, or keep it in its own brief and check it again once the reshape's export lands.
 
-A long queue is the signal to triage, not to reshape: the reshape waits until the queue holds only briefs that will survive it.
+A theme's brief left with no ask is deleted by the same close-out. A long queue is the signal to triage, not to reshape: the reshape waits until the queue holds only asks that will survive it.
 
 ## 9. What an agent must not do
 
