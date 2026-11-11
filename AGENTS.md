@@ -9,7 +9,7 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | when you are… | load | how it fires |
 |---|---|---|
 | <!-- FILL: writing or changing a test --> | <!-- FILL: `.claude/rules/testing.md` --> | <!-- FILL: opening `test/**` --> |
-| planning an epic, or building, reviewing, fixing, closing or releasing its tickets | the user-level tracker pipeline: `/tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `/tracker-close`, `/tracker-release` | invoke it |
+| planning multi-ticket work, or building, reviewing, fixing, closing or releasing its tickets | the user-level tracker pipeline: `/tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `/tracker-close`, `/tracker-release` | invoke it |
 | stopping, resuming, or taking new scope on near-ready work | `/tracker-pause`, `/tracker-resume`, `/tracker-amend` | invoke it |
 | handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
 | raising a workflow improvement upstream | the `template-feedback` skill | invoke it |
@@ -20,7 +20,7 @@ A path-scoped rule fires only when a matching file is read, so a rule that must 
 
 ## Model selection & task tracking
 
-Every task you plan or pick up carries an explicit **complexity** rating and the **model** it runs on — state both (`complexity · model · why`) in the plan, the epic ticket, or the task list so the choice is deliberate and reviewable, not implicit. When you decompose work, tag each piece; don't leave the model a running default nobody chose.
+Every task you plan or pick up carries an explicit **complexity** rating and the **model** it runs on — state both (`complexity · model · why`) in the plan, the parent ticket, or the task list so the choice is deliberate and reviewable, not implicit. When you decompose work, tag each piece; don't leave the model a running default nobody chose.
 
 - **Default to the most capable model.** Correctness-critical, interdependent, or context-heavy work — schema/data changes, multi-file refactors, anything where a subtle mistake compounds across the change — stays there even when it is large. Delegating hard work to a cheaper run because it's tedious is a false economy.
 - **Escalate to a cheaper/faster model only when the complexity genuinely pays off there** and the task isn't the correctness-critical / interdependent / context-heavy kind above. When it's a close call, stay on the capable model.
@@ -122,22 +122,46 @@ A fallback to the retired source is a defect, not a safety net: it keeps the dea
 - **Don't write the legacy field either.** New create/update paths write the fact to its current owner, never to the retired one.
 - **A legacy field with no readers is a field to drop.** The lifecycle is **re-point reads → stop writing → drop the field**, in that order — never leave it parked as a dormant fallback. "It still has data" is not a reason to keep reading it; migrate the data to the owner, then drop.
 
+This stays an every-task rule rather than a path-scoped one: a fact can be read from any file, so no path pattern would fire before the fallback is written.
+
 ## CI / gate
 
 <!-- FILL: what must be green before a change ships (tests, lint, security scan) and where it runs.
      The tracker pipeline defers to this gate. -->
 
+**The local gate is the gate.**
+
+- **Check it is installed and runnable before building** — its hooks are in place and its command runs — and never pass `--no-verify`.
+- **Report a gate's result only by quoting the output seen in that run.** A hook that is not installed did not pass.
+
+Rules that depend on the project's tooling, each a `FILL` with its rule beside it:
+
+- **Formatter on write:** <!-- FILL: the formatter command --> — runs on each file as it is written, through the format-on-write hook in `.claude/settings.local.json.example`.
+- **Commit and push hooks:** <!-- FILL: what each hook runs, and how it is installed --> — a hook verifies and never rewrites: a hook that changes files commits what nobody reviewed.
+
 ## Development Workflow
 
-For any new feature or significant change:
+**One coherent change is the unit of work:** one issue, one branch, one pull request, sized for one review.
 
-1. **Create a GitHub issue** documenting the change (summary, acceptance criteria, technical notes).
-2. **Work in the issue's own worktree**: `claude --worktree issue-<issue>` checks out `.claude/worktrees/issue-<issue>`, and the same command re-enters it later. Rename its branch to `<issue>-<slug>` before the first push. Two agents never share a checkout — they race on HEAD.
-3. **Implement & test** — write tests alongside the change; run the gate frequently; drive the runtime surface.
-4. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
-5. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
+1. **Open one issue for the change:** the problem, the done-when lines, the technical notes. Related tickets from one analysis are one issue, and the triage and review rows it produces stay inside it as checklist items, never a ticket each.
+2. **Branch from a freshly fetched default branch**, in the issue's own worktree: `git fetch origin` first, then `claude --worktree issue-<issue>` checks out `.claude/worktrees/issue-<issue>`, and the same command re-enters it later. `git log origin/<default>..HEAD` prints nothing before the first commit, so no unpushed local commit rides into the squash. Two agents never share a checkout — they race on HEAD.
+3. **A worktree gets the untracked files it needs** — local keys, a `.env` — through `.worktreeinclude`, never by copying them by hand.
+4. **Check the branch name on the remote before the first push:** rename the branch to `<issue>-<slug>`, and `git ls-remote --heads origin <branch>` prints nothing, so the push cannot land on a branch an existing pull request uses.
+5. **Implement & test** — write tests alongside the change; run the gate frequently; drive the runtime surface.
+6. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
+7. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
-For larger, multi-ticket work, plan it on an epic and build it with the tracker pipeline (see the routing table): the plan is a marked section of the epic's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
+Every ticket and every pull request **opens with `## Sequence`:** its ticket, the previous and the next, one reference per line.
+
+A pull request:
+
+- **Has a Conventional Commit title:** `<type>(<scope>)!: <subject>`, with a sentence-style subject after the type. `.github/workflows/pr-title.yml` checks it, again whenever the title is edited, and the repository squashes with the PR title as the commit subject, so the release is versioned from what was reviewed.
+- **Compares with the base branch:** what the code did before and why that was wrong, never an earlier revision of the branch, which its reader never saw.
+- **Carries the evidence in its body:** the gate's output, the mutation checks, how to test it. Nothing is mirrored back to the issue; the closing reference closes it.
+
+**The CHANGELOG follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),** each release opening with a lead paragraph on what it brings, before its lists.
+
+Larger work spanning several tickets is planned and built with the tracker pipeline (see the routing table): the plan is a marked section of the parent issue's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
 
 ### Incidental minor findings → the `chore` accumulator
 

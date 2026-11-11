@@ -6,7 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **A CI check holds every pull request title to a Conventional Commit.** `.github/workflows/pr-title.yml` runs `.github/scripts/pr-title` on `<type>(<scope>)!: <subject>` whenever a pull request is opened, edited, pushed to or reopened, and names the expected form when it refuses one; `test/pr_title_test.rb` holds its rules. README's Applying steps gain the one command that squashes with the pull request title, so `/tracker-release` versions from what was reviewed. (#37)
+
 ### Changed
+
+- **`AGENTS.md`'s Development Workflow states the delivery rules every task needs.** One coherent change is one issue, branch and pull request, with its triage and review rows inside it; the branch starts at a freshly fetched default branch and its name is checked on the remote before the first push; a worktree gets its untracked files through `.worktreeinclude`; every ticket and pull request opens with `## Sequence`; a pull request has a Conventional Commit title, compares with the base branch and carries the evidence in its body; the CHANGELOG follows Keep a Changelog with a lead paragraph per release. CI / gate states that the local gate is the gate — checked before building, never skipped, reported only by quoting its output — with `FILL` lines for the formatter and the commit and push hooks, which verify and never rewrite. "No fallbacks to legacy values" stays an every-task rule, with why. (#37)
+- **The local settings example carries a format-on-write hook slot**, a `FILL` for the project's formatter. (#37)
 
 - **README states the delivery pipeline as required at user level, with its contract.** Plan, build, review, fix, close and release run on the user-level tracker pipeline, never shipped in this package, since a copy per project drifts. README §4 lists each command and workflow it uses — `tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `tracker-close`, `tracker-release`, `tracker-amend`, `tracker-pause`, `tracker-resume`, `tracker-roadmap`, `tracker-audit`, `workflow-orchestration` — with what it reads and what it leaves where, so an adopter without the pipeline follows the contract by hand; `AGENTS.md`'s routing rows point at it. The at-a-glance diagram and the phase map describe the one pipeline. Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is published as a public APM package. (#36)
 - **README's "Applying the template" is one step per heading, with the commands to copy.** The package installs with `apm init --yes --target claude` and a pinned `apm install dsaenztagarro/agent-sdlc#v<version>`, so `apm.yml` records `claude` as the target and every developer's install deploys to `.claude/`. (#36)

@@ -1,0 +1,20 @@
+name: pr-title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  conventional-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Check the title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: .github/scripts/pr-title "$TITLE"

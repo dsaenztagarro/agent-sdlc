@@ -19,5 +19,18 @@
   "attribution": {
     "commit": "",
     "pr": ""
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs true # FILL: replace true with the formatter, run on the file just written"
+          }
+        ]
+      }
+    ]
   }
 }
