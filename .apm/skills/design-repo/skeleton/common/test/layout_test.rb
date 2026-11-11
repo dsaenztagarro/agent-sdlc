@@ -2,6 +2,7 @@
 
 require "minitest/autorun"
 require "open3"
+require "shellwords"
 
 # Every design repository keeps one layout, so that an agent who has worked in one finds its way
 # around any other. Design repositories drift after they are created, not when: a snapshot
@@ -18,6 +19,7 @@ class LayoutTest < Minitest::Test
   ROOT_FOLDERS = %w[briefs pages system references vendor docs lib test dist bin .design-sync .claude .github].freeze
   ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile Gemfile Gemfile.lock .gitignore LICENSE].freeze
   EXPORT_FOLDERS = %w[pages system].freeze
+  EXPORT_FOLDER = { "project" => "pages", "system" => "system" }.freeze
   RULE_LENGTH = 80
   BRIEF_HEADER = /\A(?:[-*]\s+)?(?:\*\*)?(?:For|Produces|Do[- ]not[- ]edit|Status)(?::|\*\*)/i
 
@@ -33,6 +35,24 @@ class LayoutTest < Minitest::Test
     symlinks = git("ls-files", "-s").lines.select { |line| line.start_with?("120000") }.map { |line| line.split("\t").last.strip }
 
     assert_empty symlinks, "what a clone renders, builds or tests must come from that clone, not another checkout"
+  end
+
+  # One bin/sync mirrors one Claude Design project, so a repository is one kind: an application's
+  # pages beside a Design System export is the kind chosen wrong.
+  def test_bin_sync_names_the_kind_of_project_it_mirrors
+    skip "no bin/sync" unless File.file?(sync_script)
+
+    assert_includes EXPORT_FOLDER.keys, sync_kind, "bin/sync's KIND is project (a Claude Design Project) or system (a Design System)"
+  end
+
+  def test_the_only_export_folder_is_the_one_bin_sync_names
+    skip "no bin/sync" unless File.file?(sync_script)
+    skip "bin/sync names no kind" unless EXPORT_FOLDER.key?(sync_kind)
+    other = (EXPORT_FOLDERS - [EXPORT_FOLDER[sync_kind]]).first
+
+    misplaced = tracked.select { |path| path.start_with?("#{other}/") } - upstream_authored
+
+    assert_empty misplaced, "bin/sync mirrors a #{sync_kind} export into #{EXPORT_FOLDER[sync_kind]}/; #{other}/ holds only the files bin/sync's UPSTREAM pushes up"
   end
 
   def test_nothing_under_an_export_folder_is_ignored
@@ -87,6 +107,20 @@ class LayoutTest < Minitest::Test
   end
 
   private
+
+  def sync_script
+    File.join(ROOT, "bin/sync")
+  end
+
+  def sync_kind
+    File.read(sync_script)[/^KIND="([^"]*)"$/, 1]
+  end
+
+  # Each UPSTREAM entry is "<path in this repository>:<path in the export>".
+  def upstream_authored
+    entries = File.read(sync_script)[/^UPSTREAM=\((.*?)\)/m, 1].to_s
+    Shellwords.split(entries).map { |entry| entry.split(":").first }
+  end
 
   # A brief may quote a component's files, and two files can share a line no rule wrote.
   def prose_lines(path)
