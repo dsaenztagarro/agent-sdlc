@@ -1,6 +1,6 @@
 ---
 name: brief-closer
-description: Closes out a design brief in the design repository once what it asked for has landed — verifies each ask in the design project's export and the vendored artefact, re-points everything that cited the brief, retires guard exemptions whose condition it met, closes the tracking issue, ticks the epic, and only then deletes the brief. Use when an export lands that may satisfy an open brief, after adopt-designs vendors it, or when a ticket that ships a surface reaches its "delete the brief" checkbox. Never deletes a brief it has not verified.
+description: Closes out a design brief in the design repository once what it asked for has landed — verifies each ask in the design project's export and the vendored artefact, re-points everything that cited the brief, retires guard exemptions whose condition it met, closes the tracking issue, ticks the epic, and only then deletes the brief. Use when an export lands that may satisfy an open brief, after adopt-designs vendors it, or when a ticket that ships a surface reaches its checkbox for its ask leaving the brief. Never deletes a brief it has not verified.
 tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
@@ -21,7 +21,7 @@ Never close a brief on someone's word, including an export's commit message. Che
 | what you find | the brief |
 |---|---|
 | every ask landed, cleanly | work the steps below; the last deletes it |
-| some landed, others did not | stays, amended to list only what remains |
+| some landed, others did not | stays: work the steps below for the asks that landed; the last amends it to list only what remains |
 | every ask landed, but the doing broke something | stays, amended to list only what broke |
 
 Read the diff of the export that satisfied the brief, not only its end state. Look for **collateral removal** — a drawing gone with the prose that was asked to go — and **orphaned structure** — a subheading left by a removed section. Neither fails a check. A defect found this way joins the theme's brief; it is never a brief of its own.
@@ -34,8 +34,8 @@ Work these in order. The last one is the deletion, and a step that does not hold
 2. **Citations, re-pointed** in both repositories (`grep -rn <brief-basename>`). A link goes, and the ruling it carried is stated in a sentence where it was, with its home in the theme's decision record, where `AGENTS.md`'s design section says records live; a ruling with no home keeps the brief open. Future-tense prose about the ask is rewritten, so the durable half stays and the work status goes. A comment naming the brief as the reason something exists is the next step.
 3. **Guard exemptions whose condition the brief met are retired.** A guard may exempt a file because a brief was outstanding; once the brief lands the condition is met, and an exemption left behind keeps the guard weaker than it was built to be. Search the guards for the brief's name and the artefact it concerned, and read the condition each exemption states.
 4. **The tracking issue is closed**, on the repository that owns the fix.
-5. **The epic is ticked**, with one clause of what shipped, and the ticket's delete-the-brief checkbox with it.
-6. **The brief is deleted, in a commit in the design repository**, on a branch cut from its default branch, never the default branch itself, and not pushed. Its index row, if the briefs README keeps one, goes in the same commit.
+5. **The epic is ticked**, with one clause of what shipped, and the ticket's checkbox for its ask leaving the brief with it.
+6. **The landed asks leave the brief: it is deleted when nothing remains, or amended to drop them when the theme's other asks stay pending**, in a commit in the design repository, on a branch cut from its default branch, never the default branch itself, and not pushed. Its index row, if the briefs README keeps one, goes in the same commit.
 
 ## Must not
 

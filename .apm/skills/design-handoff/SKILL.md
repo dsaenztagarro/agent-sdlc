@@ -169,9 +169,9 @@ The copy does not follow the shared system: a request that lands there reaches t
 
 ## 8. Closing a brief out
 
-A brief ends when its surface ships here, so the ticket that ships a surface carries a checkbox to delete its brief. Before the deletion: verify each ask in the design project's export, re-point everything that cited the brief, rewrite future-tense prose about it, and close the tracking issue.
+An ask ends when its surface ships here, so the ticket that ships a surface carries a checkbox for its own ask leaving the theme's brief: ticked when the brief is deleted, or amended to drop that ask while the theme's other asks stay pending. Before either: verify each ask in the design project's export, re-point everything that cited it, rewrite future-tense prose about it, and close the tracking issue.
 
-A brief whose asks all landed closes. One where some did not stays, listing only the remainder. One that got what it asked for while the doing broke something else stays too, listing only what broke: what remains for a theme never opens a brief of its own. The **`brief-closer`** agent does this, in a fixed order that deletes last, when an export lands that may satisfy an open brief as well as at a ticket's delete-the-brief checkbox.
+A brief whose asks all landed closes. One where some did not stays, listing only the remainder. One that got what it asked for while the doing broke something else stays too, listing only what broke: what remains for a theme never opens a brief of its own. The **`brief-closer`** agent does this, in a fixed order that deletes last, when an export lands that may satisfy an open brief as well as at a ticket's checkbox for its ask leaving the brief.
 
 ### Before a reshape, triage the queue
 
