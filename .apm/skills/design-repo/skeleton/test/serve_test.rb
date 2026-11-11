@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "test_helper"
+require "cgi"
 require "fileutils"
 require "net/http"
 require "socket"
 require "tmpdir"
+require "uri"
 
 # What bin/serve offers: every page in this repository, from a real origin.
 #
@@ -52,11 +54,21 @@ class ServeTest < Minitest::Test
     assert_equal "<main>the list</main>", response.body
   end
 
-  test "a page whose name holds a plus is served from the link the index gives it" do
-    write("pages/a+b.html", "<main>a and b</main>")
+  test "every page is served from the link the index gives it, whatever its name holds" do
+    names = ["a+b", "c#1", "b 100%", "d?e"]
+    names.each { |name| write("pages/#{name}.html", "<main>#{name}</main>") }
 
-    assert_includes get("/").body, %(href="/pages/a+b.html")
-    assert_equal "<main>a and b</main>", get("/pages/a+b.html").body
+    links = get("/").body.scan(/href="([^"]+)"/).flatten.map { |href| CGI.unescapeHTML(href) }
+
+    names.each do |name|
+      link = links.find { |href| URI.decode_uri_component(href) == "/pages/#{name}.html" }
+      refute_nil link, "the index has no link to #{name}"
+      assert_equal "<main>#{name}</main>", get(link).body
+    end
+  end
+
+  test "a path with a malformed escape gets an answer" do
+    assert_equal "404", get("/pages/%ZZ.html").code
   end
 
   test "a path outside the repository is never served" do

@@ -39,10 +39,15 @@ def group(path)
   path.split("/").include?("_ds") ? "design system" : path.split("/").first
 end
 
+# A page's address, each segment percent-encoded so that a name holding #, ? or % still reaches it.
+def link(path)
+  "/" + path.split("/").map { |segment| URI.encode_uri_component(segment) }.join("/")
+end
+
 def index
   found = pages
   sections = found.group_by { |path| group(path) }.sort_by { |name, _| name == "design system" ? "~" : name }.map do |name, paths|
-    links = paths.map { |path| %(<li><a href="/#{escape(path)}">#{escape(path.delete_suffix('.html'))}</a></li>) }
+    links = paths.map { |path| %(<li><a href="#{escape(link(path))}">#{escape(path.delete_suffix('.html'))}</a></li>) }
     "<h2>#{escape(name)} <small>#{paths.size}</small></h2>\n<ul>#{links.join}</ul>"
   end
   <<~HTML
@@ -61,6 +66,8 @@ end
 def file_for(request_path)
   path = File.expand_path(".#{URI.decode_uri_component(request_path)}", ROOT)
   path if path.start_with?("#{ROOT}/") && File.file?(path)
+rescue ArgumentError
+  nil
 end
 
 def respond(client, status, type, body)
