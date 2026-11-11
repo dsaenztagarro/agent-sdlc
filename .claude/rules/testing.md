@@ -7,12 +7,16 @@ paths:
 # Testing, and building a stateful component
 
 These rules load when a file the `paths:` above names is opened: the project's tests, and the source of the components that hold state between a user's actions.
-Each rule is one sentence; where it differs by client, a web form and a terminal form follow it.
+Each rule is one sentence, followed where it helps by why it holds or how to tell it is broken; where it differs by client, a web form and a terminal form follow it.
 
 ## What a test runs against
 
-- **Test the real thing:** a test drives real collaborators and fixtures and asserts on real outcomes, with a double only at a genuine boundary — the network or an external service, infrastructure a unit test cannot stand up, or an error it cannot otherwise force.
-- **Smoke-test every interactive surface:** at least one end-to-end test reaches it through a real interaction and asserts what should now render, never the absence of an error.
+- **Test the real thing; never mock the object under test or its in-process collaborators:** a test drives real collaborators and fixtures and asserts on real outcomes, with a double only at a genuine boundary — the network or an external service, infrastructure a unit test cannot stand up, or an error it cannot otherwise force.
+  - *Why:* a test that stubs what it checks proves the stub, and stays green while the real code breaks.
+  - *The tell:* a refactor that keeps the behaviour breaks the test; rewrite it against real objects and observable outcomes.
+- **Smoke-test every interactive surface:** at least one end-to-end test reaches it through a real interaction, not a direct address, and asserts what should now render, never the absence of an error.
+  - *Scope:* it proves the wiring connects; the permutations behind it belong to focused tests.
+  - *Why positive:* an assertion of what should render states what the feature does and still fails when the wiring breaks, where an error string guards one past failure and documents nothing.
 
 ## How a test finds what it checks
 
