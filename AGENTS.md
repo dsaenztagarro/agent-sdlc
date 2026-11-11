@@ -161,7 +161,7 @@ A pull request:
 
 **The CHANGELOG follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),** each release opening with a lead paragraph on what it brings, before its lists.
 
-Larger work spanning several tickets is planned and built with the tracker pipeline (see the routing table): the plan is a marked section of the parent issue's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
+Work planned across several tickets is the one exception to the unit above, and is planned and built with the tracker pipeline (see the routing table): the plan is a marked section of the parent issue's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
 
 ### Incidental minor findings → the `chore` accumulator
 
