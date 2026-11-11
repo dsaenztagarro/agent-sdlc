@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# serve — browse every page of this design repository in a browser.
+#
+#   bin/serve            then open http://localhost:4000
+#   bin/serve 4001       on another port
+#
+# What you get: at / an index of every page in the checkout — the exported pages grouped by folder,
+# and the design-system snapshot's pages last — and each page served from its path, with the
+# styles, scripts and images it loads.
+#
+# Why not open the files directly: a page opened from file:// has a null origin, so a page that
+# fetches anything is blocked. Served from http://localhost it behaves as it does in Claude Design.
+#
+# The index is read from disk on every request, never generated and committed, so a page added
+# while the server runs is listed on the next reload.
+
+ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
+require "bundler/setup"
+require "sinatra/base"
+require "socket"
+
+ROOT = File.expand_path("..", __dir__)
+
+# Every page in the checkout, grouped as the index shows them.
+module Pages
+  SKIP = %r{\A(tmp|vendor|node_modules)/|/(uploads|scraps)/}
+  SNAPSHOT = "design system"
+
+  def self.grouped
+    all = Dir.glob("**/*.html", base: ROOT).reject { |path| path.match?(SKIP) }.sort_by(&:downcase)
+    all.group_by { |path| path.split("/").include?("_ds") ? SNAPSHOT : path.split("/").first }
+       .sort_by { |group, _| [group == SNAPSHOT ? 1 : 0, group] }
+  end
+end
+
+class Serve < Sinatra::Base
+  set :public_folder, ROOT
+  set :views, File.expand_path("../lib/serve", __dir__)
+  mime_type :jsx, "text/javascript"
+
+  helpers do
+    def h(text) = Rack::Utils.escape_html(text)
+
+    # A page's address, each segment percent-encoded so that a name holding #, ? or % still reaches it.
+    def link(path) = "/" + path.split("/").map { |segment| URI.encode_uri_component(segment) }.join("/")
+  end
+
+  get "/" do
+    erb :index, locals: { name: File.basename(ROOT), groups: Pages.grouped }
+  end
+end
+
+port = Integer(ARGV.fetch(0, "4000"))
+begin
+  TCPServer.new("127.0.0.1", port).close
+rescue Errno::EADDRINUSE
+  abort "port #{port} is in use: run bin/serve <another port>"
+end
+puts "serving #{ROOT} on http://localhost:#{port}, ^C to stop"
+Serve.run!(port: port, bind: "127.0.0.1", quiet: true, server_settings: { Silent: true })

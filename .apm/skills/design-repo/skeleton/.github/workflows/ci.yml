@@ -14,10 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # No Gemfile and no bundler: the generators are plain Ruby, so a design repository
-      # clones and runs with nothing installed.
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
+          bundler-cache: true
 
-      - run: rake
+      - run: bundle exec rake

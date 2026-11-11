@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "minitest/autorun"
+require_relative "test_helper"
 require "fileutils"
 require "open3"
 require "tmpdir"
@@ -8,9 +8,12 @@ require "tmpdir"
 # What bin/sync lets into this repository.
 #
 # The mirror is `rsync --delete`, so whatever an export carries becomes this repository's truth,
-# and every refusal has to happen before anything is copied. Each test runs a copy of bin/sync in
-# a throwaway checkout, set to the export kind under test, because the script resolves its target
-# from its own location and a real run would mirror over this repository.
+# and every refusal has to happen before anything is copied: an incomplete export, the other kind,
+# a page that is not one canonical prototype, an edit to a file this repository authors. Authoring
+# screenshots never cross.
+# Each test runs a copy of bin/sync in a throwaway checkout, set to the export kind under test,
+# because the script resolves its target from its own location and a real run would mirror over
+# this repository.
 class SyncTest < Minitest::Test
   SCRIPT = File.expand_path("../bin/sync", __dir__)
 
@@ -18,110 +21,244 @@ class SyncTest < Minitest::Test
     FileUtils.rm_rf(@root) if @root
   end
 
-  def test_a_project_export_is_mirrored_into_pages_with_its_design_system_snapshot
+  test "a project export is mirrored into pages with its design-system snapshot" do
     checkout(kind: "project")
     project_export
 
-    status, err = sync
+    status, out = sync
 
-    assert status.success?, err
-    assert_path_exists File.join(@root, "pages/books.html")
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/surface.html")
     assert_path_exists File.join(@root, "pages/_ds/shared/_ds_manifest.json")
   end
 
-  def test_a_project_mirror_is_followed_by_shots_and_a_breach_does_not_undo_it
+  test "a project mirror is followed by shots, and a breach does not undo it" do
     checkout(kind: "project")
     project_export
     File.write(File.join(@root, "bin/shots"), "#!/bin/sh\ntouch \"$(dirname \"$0\")/../shot\"\nexit 1\n")
     File.chmod(0o755, File.join(@root, "bin/shots"))
 
-    status, err = sync
+    status, out = sync
 
-    assert status.success?, err
+    assert status.success?, out
     assert_path_exists File.join(@root, "shot")
-    assert_path_exists File.join(@root, "pages/books.html")
+    assert_path_exists File.join(@root, "pages/surface.html")
   end
 
-  def test_a_design_system_export_is_mirrored_into_system
+  test "a design-system export is mirrored into system" do
     checkout(kind: "system")
     system_export
 
-    status, err = sync
+    status, out = sync
 
-    assert status.success?, err
+    assert status.success?, out
     assert_path_exists File.join(@root, "system/components/button.css")
   end
 
-  def test_an_export_of_the_other_kind_is_refused
+  test "an export of the other kind is refused" do
     checkout(kind: "system")
     project_export
 
-    status, err = sync
+    status, out = sync
 
     refute status.success?
-    assert_includes err, "project export"
+    assert_includes out, "project export"
     refute_path_exists File.join(@root, "system")
   end
 
-  def test_a_page_that_is_not_one_canonical_prototype_per_surface_is_refused
+  test "an export with no design-system manifest is refused and nothing is mirrored" do
     checkout(kind: "project")
     project_export
-    %w[books-v2.html timer\ v1.html parity-audit.html tab-rationale.html back-link-options.html].each do |page|
-      File.write(File.join(@export, page), "")
-    end
+    FileUtils.rm(File.join(@export, "_ds/shared/_ds_manifest.json"))
 
-    status, err = sync
+    status, out = sync
 
     refute status.success?
-    %w[books-v2.html timer\ v1.html parity-audit.html tab-rationale.html back-link-options.html].each do |page|
-      assert_includes err, page
-    end
+    assert_includes out, "_ds_manifest.json"
     refute_path_exists File.join(@root, "pages")
   end
 
-  def test_an_export_that_disagrees_with_a_file_authored_here_is_refused
-    checkout(kind: "system", upstream: ["tokens/colors.css"])
-    system_export
-    FileUtils.mkdir_p(File.join(@root, "system/tokens"))
-    File.write(File.join(@root, "system/tokens/colors.css"), "--accent: blue;")
-    File.write(File.join(@export, "tokens/colors.css"), "--accent: red;")
+  # A web export carries its root stylesheet; a terminal export carries none, so the list is the
+  # repository's, and an empty one refuses nothing.
+  test "an export missing a root file the repository requires is refused" do
+    checkout(kind: "project", required: ["styles.css"])
+    project_export
 
-    status, err = sync
+    status, out = sync
 
     refute status.success?
-    assert_includes err, "tokens/colors.css"
+    assert_includes out, "styles.css"
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "a page that is not one canonical prototype per surface is refused" do
+    checkout(kind: "project")
+    project_export
+    pages = ["surface-v2.html", "timer v1.html", "parity-audit.html", "tab-rationale.html", "back-link-options.html"]
+    pages.each { |page| File.write(File.join(@export, page), "") }
+
+    status, out = sync
+
+    refute status.success?
+    pages.each { |page| assert_includes out, page }
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "a file the mirror never copies is not judged as a prototype" do
+    checkout(kind: "project")
+    project_export
+    FileUtils.mkdir_p(File.join(@export, "screenshots"))
+    File.write(File.join(@export, "screenshots/surface-v2.txt"), "")
+    File.write(File.join(@export, "surface-v2.png"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/surface.html")
+  end
+
+  test "authoring screenshots in an export are never mirrored" do
+    checkout(kind: "project")
+    project_export
+    FileUtils.mkdir_p(File.join(@export, "screenshots"))
+    File.write(File.join(@export, "screenshots/list.txt"), "")
+    File.write(File.join(@export, "draft.png"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/surface.html")
+    assert_empty Dir.glob("{screenshots,*.png}", base: File.join(@root, "pages"))
+  end
+
+  test "a photograph a page draws is mirrored with it" do
+    checkout(kind: "project")
+    project_export
+    write(File.join(@export, "assets/photo.jpg"), "")
+    File.write(File.join(@export, "surface.html"), %(<main><img src="assets/photo.jpg"></main>))
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/assets/photo.jpg")
+  end
+
+  test "a symlinked snapshot is replaced by the export's own" do
+    checkout(kind: "project")
+    project_export
+    elsewhere = File.join(@root, "elsewhere")
+    FileUtils.mkdir_p(elsewhere)
+    File.write(File.join(elsewhere, "local.css"), "")
+    FileUtils.mkdir_p(File.join(@root, "pages/_ds"))
+    File.symlink(elsewhere, File.join(@root, "pages/_ds/shared"))
+
+    status, out = sync
+
+    assert status.success?, out
+    refute File.symlink?(File.join(@root, "pages/_ds/shared"))
+    assert_path_exists File.join(@root, "pages/_ds/shared/_ds_manifest.json")
+    assert_path_exists File.join(elsewhere, "local.css"), "the checkout the link pointed at is left alone"
+  end
+
+  test "an export that disagrees with a file authored here is refused" do
+    checkout(kind: "system", upstream: ["system/tokens/colors.css:tokens/colors.css"])
+    system_export
+    write(File.join(@root, "system/tokens/colors.css"), "--accent: blue;")
+    File.write(File.join(@export, "tokens/colors.css"), "--accent: red;")
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "tokens/colors.css"
     assert_equal "--accent: blue;", File.read(File.join(@root, "system/tokens/colors.css"))
+  end
+
+  # A product repository mirrors into pages/ and authors its palette under system/: the guard reads
+  # the authored file where it lives, not under the export folder.
+  test "an authored palette outside the export folder is compared with the export's copy" do
+    checkout(kind: "project", upstream: ["system/tokens/colors.css:_ds/shared/tokens/colors.css"])
+    project_export
+    write(File.join(@root, "system/tokens/colors.css"), "--accent: blue;")
+    write(File.join(@export, "_ds/shared/tokens/colors.css"), "--accent: blue;")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/surface.html")
+
+    FileUtils.rm_rf(File.join(@root, "pages"))
+    File.write(File.join(@export, "_ds/shared/tokens/colors.css"), "--accent: red;")
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "_ds/shared/tokens/colors.css"
+    refute_path_exists File.join(@root, "pages")
+  end
+
+  test "an authored file missing on either side is named as missing" do
+    checkout(kind: "system", upstream: ["system/tokens/colors.css:tokens/colors.css"])
+    system_export
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "system/tokens/colors.css is missing from this repository"
+    refute_path_exists File.join(@root, "system/components")
+
+    write(File.join(@root, "system/tokens/colors.css"), "--accent: blue;")
+    FileUtils.rm(File.join(@export, "tokens/colors.css"))
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "the export is missing tokens/colors.css"
+    refute_path_exists File.join(@root, "system/components")
+  end
+
+  test "an upstream entry that does not name its path in the export is refused" do
+    checkout(kind: "system", upstream: ["tokens/colors.css"])
+    system_export
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "<path in this repository>:<path in the export>"
+    refute_path_exists File.join(@root, "system/components")
   end
 
   private
 
-  def checkout(kind:, upstream: [])
+  def checkout(kind:, upstream: [], required: [])
     @root = Dir.mktmpdir("design-repo-sync")
     FileUtils.mkdir_p(File.join(@root, "bin"))
     script = File.read(SCRIPT)
       .sub(/^KIND=".*"$/, %(KIND="#{kind}"))
-      .sub(/^UPSTREAM=\(.*\)$/, "UPSTREAM=(#{upstream.join(' ')})")
+      .sub(/^UPSTREAM=\(.*\)$/, "UPSTREAM=(#{upstream.map { |entry| %("#{entry}") }.join(' ')})")
+      .sub(/^REQUIRED_ROOT_FILES=\(.*\)$/, "REQUIRED_ROOT_FILES=(#{required.join(' ')})")
     File.write(File.join(@root, "bin/sync"), script)
     File.chmod(0o755, File.join(@root, "bin/sync"))
     @export = File.join(@root, "export")
   end
 
   def project_export
-    FileUtils.mkdir_p(File.join(@export, "_ds/shared"))
-    File.write(File.join(@export, "_ds/shared/_ds_manifest.json"), "{}")
-    File.write(File.join(@export, "books.html"), "<main></main>")
+    write(File.join(@export, "_ds/shared/_ds_manifest.json"), "{}")
+    write(File.join(@export, "surface.html"), "<main></main>")
   end
 
   def system_export
-    FileUtils.mkdir_p(File.join(@export, "components"))
-    FileUtils.mkdir_p(File.join(@export, "tokens"))
-    File.write(File.join(@export, "_ds_manifest.json"), "{}")
-    File.write(File.join(@export, "components/button.css"), ".btn{}")
-    File.write(File.join(@export, "tokens/colors.css"), "--accent: blue;")
+    write(File.join(@export, "_ds_manifest.json"), "{}")
+    write(File.join(@export, "components/button.css"), ".btn{}")
+    write(File.join(@export, "tokens/colors.css"), "--accent: blue;")
+  end
+
+  def write(path, body)
+    FileUtils.mkdir_p(File.dirname(path))
+    File.write(path, body)
   end
 
   def sync
-    _out, err, status = Open3.capture3(File.join(@root, "bin/sync"), @export)
-    [status, err]
+    out, err, status = Open3.capture3(File.join(@root, "bin/sync"), @export)
+    [status, out + err]
   end
 end

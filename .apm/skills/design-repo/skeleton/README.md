@@ -18,15 +18,20 @@ dist/                  what crosses into applications — generated, committed
 bin/sync               mirror a fresh export
 bin/ds-status          whether pages/_ds/ carries what the shared system does
 bin/shots              every page in every state, the application surface alone, into tmp/shots/
+bin/stand-ins          where each stand-in is on its way into the shared system
+bin/serve              every page from a real origin, with an index walked on each request
 ```
 
 ## Working on it
 
 ```bash
-bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an export of the wrong kind, an off-format page, or an edited upstream file
+bundle install  # once: the gems rake and bin/serve need
+bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, one of the wrong kind, an off-format page, or an edited upstream file
 rake            # every check, then the tests — the gate before each merge
 bin/ds-status   # a product bound to a shared system: what its _ds/ copy lacks, from the two manifests
+bin/stand-ins   # a product bound to a shared system: each stand-in's stage — unrequested, requested, upstream or landed
 bin/shots       # a product: screenshot every page in every state, and name each page that breaks the page contract
+bin/serve       # browse every page on http://localhost:4000
 ```
 
 A hand edit inside the export folder is reverted by the next `bin/sync`: a change to what the project draws starts as a brief in `briefs/proposed/`.

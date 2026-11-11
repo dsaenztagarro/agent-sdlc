@@ -6,16 +6,19 @@
 // note or a paragraph beside the surface never reaches a shot. A page that does not keep the
 // contract is named, and a brief fixes it; nothing here edits a page.
 //
-// The contract, in the page's own markup:
+// The contract, in the page as it renders:
 //   [data-surface]                            exactly one: the application as it renders, chrome included
-//   [data-state="<Name>"]                     one per state, inside the surface, one shown at a time
-//   [role="tablist"][aria-label="State"]      the state bar, one [role="tab"] per state, labelled with its name;
-//                                             required once a page has two states, hidden in every shot
-//   [data-family="<Family>"]                  on every state or none: a page with many states groups them;
-//                                             a family's states sit together, each named "<Family> · <state>",
-//                                             or "<Family>" alone for its first, without repeating the family;
-//                                             its tab reads "<state>", or "Default" for the bare one, and may
-//                                             be hidden while another family is shown
+//   [data-state="<Family> · <state>"]         one per state, inside the surface, one shown at a time; the
+//                                             family is the name before " · ", or the whole name for the
+//                                             family's first state. A family's states sit together, the
+//                                             bare one first, and a state never repeats its family
+//   #state=<family>/<state>                   the address that shows a state, as the design system's state
+//                                             switcher writes it
+//   [role="tablist"][aria-label="State"]      the switcher's State row, required once a page has two states:
+//                                             with a state shown, its selected tab is labelled with the
+//                                             state's name and reads "<state>", or "Default" for the bare one
+//   [data-design-chrome]                      the switcher and anything else drawn around the surface,
+//                                             hidden in every shot
 //
 // Usage: node lib/shots.js PAGES_DIR OUT_DIR
 // Exit 0 when every page keeps the contract, 1 when one does not, 2 when no browser can be launched.
@@ -27,7 +30,12 @@ const { chromium } = require("playwright-core");
 
 const [pagesDir, outDir] = process.argv.slice(2).map((p) => path.resolve(p));
 const SCALE = 2;
+const VIEWPORT = { width: 1440, height: 900 };
+// Chrome refuses a screenshot taller than about 32,000 device pixels; a taller surface is cut here.
+const MAX_HEIGHT = Math.floor(32000 / SCALE);
 const BAR = '[role="tablist"][aria-label="State"]';
+const CHROME = "[data-design-chrome]";
+const SEP = " · ";
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".jsx": "text/javascript",
   ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2" };
 
@@ -67,75 +75,91 @@ async function contract(page) {
   return page.evaluate((bar) => {
     const states = [...document.querySelectorAll("[data-state]")]
       .filter((el) => !el.parentElement.closest("[data-state]"))
-      .map((el) => ({ name: el.dataset.state, family: el.dataset.family }));
-    const tablist = document.querySelector(bar);
-    const tabs = tablist ? [...tablist.querySelectorAll('[role="tab"]')].map((t) => t.textContent.trim()) : null;
-    return { surfaces: document.querySelectorAll("[data-surface]").length, states, tabs };
+      .map((el) => el.dataset.state.trim());
+    return { surfaces: document.querySelectorAll("[data-surface]").length, states, hasBar: Boolean(document.querySelector(bar)) };
   }, BAR);
 }
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-// The label a state's tab carries: its whole name, or within a family the part after the family.
-function label({ name, family }) {
-  if (!family) return name;
-  if (name === family) return "Default";
-  return name.startsWith(`${family} · `) ? name.slice(family.length + 3) : name;
+// A state's family and the part after it, null for the bare family.
+function parse(name) {
+  const i = name.indexOf(SEP);
+  return i < 0 ? { family: name, part: null } : { family: name.slice(0, i), part: name.slice(i + SEP.length) };
 }
 
+// The address the switcher shows a state at, and the label its tab reads.
+const address = (name) => {
+  const { family, part } = parse(name);
+  return part === null ? slug(family) : `${slug(family)}/${slug(part)}`;
+};
+const label = (name) => parse(name).part ?? "Default";
+
 function familyBreaches(states) {
-  const grouped = states.filter((s) => s.family).length;
-  if (grouped === 0) return [];
-  if (grouped < states.length) return [`gives ${grouped} of its ${states.length} states a family; a grouped page gives every state one`];
   const found = [];
-  const families = [...new Set(states.map((s) => s.family))];
-  for (const family of families) {
-    const at = states.flatMap((s, i) => (s.family === family ? [i] : []));
+  const parsed = states.map(parse);
+  for (const family of new Set(parsed.map((s) => s.family))) {
+    const at = parsed.flatMap((s, i) => (s.family === family ? [i] : []));
     if (at[at.length - 1] - at[0] + 1 !== at.length) found.push(`its "${family}" family is split: its states do not sit together`);
+    const bare = at.find((i) => parsed[i].part === null);
+    if (bare !== undefined && bare !== at[0]) found.push(`its state "${states[bare]}" is the bare family but not the "${family}" family's first`);
   }
-  for (const s of states) {
-    if (s.name !== s.family && !s.name.startsWith(`${s.family} · `)) {
-      found.push(`its state "${s.name}" does not start with its family "${s.family}"`);
-    } else if (s.name !== s.family && new RegExp(`\\b${escape(s.family)}\\b`, "i").test(label(s))) {
-      found.push(`its state "${s.name}" repeats its family`);
-    }
+  for (const [i, { family, part }] of parsed.entries()) {
+    if (part !== null && new RegExp(`\\b${escape(family)}\\b`, "i").test(part)) found.push(`its state "${states[i]}" repeats its family`);
   }
   return found;
 }
 
-function breaches({ surfaces, states, tabs }) {
+function breaches({ surfaces, states, hasBar }) {
   const found = [];
   if (surfaces !== 1) found.push(`has ${surfaces} [data-surface] elements; it needs exactly one`);
   if (states.length === 0) found.push("names no state: no [data-state] element");
-  if (states.length > 1 && !tabs) found.push(`has ${states.length} states and no state bar`);
+  if (states.length > 1 && !hasBar) found.push(`has ${states.length} states and no state bar`);
   found.push(...familyBreaches(states));
-  const labels = states.map(label);
-  if (tabs && tabs.join("|") !== labels.join("|")) {
-    found.push(`its state bar reads ${JSON.stringify(tabs)}, its states are ${JSON.stringify(labels)}`);
-  }
   return found;
 }
 
+// Each state is reached at its address, and the bar must then name it; the design chrome is hidden
+// while the surface is captured, on a page with one state as on one with many.
 async function shoot(page, rel, states, hasBar) {
   const shots = [];
-  for (const [i, { name }] of states.entries()) {
+  const cut = [];
+  for (const [i, name] of states.entries()) {
     if (hasBar) {
-      // Dispatched rather than clicked: a grouped bar hides the tabs of every family but the one shown.
-      await page.locator(`${BAR} [role="tab"]`).nth(i).dispatchEvent("click");
+      await page.evaluate((hash) => { location.hash = hash; }, `state=${address(name)}`);
       const shown = await page.waitForFunction(
-        (n) => [...document.querySelectorAll("[data-state]")].some((el) => el.dataset.state === n && el.checkVisibility()),
+        (n) => [...document.querySelectorAll("[data-state]")].some((el) => el.dataset.state.trim() === n && el.checkVisibility()),
         name, { timeout: 2000 }
       ).then(() => true, () => false);
-      if (!shown) return { breach: `its "${name}" tab does not show the "${name}" state` };
-      await page.evaluate((bar) => { document.querySelector(bar).style.visibility = "hidden"; }, BAR);
+      if (!shown) return { breach: `its address #state=${address(name)} does not show the "${name}" state` };
+      const tab = await page.evaluate((bar) => {
+        const t = document.querySelector(`${bar} [role="tab"][aria-selected="true"]`);
+        return t && { name: t.getAttribute("aria-label"), text: t.textContent.trim() };
+      }, BAR);
+      if (!tab || tab.name !== name || tab.text !== label(name)) {
+        return { breach: `at the "${name}" state, its state bar reads ${JSON.stringify(tab?.text ?? null)}, not "${label(name)}"` };
+      }
     }
+    await page.evaluate((chrome) => document.querySelectorAll(chrome).forEach((c) => { c.style.visibility = "hidden"; }), CHROME);
     const file = path.join(rel.replace(/\.html$/, ""), `${String(i + 1).padStart(2, "0")}-${slug(name)}.png`);
     fs.mkdirSync(path.join(outDir, path.dirname(file)), { recursive: true });
+    // The stage gives the surface the viewport's height and the surface scrolls inside it, so a shot
+    // would stop at the fold: the viewport grows by what the surface's scrollers overflow.
+    const overflow = await page.evaluate(() => {
+      const surface = document.querySelector("[data-surface]");
+      return Math.max(0, ...[surface, ...surface.querySelectorAll("*")]
+        .filter((el) => /auto|scroll/.test(getComputedStyle(el).overflowY))
+        .map((el) => el.scrollHeight - el.clientHeight));
+    });
+    const height = VIEWPORT.height + overflow;
+    if (height > MAX_HEIGHT) cut.push(name);
+    await page.setViewportSize({ ...VIEWPORT, height: Math.min(height, MAX_HEIGHT) });
     await page.locator("[data-surface]").screenshot({ path: path.join(outDir, file), animations: "disabled" });
-    if (hasBar) await page.evaluate((bar) => { document.querySelector(bar).style.visibility = ""; }, BAR);
+    await page.setViewportSize(VIEWPORT);
+    await page.evaluate((chrome) => document.querySelectorAll(chrome).forEach((c) => { c.style.visibility = ""; }), CHROME);
     shots.push({ name, file });
   }
-  return { shots };
+  return { shots, cut };
 }
 
 function index(shot) {
@@ -165,19 +189,21 @@ ${sections.join("\n")}\n`;
   const base = `http://127.0.0.1:${server.address().port}/`;
   const shot = {};
   const broken = [];
+  const cuts = [];
 
   for (const file of pages(pagesDir)) {
     const rel = path.relative(pagesDir, file);
-    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: SCALE });
+    const page = await browser.newPage({ viewport: VIEWPORT, deviceScaleFactor: SCALE });
     await page.goto(base + rel.split(path.sep).map(encodeURIComponent).join("/"), { waitUntil: "networkidle" });
     const found = await contract(page);
     const breach = breaches(found);
     if (breach.length) {
       breach.forEach((b) => broken.push(`${rel}: ${b}`));
     } else {
-      const result = await shoot(page, rel, found.states, Boolean(found.tabs));
+      const result = await shoot(page, rel, found.states, found.hasBar);
       if (result.breach) broken.push(`${rel}: ${result.breach}`);
       else shot[rel] = result.shots;
+      result.cut?.forEach((name) => cuts.push(`${rel}: the ${name} state is cut at ${MAX_HEIGHT}px, taller than one screenshot holds`));
     }
     await page.close();
   }
@@ -188,6 +214,7 @@ ${sections.join("\n")}\n`;
 
   const count = Object.values(shot).reduce((n, s) => n + s.length, 0);
   console.log(`${count} shots of ${Object.keys(shot).length} pages — open ${path.join(outDir, "index.html")}`);
+  cuts.forEach((c) => console.log(`  ${c}`));
   if (broken.length) {
     console.error(`${broken.length} page contract breach(es) — a brief fixes them, never an edit in the mirror:`);
     broken.forEach((b) => console.error(`  ${b}`));
