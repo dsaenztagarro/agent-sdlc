@@ -16,7 +16,7 @@ Use it **only for generalizable, project-agnostic** improvements to the agentic 
 
 | Use the skill | Do NOT use the skill (handle locally instead) |
 |---|---|
-| A missing/weak rule in `AGENTS.md`'s portable sections | A project-specific rule → edit *this* repo's `AGENTS.md` |
+| A missing/weak rule in `AGENTS.md`'s portable sections, or in the testing rule `.claude/rules/testing.md` | A project-specific rule → edit *this* repo's `AGENTS.md` or rule |
 | A skill (`design-handoff`, this one, …) whose steps could be clearer/safer | A bug in this project's code or tests |
 | A docs-taxonomy gap (what belongs in a record, a test, the README or a skill) | A one-off decision → the theme's record in *this* repo |
 | A portable principle worth adding (testing, model selection, docs style) | Project content, copy, or config |
@@ -39,7 +39,8 @@ Restate the improvement in one project-agnostic sentence. If you can't (it names
 Identify the template files the change lands in, e.g.:
 
 ```
-AGENTS.md                                  # a rule/principle
+AGENTS.md                                  # a rule/principle every task needs
+.claude/rules/testing.md                   # a testing rule, or one for building a stateful component
 .apm/skills/<name>/SKILL.md                # a skill's steps
 .apm/agents/<name>.agent.md                # an agent's prompt
 docs/adr/README.md                         # decision-record conventions
