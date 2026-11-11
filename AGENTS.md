@@ -151,7 +151,7 @@ Rules that depend on the project's tooling, each a `FILL` with its rule beside i
 6. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
 7. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
-Every ticket and every pull request **opens with `## Sequence`:** its ticket, the previous and the next, one reference per line.
+Every ticket and every pull request **opens with `## Sequence`**, one reference per line: a ticket names the previous ticket, the next and its pull requests; a pull request names its ticket, the previous pull request and the next.
 
 A pull request:
 
