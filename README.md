@@ -172,7 +172,7 @@ cd <project>
 
 ### 2. Fill in `AGENTS.md`
 
-Replace every `<!-- FILL: … -->` marker — the project overview, the gate commands, the architecture map, the project's own rules — and delete the sections that do not apply, such as the design workflow for a headless service.
+Replace every `<!-- FILL: … -->` marker — the project overview, the gate commands, the architecture map, the project's own rules — and delete the sections that do not apply, such as the design workflow for a headless service or a surface that takes all its colours from its host.
 
 ```bash
 # list the placeholders still to fill
@@ -208,9 +208,11 @@ gh label create decision-log
 gh issue create --label decision-log --title "decision-log: <theme>" --body "History of docs/adr/<theme>.md"
 ```
 
-### 6. Create the design repository, for a UI
+### 6. Create the design repository, for a UI whose colours the product owns
 
-Run the `design-repo` skill, and fill in the names in `AGENTS.md`'s design section, which `design-handoff` reads. Without a UI, delete that section.
+Run the `design-repo` skill, and fill in the block of names in `AGENTS.md`'s design section, one per line, which the design skills and agents read.
+
+A surface whose colours belong to its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — needs no design repository: delete the design section, and record why in the theme's decision record, with the condition that reopens it. Without a UI, delete the section too. The design skills stay installed with the package and do not apply without it.
 
 ### 7. Copy the local settings
 
