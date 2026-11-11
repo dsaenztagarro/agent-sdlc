@@ -32,6 +32,12 @@ UPSTREAM=()
 # stylesheet (styles.css); a terminal client's export carries none, and lists nothing.
 REQUIRED_ROOT_FILES=()
 
+# The Markdown files the project keeps as its own, each a path relative to the export root, or a
+# pattern whose * also crosses folders. Any other Markdown outside _ds/ is a note — a request, a
+# plan — and the export is refused: a request belongs in the open brief of the repository whose
+# project will draw it, where an export cannot delete it.
+PROJECT_FILES=(readme.md AGENTS.md CLAUDE.md)
+
 # Authoring noise a designer leaves in a project, referenced by nothing.
 EXCLUDES=(uploads/ scraps/ screenshots/ '*.png' .thumbnail)
 
@@ -120,6 +126,24 @@ if [[ -n "$off_format" ]]; then
   printf '%s\n' "$off_format" | sed 's/^/    /' >&2
   echo "  Keep the chosen version under its canonical name in Claude Design, delete the rest, re-export." >&2
   echo "  Nothing was mirrored." >&2
+  exit 1
+fi
+
+# --- No note beside the pages ------------------------------------------------
+notes=()
+while IFS= read -r path; do
+  own=false
+  for pattern in "${PROJECT_FILES[@]+"${PROJECT_FILES[@]}"}"; do
+    if [[ "$path" == $pattern ]]; then own=true; break; fi
+  done
+  $own || notes+=("$path")
+done < <(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o -type f -name '*.md' -print | sed 's|^\./||' | sort)
+if [[ ${#notes[@]} -gt 0 ]]; then
+  echo "error: the export carries notes beside its pages:" >&2
+  printf '    %s\n' "${notes[@]}" >&2
+  echo "  A request to the shared design system amends the open brief for its theme in that repository's" >&2
+  echo "  briefs/proposed/; a request to this project amends this repository's. Then delete the note in" >&2
+  echo "  Claude Design and export again. Nothing was mirrored." >&2
   exit 1
 fi
 

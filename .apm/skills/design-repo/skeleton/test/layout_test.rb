@@ -18,6 +18,8 @@ class LayoutTest < Minitest::Test
   ROOT_FOLDERS = %w[briefs pages system references vendor docs lib test dist bin .design-sync .claude .github].freeze
   ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile Gemfile Gemfile.lock .gitignore LICENSE].freeze
   EXPORT_FOLDERS = %w[pages system].freeze
+  RULE_LENGTH = 80
+  BRIEF_HEADER = /\A(?:[-*]\s+)?(?:\*\*)?(?:For|Produces|Do[- ]not[- ]edit|Status):/i
 
   def test_every_top_level_entry_is_one_the_layout_names
     entries = tracked.map { |path| path.split("/").first }.uniq
@@ -47,6 +49,20 @@ class LayoutTest < Minitest::Test
     misplaced = briefs.reject { |path| path.match?(%r{\Abriefs/proposed/[^/]+\.brief\.md\z}) }
 
     assert_empty misplaced
+  end
+
+  # A rule pasted into each brief dies with each one, and the copies drift as the rule moves.
+  def test_no_rule_is_repeated_in_two_open_briefs
+    briefs = tracked.select { |path| path.start_with?("briefs/") && File.file?(File.join(ROOT, path)) } - ["briefs/README.md"]
+    found_in = Hash.new { |hash, line| hash[line] = [] }
+    briefs.each do |path|
+      File.readlines(File.join(ROOT, path)).map(&:strip).uniq
+          .select { |line| line.length >= RULE_LENGTH && !line.match?(BRIEF_HEADER) }
+          .each { |line| found_in[line] << path }
+    end
+    repeated = found_in.select { |_line, paths| paths.size > 1 }.map { |line, paths| "#{paths.join(' and ')}: #{line}" }
+
+    assert_empty repeated, "a rule that holds for every export belongs in the design project's own readme.md, pushed with /design-sync, never in a brief"
   end
 
   def test_a_vendored_shared_system_is_a_name_ds_folder

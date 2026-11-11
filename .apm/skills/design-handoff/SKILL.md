@@ -62,7 +62,9 @@ Observed, not documented: it writes one change at a time, never as a wholesale r
 
 - **A rule that must hold for every future export goes into the project's own `readme.md` through `/design-sync`**, which the project reads before it draws. Pasted into a brief, the same rule dies with the brief. Not documented: that `/design-sync` writes the project's `readme.md` is stated by no documentation, so check the project shows the rule after the sync.
 - **The project's agent context holds principles, never decisions about particular elements.** A principle — shape names the field, colour flags attention, absence is calm — holds for elements not drawn yet. A decision about one chip or one column is drawn in its page, and changes without the agent context changing; written into it, the decision becomes a second copy of the page that drifts, and the file grows with the elements instead of with the product's ideas. A ruling that is a principle amends the agent context; a ruling about one element is drawn in that element's page. An index that only names what exists — components, pages, tokens — is not a decision, and stays: it carries no rule to drift.
-- **The mirror is refreshed only through the export** and the design repository's sync script, whose refusals — an export that is not a design system's, a file the repository owns that the project edited — are the review gate.
+- **The mirror is refreshed only through the export** and the design repository's sync script, whose refusals — an export that is not a design system's, a file the repository owns that the project edited, a note beside the pages — are the review gate.
+- **The export carries no request.** A request or a plan the project writes into its files reaches no brief, and the next export can delete it unseen: the project raises it in the design chat, the sync script refuses an export carrying one, and its content goes to the open brief of the repository whose project will draw it.
+- **A brief never restates a rule that holds for every export.** Each copy dies with its brief, and the copies drift as the rule moves; the design repository's layout check fails when two open briefs share a long line.
 
 ## 3. The export mirror is generated — never hand-edit it
 
@@ -97,10 +99,15 @@ Only where a shared design system is vendored (§1).
 - **A shared component that serves the job as well as anything could is used as it is.**
 - **Otherwise the product owns one.** A component that makes this product's experience better — a widget only its domain needs, or a shape the shared one cannot take without bending — is drawn in the product's project, in its own leaf, and is the product's for good. That the shared system lacks it is no reason to move it there; best-in-class surfaces need components fitted to each product.
 - **A component is promoted only once it is generic enough to serve other applications** — its rules hold with this product's domain taken out, and a second application would use it unchanged. Then, and only then, it takes the route below.
+- **A promotion Design proposes is an input to that test, never a decision** — whether it comes in the design chat, as a stand-in marker, or as a note in the export, which `bin/sync` refuses. The agent who publishes the export judges it, at the step `bin/stand-ins` reports the stand-in `unrequested`:
+  - **it passes** — the agent amends the shared system's open brief for the component's theme, or opens one for a theme none covers, carrying the stand-in's rules and names byte for byte and none of the steps Design proposed: a brief states the problem and the rules, and the drawing is the shared system's project's to invent;
+  - **it fails** — the block loses its marker, through a brief to the product's own project, and stays the product's for good.
+
+  Either way, nothing is written into either repository's export folder.
 
 ### Promoting a component: one stand-in, landed by deletion
 
-The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and the request goes in the **shared system's repository**: it amends that repository's open brief for the component's theme in `briefs/proposed/`, or opens `<theme>.brief.md` when none covers it, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
+The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, where `<Component>` is the one PascalCase name the shared system will list it under — `bin/stand-ins` looks the stand-in up by the first such name after "lands", so a description in its place names the wrong component. The marker form reaches the design project in its own `readme.md`, seeded by the `design-repo` skill, since the project never sees this skill. The request goes in the **shared system's repository**: it amends that repository's open brief for the component's theme in `briefs/proposed/`, or opens `<theme>.brief.md` when none covers it, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
 
 - **Byte-identical is the point.** When the component lands, the stand-in is deleted — the classes, or the local definition of the token or glyph — and no markup or renderer call changes; a stand-in that drifted from its brief turns landing into a migration.
 - **The request lives with the system that will draw it.** It joins the shared system's open brief for its theme, one theme attached to that project at a time, and leaves the brief once it lands.
@@ -137,7 +144,8 @@ The copy does not follow the shared system: a request that lands there reaches t
   the project draws it; export downloaded         <- a person
         |
         v
-  in <project>-ds: sync (which shoots every page), regenerate, run the suite
+  in <project>-ds: sync (which shoots every page), stand-ins,
+  regenerate, run the suite
         |
         v
   review the sync diff: a rule changed or only a comment?
