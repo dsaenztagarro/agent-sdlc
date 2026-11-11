@@ -4,6 +4,7 @@ require_relative "test_helper"
 require "cgi"
 require "fileutils"
 require "net/http"
+require "open3"
 require "socket"
 require "tmpdir"
 require "uri"
@@ -73,6 +74,13 @@ class ServeTest < Minitest::Test
 
   test "a path with a malformed escape gets an answer" do
     assert_match(/\A4\d\d\z/, get("/pages/%ZZ.html").code)
+  end
+
+  test "a second server on a busy port says so in one line" do
+    out, status = Open3.capture2e("ruby", File.join(@root, "bin/serve"), @port.to_s)
+
+    refute status.success?
+    assert_equal ["port #{@port} is in use: run bin/serve <another port>"], out.lines.map(&:chomp).reject(&:empty?)
   end
 
   test "a path outside the repository is never served" do

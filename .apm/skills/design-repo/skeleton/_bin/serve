@@ -19,6 +19,7 @@
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 require "bundler/setup"
 require "sinatra/base"
+require "socket"
 
 ROOT = File.expand_path("..", __dir__)
 
@@ -51,4 +52,11 @@ class Serve < Sinatra::Base
   end
 end
 
-Serve.run!(port: Integer(ARGV.fetch(0, "4000")), bind: "127.0.0.1")
+port = Integer(ARGV.fetch(0, "4000"))
+begin
+  TCPServer.new("127.0.0.1", port).close
+rescue Errno::EADDRINUSE
+  abort "port #{port} is in use: run bin/serve <another port>"
+end
+puts "serving #{ROOT} on http://localhost:#{port}, ^C to stop"
+Serve.run!(port: port, bind: "127.0.0.1", quiet: true, server_settings: { Silent: true })
