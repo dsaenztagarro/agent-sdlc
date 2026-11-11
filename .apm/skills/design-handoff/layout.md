@@ -116,7 +116,7 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
   - an export of the wrong kind — a consuming product's export into a shared system;
   - an export whose copy of a file this repository authors upstream differs or is missing;
   - a page that is not one canonical prototype per surface — a versioned copy, an audit, a rationale or an options page.
-- It never mirrors authoring screenshots, and replaces a symlinked snapshot with the export's own. Behaviour artefacts — a `spec-notes/` folder, a rulings page — are mirrored and reported as a regression of the surface-only contract, so their arrival is news rather than silently filtered.
+- It never mirrors authoring screenshots, and replaces a symlinked snapshot with the export's own.
 - It stages into a git-ignored `tmp/`, deletes only inside the checkout, mirrors, reports what changed, and leaves committing to a person.
 - **`ds-status`**, in a product's repository, compares the `_ds/` snapshot's manifest with the shared system's, and exits 1 when the snapshot lacks a token or component the shared system carries.
 - **`shots`**, in a product's repository, runs after every sync: it reaches each state of each page at its address, `#state=<family>/<state>`, checks that the State row names it, hides `[data-design-chrome]`, and screenshots the `[data-surface]` element whole into the git-ignored `tmp/shots/`, with an `index.html` contact sheet; it exits 1 naming each page that breaks the page contract (§4 of the skill). The generator is `lib/shots.js`; Playwright drives the installed Chrome from a cache outside the repository, and its test skips, saying so, where node or a browser is missing.

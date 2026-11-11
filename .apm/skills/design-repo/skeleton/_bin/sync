@@ -12,8 +12,7 @@
 # page is not one canonical prototype per surface, or when it disagrees with a file this
 # repository authors and pushes up (UPSTREAM below). Every delete is confined to this checkout.
 #
-# Authoring screenshots never cross. Behaviour artefacts do, and are reported: the design project
-# ships the surface only, and filtering them here would hide that it stopped doing so.
+# Authoring screenshots never cross.
 #
 # Usage:
 #   bin/sync [SOURCE]   SOURCE is the export as a zip or a directory.
@@ -142,17 +141,7 @@ exclude_args=()
 for pattern in "${EXCLUDES[@]}"; do exclude_args+=(--exclude "$pattern"); done
 rsync -a --delete "${exclude_args[@]}" "$export_root/" "$target/"
 
-# --- Behaviour artefacts: report, never filter -------------------------------
-# The design project ships the surface only: behaviour reaches it as a brief and comes back as an
-# open question, decided in the application. A spec-notes folder or a rulings page means it has
-# regressed; excluding them here would keep it authoring behaviour that nobody receives.
 folder=$(basename "$target")
-behaviour=$(cd "$target" && find . \( -name _ds -prune \) -o \( -name spec-notes -o -name '*rulings*' \) -print | sed "s|^\./|$folder/|" | sort)
-if [[ -n "$behaviour" ]]; then
-  echo "warning: the export carries behaviour artefacts, a regression of the surface-only contract:"
-  printf '%s\n' "$behaviour" | sed 's/^/    /'
-  echo "  Behaviour lives in the application's tests and decision records: brief the project to remove them."
-fi
 
 # --- Report; committing is a person's call -----------------------------------
 if git -C "$repo_root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then

@@ -10,7 +10,7 @@ require "tmpdir"
 # The mirror is `rsync --delete`, so whatever an export carries becomes this repository's truth,
 # and every refusal has to happen before anything is copied: an incomplete export, the other kind,
 # a page that is not one canonical prototype, an edit to a file this repository authors. Authoring
-# screenshots never cross; behaviour artefacts cross and are reported, so their arrival is news.
+# screenshots never cross.
 # Each test runs a copy of bin/sync in a throwaway checkout, set to the export kind under test,
 # because the script resolves its target from its own location and a real run would mirror over
 # this repository.
@@ -102,22 +102,6 @@ class SyncTest < Minitest::Test
     refute status.success?
     pages.each { |page| assert_includes out, page }
     refute_path_exists File.join(@root, "pages")
-  end
-
-  test "an export carrying behaviour artefacts is mirrored and reported as a contract regression" do
-    checkout(kind: "project")
-    project_export
-    FileUtils.mkdir_p(File.join(@export, "spec-notes"))
-    File.write(File.join(@export, "spec-notes/save-rules.md"), "")
-    File.write(File.join(@export, "list-rulings.html"), "")
-
-    status, out = sync
-
-    assert status.success?, out
-    assert_includes out, "surface-only contract"
-    assert_includes out, "pages/spec-notes"
-    assert_includes out, "pages/list-rulings.html"
-    assert_path_exists File.join(@root, "pages/spec-notes/save-rules.md")
   end
 
   test "authoring screenshots in an export are never mirrored" do
