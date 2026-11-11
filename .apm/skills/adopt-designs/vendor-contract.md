@@ -20,7 +20,7 @@ token set, in a format with # comments (TOML, YAML):
 # vendored from <design repository>@<revision> sha256:<digest> — re-vendor with <vendor command>, never edit by hand
 ```
 
-A format with no comment syntax — a JSON token set — cannot carry the line without breaking its own parse. Its stamp is the same line without comment markers, alone in a sidecar file named for the vendored file with `.stamp` appended, written by the same vendor run; the digest then covers the whole vendored file.
+A format with no comment syntax — a JSON token set — cannot carry the line without breaking its own parse. Its stamp is the same line without comment markers, alone in a sidecar file named for the vendored file with `.stamp` appended, written by the same vendor run; the digest then covers the whole vendored file. The sidecar is part of the file it stamps: it lives beside it, counts as at the vendored path even when that path names the single file, and is never checked as a file of its own.
 
 - `<design repository>` is the name `AGENTS.md`'s design section gives.
 - `<revision>` is the full object name of the design checkout's `HEAD`, never abbreviated.
@@ -57,7 +57,7 @@ Whether the new revision is the current one is not the vendor command's to say: 
 
 Each adopter writes these, in its own stack, under these names, against a real temporary git repository with a bare remote standing in for the design repository — never a stubbed git:
 
-- `the vendored bytes match the digest` — every file at or under the path the design section gives as the artefact's vendored path carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file a second path writes there fails it too. Every vendored file lives at that path; one written elsewhere is invisible to this test, and the one-writer rule is then held by review alone.
+- `the vendored bytes match the digest` — every file other than a sidecar at or under the path the design section gives as the artefact's vendored path carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file a second path writes there fails it too. Every vendored file lives at that path; one written elsewhere is invisible to this test, and the one-writer rule is then held by review alone.
 - `an edit breaks the digest` — one byte of the stamped content changed, and the digest check fails.
 - `vendoring pins HEAD` — vendoring from the fixture stamps its `HEAD`'s full revision and the design repository's name.
 - `a dirty artefact is refused` — an uncommitted change to the published artefact is refused, and the vendored file is left as it was.
