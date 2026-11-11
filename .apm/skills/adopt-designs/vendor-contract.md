@@ -16,9 +16,11 @@ The stamp is the file's first line, in the artefact's own comment syntax:
 stylesheet bundle:
 /* vendored from <design repository>@<revision> sha256:<digest> — re-vendor with <vendor command>, never edit by hand */
 
-token set:
+token set, in a format with # comments (TOML, YAML):
 # vendored from <design repository>@<revision> sha256:<digest> — re-vendor with <vendor command>, never edit by hand
 ```
+
+A format with no comment syntax — a JSON token set — cannot carry the line without breaking its own parse. Its stamp is the same line without comment markers, alone in a sidecar file named for the vendored file with `.stamp` appended, written by the same vendor run; the digest then covers the whole vendored file.
 
 - `<design repository>` is the name `AGENTS.md`'s design section gives.
 - `<revision>` is the full object name of the design checkout's `HEAD`, never abbreviated.
@@ -55,8 +57,8 @@ Whether the new revision is the current one is not the vendor command's to say: 
 
 Each adopter writes these, in its own stack, under these names, against a real temporary git repository with a bare remote standing in for the design repository — never a stubbed git:
 
-- `the vendored bytes match the digest` — every vendored file in the application starts with a stamp whose digest matches the bytes after it. It runs in the gate, so an unstamped file from a second path fails it too.
-- `an edit breaks the digest` — one byte changed after the stamp, and the digest check fails.
+- `the vendored bytes match the digest` — every vendored file in the application carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file from a second path fails it too.
+- `an edit breaks the digest` — one byte of the stamped content changed, and the digest check fails.
 - `vendoring pins HEAD` — vendoring from the fixture stamps its `HEAD`'s full revision and the design repository's name.
 - `a dirty artefact is refused` — an uncommitted change to the published artefact is refused, and the vendored file is left as it was.
 - `a stderr warning is not read as dirty` — a git that writes a warning to stderr and a clean status to stdout vendors normally. A wrapper on `PATH` that writes the warning and then runs the real git is the one double this needs: the warning cannot be produced otherwise.
