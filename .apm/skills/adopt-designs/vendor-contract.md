@@ -6,7 +6,7 @@ Each adopter implements it once, in its own stack, and names the command in `AGE
 
 ## One writer, one stamp per file
 
-**The vendor command is the only path that writes a vendored file, and every file it writes carries a stamp.**
+**The vendor command is the only path that writes a vendored file, every file it writes carries a stamp, and every one lives at or under the vendored path the design section gives.**
 A second script that copies from the design repository writes a file nothing can trace; fold it into the vendor command or delete it.
 A file generated here from the vendored artefact — code compiled from a token set — is not vendored: it carries no stamp, and is held by its own regenerate-and-compare test instead.
 
@@ -57,7 +57,7 @@ Whether the new revision is the current one is not the vendor command's to say: 
 
 Each adopter writes these, in its own stack, under these names, against a real temporary git repository with a bare remote standing in for the design repository — never a stubbed git:
 
-- `the vendored bytes match the digest` — every vendored file in the application carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file from a second path fails it too.
+- `the vendored bytes match the digest` — every file at or under the path the design section gives as the artefact's vendored path carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file a second path writes there fails it too. Every vendored file lives at that path; one written elsewhere is invisible to this test, and the one-writer rule is then held by review alone.
 - `an edit breaks the digest` — one byte of the stamped content changed, and the digest check fails.
 - `vendoring pins HEAD` — vendoring from the fixture stamps its `HEAD`'s full revision and the design repository's name.
 - `a dirty artefact is refused` — an uncommitted change to the published artefact is refused, and the vendored file is left as it was.
