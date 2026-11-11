@@ -163,7 +163,7 @@ The copy does not follow the shared system: a request that lands there reaches t
 **One open brief per theme, named for the theme and amended in place.** A new ask joins the open brief for its theme; a brief opens only for a theme none covers. Briefs opened request by request grow with the work and stop being read. The design repository's `briefs/README.md` carries the house format and the reader rule.
 
 1. **State the constraint; do not cite the artefact.** A decision's ruling is written out as a sentence, with its theme named beside it; the record itself lives where `AGENTS.md`'s design section says decision records do. A link out of the design repository resolves to nothing at the far end.
-2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no.
+2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no, except on the brief's Do-not-edit line, where application paths, issue numbers, checkouts and framework names constrain the deliverable rather than explain it.
 3. **A brief never cites another brief.** Each is deleted on its own schedule.
 4. **A technical decision belongs in a decision record here, not in the design.** The brief asks Design to *depict* a ruling, never to make it. A behaviour the page must show that nothing has settled is drawn and labelled as an **open question**, never as a rule.
 
