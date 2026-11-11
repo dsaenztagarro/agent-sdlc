@@ -33,7 +33,7 @@ UPSTREAM=()
 REQUIRED_ROOT_FILES=()
 
 # The Markdown files the project keeps as its own, each a path relative to the export root, or a
-# pattern whose * also crosses folders. Any other Markdown outside _ds/ is a note — a request, a
+# pattern whose * also crosses folders, matched in any case. Any other Markdown outside _ds/ is a note — a request, a
 # plan — and the export is refused: a request belongs in the open brief of the repository whose
 # project will draw it, where an export cannot delete it.
 PROJECT_FILES=(readme.md AGENTS.md CLAUDE.md)
@@ -131,6 +131,7 @@ fi
 
 # --- No note beside the pages ------------------------------------------------
 notes=()
+shopt -s nocasematch
 while IFS= read -r path; do
   own=false
   for pattern in "${PROJECT_FILES[@]+"${PROJECT_FILES[@]}"}"; do
@@ -138,6 +139,7 @@ while IFS= read -r path; do
   done
   $own || notes+=("$path")
 done < <(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o -type f \( -iname '*.md' -o -iname '*.markdown' \) -print | sed 's|^\./||' | sort)
+shopt -u nocasematch
 if [[ ${#notes[@]} -gt 0 ]]; then
   echo "error: the export carries notes beside its pages:" >&2
   printf '    %s\n' "${notes[@]}" >&2

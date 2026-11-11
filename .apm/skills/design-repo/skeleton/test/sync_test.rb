@@ -145,6 +145,17 @@ class SyncTest < Minitest::Test
     %w[readme.md AGENTS.md CLAUDE.md].each { |file| assert_path_exists File.join(@root, "pages", file) }
   end
 
+  test "the project's own files are recognised whatever their case" do
+    checkout(kind: "project")
+    project_export
+    File.write(File.join(@export, "README.md"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/README.md")
+  end
+
   test "a note inside the design-system snapshot is mirrored" do
     checkout(kind: "project")
     project_export
