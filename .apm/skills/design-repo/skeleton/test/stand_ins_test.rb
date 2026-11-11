@@ -44,6 +44,15 @@ class StandInsTest < Minitest::Test
     assert_match(/^requested +Callout /, out)
   end
 
+  test "a brief that names a component only in passing does not request it" do
+    project(stand_in: callout, copy: {}, shared: {}, briefs: { "density.brief.md" => "# Density\n\nThe Callout above keeps its own padding.\n" })
+
+    out, status = run_script
+
+    refute status.success?
+    assert_match(/^unrequested\s+Callout/, out)
+  end
+
   test "a selector list split across lines lands only when every class in it does" do
     stand_in = "/* STAND-IN — delete when the design system lands Callout */\n.callout,\n.callout-body { padding: 4px; }\n"
     copy = { components: ["Callout"], css: ".callout-body { padding: 4px; }" }

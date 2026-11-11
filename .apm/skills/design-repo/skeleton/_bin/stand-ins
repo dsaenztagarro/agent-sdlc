@@ -83,13 +83,16 @@ end
 
 copy = System.read(copies.first)
 upstream = System.read(File.join(shared, "system"))
-# One open brief per theme: a request is open while one of them names the component.
-briefs = Dir.glob(File.join(shared, "briefs/proposed/*.brief.md")).map { |path| File.read(path) }
+# One open brief per theme: a request is open while one of them asks for the component, in a
+# heading or on its Produces line. A name mentioned in passing asks for nothing.
+asks = Dir.glob(File.join(shared, "briefs/proposed/*.brief.md")).flat_map do |path|
+  File.readlines(path).grep(/\A#|Produces:/)
+end
 
 stages = stand_ins.map do |stand_in|
   stage = if copy.carries?(stand_in) then "landed"
           elsif upstream.carries?(stand_in) then "upstream"
-          elsif stand_in.name && briefs.any? { |brief| brief.match?(/\b#{Regexp.escape(stand_in.name)}\b/) } then "requested"
+          elsif stand_in.name && asks.any? { |ask| ask.match?(/\b#{Regexp.escape(stand_in.name)}\b/) } then "requested"
           else "unrequested"
           end
   puts format("%-12s %-16s %s:%d  %s", stage, stand_in.name || "?", stand_in.path, stand_in.line, stand_in.text)
