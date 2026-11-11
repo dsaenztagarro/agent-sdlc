@@ -69,7 +69,7 @@ The triage in `adopt-designs` marks each finding with the guard that catches it,
 
 | guard | web, stylesheet bundle | terminal, token set |
 |---|---|---|
-| **triage** | a class the markup writes that no shipped stylesheet declares fails the build; a class the bundle ships that no markup writes is reported as coverage, not failed | a token name the code reads that neither the vendored set nor the shared system's tokens define fails the build; a name the set ships that no code reads is reported as coverage, not failed |
+| **triage** | a class the markup writes, or a custom property the application's styles read, that no shipped stylesheet declares fails the build; a class the bundle ships that no markup writes is reported as coverage, not failed | a token name the code reads that neither the vendored set nor the shared system's tokens define fails the build; a name the set ships that no code reads is reported as coverage, not failed |
 | **ownership** | no application selector that the design declares: one selector, one home | no colour or glyph literal outside the token loader |
 | **precedence** | the cascade layer order, documented once and tested once | the order among the vendored set, the shared system's tokens, the user's overrides and the renderer's defaults, documented once and tested once |
 | **parity** | a node's computed style against the same node on the design page, in the same state | one golden frame per page state, ANSI-stripped so it holds composition only, compared against that state, or recorded as deferred in the theme's decision record |
