@@ -184,7 +184,7 @@ A long queue is the signal to triage, not to reshape: the reshape waits until th
 ## 9. What an agent must not do
 
 - **Edit the export mirror**, or the vendored artefact here.
-- **Style anything outside the vendored artefact** — a colour, a spacing, a glyph, a component neither the product's design nor the shared system ships. The fix is a brief, not a local rule.
+- **Style anything outside what `AGENTS.md`'s build rule allows.** On the web: a colour, a spacing or a component that neither the vendored artefact nor the shared system's package ships. In a terminal: a colour or a glyph outside the vendored token set, the shared system's tokens, the user's overrides and the renderer's defaults. The fix is a brief, not a local rule.
 - **Cite a brief or a design page from code.** Cite the decision record for *why* and the test for *what*.
 - **Answer a behaviour question on a page.** Behaviour is decided here, in a test.
 - **Start a route that §2 says a person starts.**
