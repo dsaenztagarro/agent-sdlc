@@ -117,6 +117,7 @@ class SyncTest < Minitest::Test
     assert_includes out, "promote-table-loading.md"
     assert_includes out, "notes/plan.md"
     assert_includes out, "open brief"
+    assert_includes out, "PROJECT_FILES", "a file the project keeps on purpose has a remedy besides deletion"
     refute_path_exists File.join(@root, "pages")
   end
 

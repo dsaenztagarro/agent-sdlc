@@ -145,7 +145,8 @@ if [[ ${#notes[@]} -gt 0 ]]; then
   printf '    %s\n' "${notes[@]}" >&2
   echo "  A request to the shared design system amends the open brief for its theme in that repository's" >&2
   echo "  briefs/proposed/; a request to this project amends this repository's. Then delete the note in" >&2
-  echo "  Claude Design and export again. Nothing was mirrored." >&2
+  echo "  Claude Design and export again. A file the project keeps on purpose is listed in PROJECT_FILES" >&2
+  echo "  in bin/sync instead. Nothing was mirrored." >&2
   exit 1
 fi
 
