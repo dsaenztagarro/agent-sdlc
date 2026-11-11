@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+The delivery pipeline becomes a contract rather than a shipped copy, and `AGENTS.md` states the delivery rules every task needs, with a CI check that holds pull request titles to Conventional Commits so a release can be versioned from what was reviewed.
+
 ### Added
 
 - **A CI check holds every pull request title to a Conventional Commit.** `.github/workflows/pr-title.yml` runs `.github/scripts/pr-title` on `<type>(<scope>)!: <subject>` whenever a pull request is opened, edited, pushed to or reopened, and names the expected form when it refuses one; `test/pr_title_test.rb` holds its rules. README's Applying steps gain the one command that squashes with the pull request title, so `/tracker-release` versions from what was reviewed. (#37)
