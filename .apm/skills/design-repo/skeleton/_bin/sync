@@ -109,7 +109,10 @@ for file in "${REQUIRED_ROOT_FILES[@]+"${REQUIRED_ROOT_FILES[@]}"}"; do
 done
 
 # --- One canonical prototype per surface -------------------------------------
-off_format=$(cd "$export_root" && find . \( -name _ds -o -name uploads -o -name scraps \) -prune -o \
+# Only what the mirror copies is judged: the snapshot and everything EXCLUDES drops are skipped.
+skipped=(-name _ds)
+for pattern in "${EXCLUDES[@]}"; do skipped+=(-o -name "${pattern%/}"); done
+off_format=$(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o \
   -type f \( -name '*-v[0-9]*' -o -name '* v[0-9]*' -o -name '*-audit.*' \
   -o -name '*-rationale.*' -o -name '*-options.*' \) -print | sed 's|^\./||' | sort)
 if [[ -n "$off_format" ]]; then

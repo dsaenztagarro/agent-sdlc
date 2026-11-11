@@ -104,6 +104,19 @@ class SyncTest < Minitest::Test
     refute_path_exists File.join(@root, "pages")
   end
 
+  test "a file the mirror never copies is not judged as a prototype" do
+    checkout(kind: "project")
+    project_export
+    FileUtils.mkdir_p(File.join(@export, "screenshots"))
+    File.write(File.join(@export, "screenshots/surface-v2.txt"), "")
+    File.write(File.join(@export, "surface-v2.png"), "")
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/surface.html")
+  end
+
   test "authoring screenshots in an export are never mirrored" do
     checkout(kind: "project")
     project_export
