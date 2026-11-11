@@ -53,7 +53,7 @@ The design project holds its own files and nothing else — it cannot open eithe
 | route | carries | lifetime |
 |---|---|---|
 | **a brief**, pasted into the project | one ask | spent on arrival; deleted when its surface ships (§8) |
-| **`/design-sync`**, from Claude Code | a repository's files, uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
+| **`/design-sync`**, from Claude Code | a repository's design system, converted and uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
 | **the export**, the project's Export menu, *Download as .zip* | the whole project, back to the design repository | a commit of the mirror |
 
 `/design-sync` needs a claude.ai login in Claude Code (`/design-login`), and is unavailable where Claude Code does not contact claude.ai — Amazon Bedrock, Google Cloud, Microsoft Foundry.
