@@ -1,5 +1,5 @@
 name: agent-sdlc
-version: 0.4.2
+version: 0.5.0
 description: The agent-sdlc workflow's skills and agents, deployed into a project that adopts it
 author: David Sáenz
 dependencies:
