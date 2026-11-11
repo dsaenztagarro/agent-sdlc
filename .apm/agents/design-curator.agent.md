@@ -29,7 +29,7 @@ So the direction is always the same: **the application's copy goes, and what the
 
 ## Start from the measurement
 
-Run the triage command first, every time. Where the design section gives it as `none`, start from the report the task carries instead — selectors for a bundle, token names for a token set; either way, act on every disappeared name that report names, since triage cannot see a name built in code. The triage command reports what is outstanding, each finding marked guarded or `NO GUARD`, and a `NO GUARD` finding surfaces nowhere else. Reading the artefact yourself to rebuild that list spends the context you were spawned to save.
+Run the triage command first, every time. Where the design section gives it as `none`, start from the report the task carries instead — selectors for a bundle, token names for a token set; either way, act on every disappeared name that report names, since triage cannot see a name built in code. The triage command reports what is outstanding. Mark each finding it reports as `adopt-designs` does — guarded, naming the guard in the gate that fails while the finding stands, or `NO GUARD` — keeping the marks the task carries; a `NO GUARD` finding surfaces nowhere else. Reading the artefact yourself to rebuild that list spends the context you were spawned to save.
 
 A finding that needs the design's own sources — which leaf a rule belongs in, whether a generator should emit it — is not yours: it is the design repository's. Say so and move on.
 
