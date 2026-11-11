@@ -9,9 +9,12 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | when you are… | load | how it fires |
 |---|---|---|
 | <!-- FILL: writing or changing a test --> | <!-- FILL: `.claude/rules/testing.md` --> | <!-- FILL: opening `test/**` --> |
-| decomposing a design into an epic | the `/epic` skill | invoke it |
+| planning an epic, or building, reviewing, fixing, closing or releasing its tickets | the user-level tracker pipeline: `/tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `/tracker-close`, `/tracker-release` | invoke it |
+| stopping, resuming, or taking new scope on near-ready work | `/tracker-pause`, `/tracker-resume`, `/tracker-amend` | invoke it |
 | handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
 | raising a workflow improvement upstream | the `template-feedback` skill | invoke it |
+
+The tracker pipeline is required at user level, never shipped in the agent-sdlc package. Without it, follow [its contract](https://github.com/dsaenztagarro/agent-sdlc#4-the-delivery-pipeline--required-at-user-level) by hand: what each step reads, and what it leaves where.
 
 A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
@@ -37,7 +40,7 @@ This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdl
 
 ## Common Commands
 
-<!-- FILL: the real commands. These are what the test/lint gate and the /epic skill rely on. -->
+<!-- FILL: the real commands. These are what the test/lint gate and the tracker pipeline rely on. -->
 
 ```bash
 # build:   <!-- FILL -->
@@ -122,7 +125,7 @@ A fallback to the retired source is a defect, not a safety net: it keeps the dea
 ## CI / gate
 
 <!-- FILL: what must be green before a change ships (tests, lint, security scan) and where it runs.
-     The /epic skill defers to this gate. -->
+     The tracker pipeline defers to this gate. -->
 
 ## Development Workflow
 
@@ -134,13 +137,13 @@ For any new feature or significant change:
 4. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
 5. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
-For larger, multi-ticket work, drive it with the **`/epic`** skill (`.claude/skills/epic/`): one design doc → a GitHub epic → phased sub-issues → shipped, one ticket at a time.
+For larger, multi-ticket work, plan it on an epic and build it with the tracker pipeline (see the routing table): the plan is a marked section of the epic's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
 
 ### Incidental minor findings → the `chore` accumulator
 
 While doing a task you'll notice **minor, unrelated** defects — a stale label, a typo, a dead file, a tiny inconsistency — out of scope for what you're shipping. Don't fix it inline (bloats an unrelated diff), don't drop it (it's lost), and don't open a dedicated issue for a one-line fix (pure ceremony). Instead capture it in one rolling paper-cuts list and keep working.
 
-One open **`chore`**-labelled issue pools these. Find it, append the finding, move on (mirroring the `epic` skill's find-or-create-by-label):
+One open **`chore`**-labelled issue pools these. Find it, append the finding, move on:
 
 ```bash
 gh issue list --label chore --state open        # find the open accumulator

@@ -17,7 +17,7 @@ Use it **only for generalizable, project-agnostic** improvements to the agentic 
 | Use the skill | Do NOT use the skill (handle locally instead) |
 |---|---|
 | A missing/weak rule in `AGENTS.md`'s portable sections | A project-specific rule → edit *this* repo's `AGENTS.md` |
-| A skill (`epic`, this one, …) whose steps could be clearer/safer | A bug in this project's code or tests |
+| A skill (`design-handoff`, this one, …) whose steps could be clearer/safer | A bug in this project's code or tests |
 | A docs-taxonomy gap (what belongs in a record, a test, the README or a skill) | A one-off decision → the theme's record in *this* repo |
 | A portable principle worth adding (testing, model selection, docs style) | Project content, copy, or config |
 
@@ -27,7 +27,7 @@ The tell for "generalizable": the improvement is phrased without naming this pro
 
 - **Never edit the template silently.** The default output is a *proposed* GitHub **issue** on the upstream repo, opened only after the user approves. Do not open a PR or push to the template unless the user explicitly asks for a PR.
 - **Raise the hand promptly, but don't derail.** When an improvement surfaces mid-task, note it and finish the current unit of work first; then run this skill. Don't silently pocket the idea, and don't abandon the task to chase it.
-- **One improvement per issue.** Keep proposals atomic so each can be triaged and accepted on its own. Batch nothing.
+- **One coherent improvement per issue; related changes from one review are one issue.** An issue is triaged and accepted as a whole, so it carries one idea — but the findings one review makes about the same idea land together, not split across many issues.
 - **Propose, don't decide.** You surface the change and the reasoning; the human triages. Show the evaluation, not just the outcome.
 
 ## 1. Confirm it's generalizable
@@ -36,14 +36,15 @@ Restate the improvement in one project-agnostic sentence. If you can't (it names
 
 ## 2. Locate the artifact it touches
 
-Identify the single template file the change lands in, e.g.:
+Identify the template files the change lands in, e.g.:
 
 ```
 AGENTS.md                                  # a rule/principle
-.claude/skills/<name>/SKILL.md             # a skill's steps
+.apm/skills/<name>/SKILL.md                # a skill's steps
+.apm/agents/<name>.agent.md                # an agent's prompt
 docs/adr/README.md                         # decision-record conventions
 docs/adr/decision-records.md               # what goes where, and why it is bounded
-.claude/skills/design-handoff/SKILL.md     # the Claude Design procedure
+.apm/skills/design-handoff/SKILL.md        # the Claude Design procedure
 README.md                                  # the template's own overview
 ```
 

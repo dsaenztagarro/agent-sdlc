@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **README states the delivery pipeline as required at user level, with its contract.** Plan, build, review, fix, close and release run on the user-level tracker pipeline, never shipped in this package, since a copy per project drifts. README §4 lists each command and workflow it uses — `tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `tracker-close`, `tracker-release`, `tracker-amend`, `tracker-pause`, `tracker-resume`, `tracker-roadmap`, `tracker-audit`, `workflow-orchestration` — with what it reads and what it leaves where, so an adopter without the pipeline follows the contract by hand; `AGENTS.md`'s routing rows point at it. The at-a-glance diagram and the phase map describe the one pipeline. Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is published as a public APM package. (#36)
+- **README's "Applying the template" is one step per heading, with the commands to copy.** The package installs with `apm init --yes --target claude` and a pinned `apm install dsaenztagarro/agent-sdlc#v<version>`, so `apm.yml` records `claude` as the target and every developer's install deploys to `.claude/`. (#36)
+- **`template-feedback` asks for one coherent improvement per issue, with related changes from one review as one issue,** instead of splitting one review's findings across many, and its file map names the package's `.apm/` paths. (#36)
+
+### Removed
+
+- **The `/epic` skill.** The user-level tracker pipeline plans, builds, reviews, fixes, closes and releases an epic's tickets; a second orchestrator writing to the same epic kept its own decisions log, checklist and close-out, and collided with it. (#36)
+
 ## [0.5.0] - 2026-11-11
 
 ### Added
