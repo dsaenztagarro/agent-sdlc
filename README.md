@@ -127,14 +127,9 @@ Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is pub
 
 ### 7. Testing rules — a path-scoped seed you keep and fill
 
-The testing rules are a path-scoped rule, `.claude/rules/testing.md`, so they load when a test or a stateful component is opened rather than in every session. It comes with the template, not the package: you keep it and fill its `paths:` with the globs of your tests and of your interactive components. Each rule is one framework-neutral sentence, with a web and a terminal form where they differ:
+[`.claude/rules/testing.md`](.claude/rules/testing.md) holds the framework-neutral rules for writing a test and for building a component that holds state. It is a path-scoped rule, so it loads when a matching file is opened rather than in every session, and it loads only once you fill its `paths:` with the globs of your tests and of your interactive components.
 
-- **What a test runs against:** real collaborators and fixtures, doubles only at genuine boundaries, and one end-to-end smoke test per interactive surface asserting what should render.
-- **How a test finds what it checks:** by role and accessible name, then label, then visible text; a component's state is the accessible state its role defines, never a class alone.
-- **The shape of a stateful component's tests:** invariants after every command, in a few named journeys and one fixed-seed walk; a mutation check proves detection, not correctness; a source-invariant guard for a closed property of the code.
-- **Building a stateful component:** every reachable state legal, escapable and visible; no control hidden in reaction to a user action; one implementation for a question two surfaces ask.
-
-It is not in the package because APM deploys a package's instruction file to `.claude/rules/` with the package's own `applyTo:` as its `paths:`, and every `apm install` writes it again, discarding the globs you filled. Driving the runtime surface of a change before calling it done applies to every change, so it stays in `AGENTS.md`'s development workflow.
+It comes with the template, not the package, and is yours to keep and edit: APM deploys a package's instruction file to `.claude/rules/` with the package's own `applyTo:` as its `paths:`, and every `apm install` writes it again, discarding the globs you filled.
 
 ### 8. `.claude/` settings
 
