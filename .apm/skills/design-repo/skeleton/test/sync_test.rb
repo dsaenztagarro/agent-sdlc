@@ -120,6 +120,20 @@ class SyncTest < Minitest::Test
     refute_path_exists File.join(@root, "pages")
   end
 
+  test "a note is refused whatever its Markdown extension is spelled" do
+    checkout(kind: "project")
+    project_export
+    write(File.join(@export, "home/PLAN.MD"), "")
+    write(File.join(@export, "home/plan.markdown"), "")
+
+    status, out = sync
+
+    refute status.success?
+    assert_includes out, "home/PLAN.MD"
+    assert_includes out, "home/plan.markdown"
+    refute_path_exists File.join(@root, "pages")
+  end
+
   test "the project's own readme, AGENTS and CLAUDE files are mirrored" do
     checkout(kind: "project")
     project_export

@@ -137,7 +137,7 @@ while IFS= read -r path; do
     if [[ "$path" == $pattern ]]; then own=true; break; fi
   done
   $own || notes+=("$path")
-done < <(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o -type f -name '*.md' -print | sed 's|^\./||' | sort)
+done < <(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o -type f \( -iname '*.md' -o -iname '*.markdown' \) -print | sed 's|^\./||' | sort)
 if [[ ${#notes[@]} -gt 0 ]]; then
   echo "error: the export carries notes beside its pages:" >&2
   printf '    %s\n' "${notes[@]}" >&2
