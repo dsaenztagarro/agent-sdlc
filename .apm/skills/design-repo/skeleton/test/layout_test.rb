@@ -23,7 +23,7 @@ class LayoutTest < Minitest::Test
     entries = tracked.map { |path| path.split("/").first }.uniq
     folders, files = entries.partition { |entry| tracked.any? { |path| path.start_with?("#{entry}/") } }
 
-    assert_empty folders - ROOT_FOLDERS, "a folder the layout does not name — amend the layout in the design-repo skill first, or move it"
+    assert_empty folders - ROOT_FOLDERS, "a folder the layout does not name — amend layout.md, which the design-repo skill names, first, or move it"
     assert_empty files - ROOT_FILES, "a root file the layout does not name"
   end
 
