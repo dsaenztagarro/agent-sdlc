@@ -99,7 +99,7 @@ Only where a shared design system is vendored (§1).
 
 ### Promoting a component: one stand-in, landed by deletion
 
-The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined locally until the shared token set carries it.
+The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
 
 - **Byte-identical is the point.** When the component lands, the stand-in is deleted — the classes, or the local definition of the token or glyph — and no markup or renderer call changes; a stand-in that drifted from its brief turns landing into a migration.
 - **The request lives with the system that will draw it.** One brief per component, attached to the shared system's project one at a time, and deleted once it lands.
