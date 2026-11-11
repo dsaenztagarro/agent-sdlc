@@ -117,7 +117,7 @@ Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is pub
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
 - **The artefact is vendored under a stamp** naming the design repository's revision and the SHA-256 of its bytes, and a test fails on any edit after vendoring; [`vendor-contract.md`](.apm/skills/adopt-designs/vendor-contract.md) states what the vendor command must do.
 - **A read-in is one pull request** whose body states the previous and the new stamped revision, and what appeared, changed and disappeared. The release that ships it carries the line "artefact vendored from `<design repository>@<revision>`".
-- **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** uploads a repository's React design system, and is the route meant for rules that must hold in every export, though no documentation says it writes the project's own `readme.md`; and the downloaded **export** brings the whole project back to be mirrored.
+- **Three routes reach the design project**, each started by a person: a pasted **brief** carries its theme's pending asks, one open brief per theme; **`/design-sync`** uploads a repository's React design system, and is the route meant for rules that must hold in every export, though no documentation says it writes the project's own `readme.md`; and the downloaded **export** brings the whole project back to be mirrored.
 - **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
 
 ### 6. Documentation style
