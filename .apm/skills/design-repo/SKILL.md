@@ -56,7 +56,7 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 ## 4. Add the generator
 
 `lib/` holds it, `dist/` its committed output, and `rake` fails when the two disagree — that check is what makes *generated, not copied* true.
-It is plain Ruby with no gems, so `rake` runs on a clone with nothing installed. `lib/shots.js` beside it is not a generator: it writes only `tmp/shots/`, needs node and a browser, and its test skips without them.
+It is plain Ruby, adding no gem to the `Gemfile`, so `bundle install` once is all a clone needs before `rake`. `lib/shots.js` beside it is not a generator: it writes only `tmp/shots/`, needs node and a browser, and its test skips without them.
 A product's stylesheet bundle is wrapped in its own cascade layer, declared after the shared system's.
 Each refusal or guarantee it adds gets a test named for the rule.
 
