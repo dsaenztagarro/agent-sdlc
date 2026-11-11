@@ -119,7 +119,7 @@ The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the 
                  +------------------- briefs --------------------+
 ```
 
-Claude Design ships surface only. A behaviour a page draws comes back as an open question, decided here by a test and, where it is a real fork, the theme's decision record.
+Claude Design ships surface only; the last rule below says where a behaviour it draws is decided.
 
 ### The rules
 
