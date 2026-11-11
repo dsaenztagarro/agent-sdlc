@@ -108,15 +108,15 @@ The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the 
 ```
   <project>-ds  (design repository)            <project>  (this repository)
   owns how a surface LOOKS and is COMPOSED     owns how it BEHAVES
-  +----------------------------------+         +----------------------------------+
-  | briefs/proposed/                 |         | code                             |
-  | pages, components, tokens        |   one   | tests              -> what       |
-  | the export mirror   (generated)  | ------> | decision records   -> why        |
-  | the artefact's generator         | artefact| the vendored artefact (generated)|
-  +----------------------------------+         +----------------------------------+
-                 ^                                               |
-                 |                                               |
-                 +------------------- briefs --------------------+
+  +----------------------------------+          +-------------------------------------+
+  | briefs/proposed/                 |          | code                                |
+  | pages, components, tokens        |   one    | tests               -> what         |
+  | the export mirror   (generated)  | -------> | decision records    -> why          |
+  | the artefact's generator         | artefact | the vendored artefact (generated)   |
+  +----------------------------------+          +-------------------------------------+
+                 ^                                                 |
+                 |                                                 |
+                 +-------------------- briefs ---------------------+
 ```
 
 Claude Design ships surface only; the last rule below says where a behaviour it draws is decided.
