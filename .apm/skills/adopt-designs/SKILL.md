@@ -25,7 +25,7 @@ Every name comes from `AGENTS.md`'s design section, the way `design-handoff` rea
 - the shared design system's repository checkout path, if the project extends one, for a brief step 4 sends there.
 
 A name the section does not give: stop, ask the person for it, and offer to add it to the section. Do not read on with a guessed one.
-A name the section gives as `none` — no triage command, no shared design system — skips what needs it, and the report says so.
+A name the section gives as `none` — no triage command, no shared design system — skips what needs it, and the report says so. An artefact given as nothing vendored yet is read the same way: the steps that need it are skipped, and the report gives the reason the section states.
 If `$ARGUMENTS` names a checkout, it replaces the section's checkout path for this run.
 
 ## Steps

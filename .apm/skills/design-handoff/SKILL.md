@@ -45,7 +45,7 @@ Design content lives outside this repository because it grows without bound, and
 
 **Exactly one generated artefact reaches this application**, and it is data — a token set, or a stylesheet bundle.
 `AGENTS.md`'s design section names it, its form, its path here, and the command that vendors it.
-**"Nothing is vendored yet, and why" is a valid state of that line** — a design still being drawn, a surface that renders the shared system's components alone — and the skills that vendor or triage skip what needs the artefact, saying so. A blank line is not that state: it is a missing name.
+**"Nothing is vendored yet, and why" is a valid state of that line** — a design still being drawn, a surface that renders the shared system's components alone — and `adopt-designs` treats it as it treats `none`: it skips what needs the artefact, and says so. A blank line is not that state: it is a missing name.
 A page is read by a person designing or building a surface; it is never a build input, and code never cites one.
 
 The design project holds its own files and nothing else — it cannot open either repository. Everything it knows arrives by one of three routes, each started by a person:
