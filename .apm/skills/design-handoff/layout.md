@@ -30,6 +30,8 @@ A product may also own a Design System project of its own, when it extends a sha
 +-- AGENTS.md               the rules an agent working here needs; CLAUDE.md is `@AGENTS.md`
 +-- CLAUDE.md
 +-- Rakefile                `rake` is the gate: every check, then the tests
++-- Gemfile                 the gems `rake` and `bin/serve` need; Gemfile.lock beside it, committed
++-- Gemfile.lock
 +-- .gitignore              tmp/ (the sync's staging and the shots), .DS_Store, .claude/worktrees/
 +-- .github/workflows/      the gate, weekly on the default branch and by hand
 +-- briefs/
@@ -121,7 +123,7 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
 - **`ds-status`**, in a product's repository, compares the `_ds/` snapshot's manifest with the shared system's, and exits 1 when the snapshot lacks a token or component the shared system carries.
 - **`shots`**, in a product's repository, runs after every sync: it reaches each state of each page at its address, `#state=<family>/<state>`, checks that the State row names it, hides `[data-design-chrome]`, and screenshots the `[data-surface]` element whole into the git-ignored `tmp/shots/`, with an `index.html` contact sheet; it exits 1 naming each page that breaks the page contract (§4 of the skill). The generator is `lib/shots.js`; Playwright drives the installed Chrome from a cache outside the repository, and its test skips, saying so, where node or a browser is missing.
 - **`stand-ins`**, in a product's repository bound to a shared system, reads each stand-in's stage — unrequested, requested, upstream, landed — from the shared system's open briefs and the two manifests, and exits 1 when one needs a step taken. Its shared checkout comes from the environment variable and default the application's `AGENTS.md` design section declares.
-- **`serve`** serves the checkout on a real origin, with an index of every page walked on each request, never committed; it is plain Ruby, with nothing to install.
+- **`serve`** serves the checkout on a real origin, with an index of every page walked on each request, never committed. It is a Sinatra application, from the `Gemfile`; its index template is `lib/serve/index.erb`.
 - **`vendor-sync`** refreshes `vendor/` from a checkout of the shared system.
 
 ### `.design-sync/`

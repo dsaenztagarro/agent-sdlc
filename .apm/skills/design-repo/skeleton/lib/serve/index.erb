@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= h name %></title>
+  <style>
+    :root { color-scheme: light dark }
+    body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 32px; max-width: 1100px }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; margin: 28px 0 8px }
+    small { opacity: .6 }
+    ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px 16px }
+    a { color: inherit; text-decoration: none }
+    a:hover { text-decoration: underline }
+  </style>
+</head>
+<body>
+  <h1><%= h name %></h1>
+  <p><%= groups.sum { |_, paths| paths.size } %> pages</p>
+<% groups.each do |group, paths| %>
+  <h2><%= h group %> <small><%= paths.size %></small></h2>
+  <ul>
+  <% paths.each do |path| %>
+    <li><a href="<%= h link(path) %>"><%= h path.delete_suffix(".html") %></a></li>
+  <% end %>
+  </ul>
+<% end %>
+</body>
+</html>

@@ -25,6 +25,7 @@ bin/serve              every page from a real origin, with an index walked on ea
 ## Working on it
 
 ```bash
+bundle install  # once: the gems rake and bin/serve need
 bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, one of the wrong kind, an off-format page, or an edited upstream file
 rake            # every check, then the tests — the gate before each merge
 bin/ds-status   # a product bound to a shared system: what its _ds/ copy lacks, from the two manifests

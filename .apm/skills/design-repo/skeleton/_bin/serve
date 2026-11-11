@@ -1,101 +1,54 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# serve — browse every page in this repository from a real origin.
+# serve — browse every page of this design repository in a browser.
 #
-# A page opened from file:// renders, but its origin is null and a page that fetches anything is
-# blocked. This serves the checkout over http, with an index of every page at /.
+#   bin/serve            then open http://localhost:4000
+#   bin/serve 4001       on another port
 #
-# The index is walked on every request rather than generated and committed: a second list of what
-# exists goes stale the first time a page is added. The _ds/ snapshot is committed with the pages,
-# so it is walked like any other folder.
+# What you get: at / an index of every page in the checkout — the exported pages grouped by folder,
+# and the design-system snapshot's pages last — and each page served from its path, with the
+# styles, scripts and images it loads.
 #
-# Plain Ruby sockets, so it runs on the Ruby `rake` already needs, with nothing installed.
+# Why not open the files directly: a page opened from file:// has a null origin, so a page that
+# fetches anything is blocked. Served from http://localhost it behaves as it does in Claude Design.
 #
-# Usage:  bin/serve [PORT]      (default 4000)
+# The index is read from disk on every request, never generated and committed, so a page added
+# while the server runs is listed on the next reload.
 
-require "socket"
-require "uri"
+ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
+require "bundler/setup"
+require "sinatra/base"
 
 ROOT = File.expand_path("..", __dir__)
-PORT = Integer(ARGV.fetch(0, "4000"))
-SKIP = %r{\A(tmp|vendor|node_modules)/|/(uploads|scraps)/}
-TYPES = {
-  ".html" => "text/html; charset=utf-8", ".css" => "text/css; charset=utf-8", ".js" => "text/javascript; charset=utf-8",
-  ".jsx" => "text/javascript; charset=utf-8", ".json" => "application/json", ".svg" => "image/svg+xml",
-  ".png" => "image/png", ".jpg" => "image/jpeg", ".woff2" => "font/woff2", ".md" => "text/plain; charset=utf-8"
-}.freeze
 
-def escape(text)
-  text.gsub(/[&<>"]/, "&" => "&amp;", "<" => "&lt;", ">" => "&gt;", '"' => "&quot;")
-end
+# Every page in the checkout, grouped as the index shows them.
+module Pages
+  SKIP = %r{\A(tmp|vendor|node_modules)/|/(uploads|scraps)/}
+  SNAPSHOT = "design system"
 
-def pages
-  Dir.glob("**/*.html", base: ROOT).reject { |path| path.match?(SKIP) }.sort_by(&:downcase)
-end
-
-# A page belongs to its top folder, and a snapshot's pages to the design system.
-def group(path)
-  path.split("/").include?("_ds") ? "design system" : path.split("/").first
-end
-
-# A page's address, each segment percent-encoded so that a name holding #, ? or % still reaches it.
-def link(path)
-  "/" + path.split("/").map { |segment| URI.encode_uri_component(segment) }.join("/")
-end
-
-def index
-  found = pages
-  sections = found.group_by { |path| group(path) }.sort_by { |name, _| name == "design system" ? "~" : name }.map do |name, paths|
-    links = paths.map { |path| %(<li><a href="#{escape(link(path))}">#{escape(path.delete_suffix('.html'))}</a></li>) }
-    "<h2>#{escape(name)} <small>#{paths.size}</small></h2>\n<ul>#{links.join}</ul>"
+  def self.grouped
+    all = Dir.glob("**/*.html", base: ROOT).reject { |path| path.match?(SKIP) }.sort_by(&:downcase)
+    all.group_by { |path| path.split("/").include?("_ds") ? SNAPSHOT : path.split("/").first }
+       .sort_by { |group, _| [group == SNAPSHOT ? 1 : 0, group] }
   end
-  <<~HTML
-    <!doctype html><html lang="en"><head><meta charset="utf-8"><title>#{escape(File.basename(ROOT))}</title>
-    <style>:root{color-scheme:light dark}body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:32px;max-width:1100px}
-    h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;margin:28px 0 8px}small{opacity:.6}
-    ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px 16px}
-    a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}</style></head><body>
-    <h1>#{escape(File.basename(ROOT))}</h1><p>#{found.size} pages</p>
-    #{sections.join("\n")}
-    </body></html>
-  HTML
 end
 
-# The file a request names, only if it is inside this checkout.
-def file_for(request_path)
-  path = File.expand_path(".#{URI.decode_uri_component(request_path)}", ROOT)
-  path if path.start_with?("#{ROOT}/") && File.file?(path)
-rescue ArgumentError
-  nil
+class Serve < Sinatra::Base
+  set :public_folder, ROOT
+  set :views, File.expand_path("../lib/serve", __dir__)
+  mime_type :jsx, "text/javascript"
+
+  helpers do
+    def h(text) = Rack::Utils.escape_html(text)
+
+    # A page's address, each segment percent-encoded so that a name holding #, ? or % still reaches it.
+    def link(path) = "/" + path.split("/").map { |segment| URI.encode_uri_component(segment) }.join("/")
+  end
+
+  get "/" do
+    erb :index, locals: { name: File.basename(ROOT), groups: Pages.grouped }
+  end
 end
 
-def respond(client, status, type, body)
-  client.write("HTTP/1.1 #{status}\r\nContent-Type: #{type}\r\nContent-Length: #{body.bytesize}\r\nConnection: close\r\n\r\n")
-  client.write(body)
-end
-
-def handle(client)
-  method, target = client.gets&.split
-  nil while (line = client.gets) && line != "\r\n"
-  return respond(client, "405 Method Not Allowed", "text/plain", "") unless method == "GET"
-
-  path = target.to_s.split("?").first.to_s
-  return respond(client, "200 OK", "text/html; charset=utf-8", index) if path == "/"
-
-  file = file_for(path)
-  return respond(client, "404 Not Found", "text/plain", "not found\n") unless file
-
-  respond(client, "200 OK", TYPES.fetch(File.extname(file).downcase, "application/octet-stream"), File.binread(file))
-rescue ArgumentError, Errno::EPIPE, Errno::ECONNRESET
-  nil
-ensure
-  client.close
-end
-
-server = TCPServer.new("127.0.0.1", PORT)
-trap("INT") { exit }
-trap("TERM") { exit }
-puts "serving #{ROOT} on http://localhost:#{PORT}  (#{pages.size} pages), ^C to stop"
-$stdout.flush
-loop { Thread.new(server.accept) { |client| handle(client) } }
+Serve.run!(port: Integer(ARGV.fetch(0, "4000")), bind: "127.0.0.1")

@@ -37,6 +37,7 @@ mv _bin bin
 grep -rl '__NAME__' . | xargs sed -i '' 's/__NAME__/<name>/g'     # GNU sed: -i without ''
 sed -i '' 's/^KIND="__KIND__"$/KIND="<project|system>"/' bin/sync
 chmod +x bin/sync bin/ds-status bin/shots bin/stand-ins bin/serve
+bundle install     # writes Gemfile.lock, which is committed
 ```
 
 The skeleton keeps its scripts in `_bin/` because APM does not deploy a folder named `bin` inside a skill; the copy renames it.

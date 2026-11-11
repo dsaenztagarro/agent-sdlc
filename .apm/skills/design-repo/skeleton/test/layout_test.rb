@@ -16,7 +16,7 @@ class LayoutTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
 
   ROOT_FOLDERS = %w[briefs pages system references vendor docs lib test dist bin .design-sync .claude .github].freeze
-  ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile .gitignore LICENSE].freeze
+  ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile Gemfile Gemfile.lock .gitignore LICENSE].freeze
   EXPORT_FOLDERS = %w[pages system].freeze
 
   def test_every_top_level_entry_is_one_the_layout_names

@@ -15,12 +15,15 @@ require "uri"
 # opened from file://, whose null origin blocks a page that fetches anything. Each test runs a copy
 # of the script in a throwaway checkout, on a free port.
 class ServeTest < Minitest::Test
-  SCRIPT = File.expand_path("../bin/serve", __dir__)
+  REPO = File.expand_path("..", __dir__)
+  SERVER_FILES = %w[bin/serve lib/serve/index.erb Gemfile Gemfile.lock].freeze
 
   def setup
     @root = Dir.mktmpdir("design-repo-serve")
-    FileUtils.mkdir_p(File.join(@root, "bin"))
-    FileUtils.cp(SCRIPT, File.join(@root, "bin/serve"))
+    SERVER_FILES.select { |file| File.exist?(File.join(REPO, file)) }.each do |file|
+      FileUtils.mkdir_p(File.dirname(File.join(@root, file)))
+      FileUtils.cp(File.join(REPO, file), File.join(@root, file))
+    end
     write("pages/list.html", "<main>the list</main>")
     write("pages/_ds/shared/button.card.html", "<main>a button</main>")
     @port = free_port
@@ -50,7 +53,8 @@ class ServeTest < Minitest::Test
     response = get("/pages/list.html")
 
     assert_equal "200", response.code
-    assert_equal "text/html; charset=utf-8", response["content-type"]
+    assert_equal "text/html", response.content_type
+    assert_equal "utf-8", response.type_params["charset"]
     assert_equal "<main>the list</main>", response.body
   end
 
@@ -68,7 +72,7 @@ class ServeTest < Minitest::Test
   end
 
   test "a path with a malformed escape gets an answer" do
-    assert_equal "404", get("/pages/%ZZ.html").code
+    assert_match(/\A4\d\d\z/, get("/pages/%ZZ.html").code)
   end
 
   test "a path outside the repository is never served" do
