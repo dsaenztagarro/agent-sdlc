@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | xargs true # FILL: replace true with the formatter, run on the file just written"
+            "command": "true # FILL: the formatter, run on \"$(jq -r .tool_input.file_path)\", the file just written"
           }
         ]
       }
