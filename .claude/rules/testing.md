@@ -11,12 +11,12 @@ Each rule is one sentence, followed where it helps by why it holds or how to tel
 
 ## What a test runs against
 
-- **Test the real thing; never mock the object under test or its in-process collaborators:** a test drives real collaborators and fixtures and asserts on real outcomes, with a double only at a genuine boundary — the network or an external service, infrastructure a unit test cannot stand up, or an error it cannot otherwise force.
+- **Test the real thing; never mock the object under test or its in-process collaborators:** a test instantiates the real units with their real collaborators and fixtures, lets them exercise real test infrastructure, and asserts on real outcomes, with a double only at a genuine boundary — the network or an external service, infrastructure a unit test cannot stand up, or an error it cannot otherwise force.
   - *Why:* a test that stubs what it checks proves the stub, and stays green while the real code breaks.
   - *The tell:* a refactor that keeps the behaviour breaks the test; rewrite it against real objects and observable outcomes.
-- **Smoke-test every interactive surface:** at least one end-to-end test reaches it through a real interaction, not a direct address, and asserts what should now render, never the absence of an error.
+- **Smoke-test every interactive surface:** at least one end-to-end test reaches it through a real interaction, rather than a direct address wherever the product allows, and asserts what should now be present or gone, never the absence of an error.
   - *Scope:* it proves the wiring connects; the permutations behind it belong to focused tests.
-  - *Why positive:* an assertion of what should render states what the feature does and still fails when the wiring breaks, where an error string guards one past failure and documents nothing.
+  - *Why positive:* an assertion of what should be present or gone states what the feature does and still fails when the wiring breaks, where an error string guards one past failure and documents nothing.
 
 ## How a test finds what it checks
 
