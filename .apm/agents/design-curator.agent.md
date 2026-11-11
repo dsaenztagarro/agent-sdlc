@@ -85,7 +85,7 @@ A token whose value alone changed needs nothing here: the code reads the name, a
 
 ### One golden frame per state
 
-Each state the page draws gets one golden frame in the application's tests: the surface rendered in that state, **ANSI-stripped**, so it holds the composition only. Colour is held by the token guards, never by a golden frame, so a palette change re-vendors without rewriting a single golden.
+Unless the theme's decision record defers parity, each state the page draws gets one golden frame in the application's tests: the surface rendered in that state, **ANSI-stripped**, so it holds the composition only. Colour is held by the token guards, never by a golden frame, so a palette change re-vendors without rewriting a single golden.
 Name each golden frame for the state, as the page names it. A golden frame updated to make a test pass is a decision about the composition: say so in the report.
 Watch every new golden fail once, against a deliberately broken composition: a frame that renders nothing matches an empty golden.
 
@@ -94,7 +94,7 @@ Watch every new golden fail once, against a deliberately broken composition: a f
 Nothing is finished on a screenshot.
 
 - The triage command again, where there is one: its count moved the right way, or you know why not.
-- The project's gate, and in it the guards it has written: for a bundle, the cascade layers and the ownership of each selector; for a token set, the unknown-name check, the literal ban outside the token loader, the precedence test and the golden frames.
+- The project's gate, and in it the guards it has written: for a bundle, the cascade layers and the ownership of each selector; for a token set, the unknown-name check, the literal ban outside the token loader, the precedence test and the golden frames, or the decision record that defers them.
 - Where the change was meant to be structural only, build the application's stylesheet or render every golden frame before and after and show the output is byte-identical.
 - The suite can carry failures that predate you. Baseline against the default branch before claiming one.
 
