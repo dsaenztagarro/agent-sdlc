@@ -115,6 +115,8 @@ Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is pub
 - **A page draws the surface, never the application.** Every state of a screen on one page, reached through a state switcher and animated where it helps — but no validation, save rule or data model, because the application changes and the page does not. A sentence someone could find false in the running application comes out.
 - **Every design repository has one layout** — `briefs/`, `pages/` or `system/` for the export, `references/`, `dist/`, `bin/sync` — whether it holds a product's design or a shared design system; [`layout.md`](.apm/skills/design-handoff/layout.md) states it folder by folder.
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
+- **The artefact is vendored under a stamp** naming the design repository's revision and the SHA-256 of its bytes, and a test fails on any edit after vendoring; [`vendor-contract.md`](.apm/skills/adopt-designs/vendor-contract.md) states what the vendor command must do.
+- **A read-in is one pull request** whose body states the previous and the new stamped revision, and what appeared, changed and disappeared. The release that ships it carries the line "artefact vendored from `<design repository>@<revision>`".
 - **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** uploads a repository's React design system, and is the route meant for rules that must hold in every export, though no documentation says it writes the project's own `readme.md`; and the downloaded **export** brings the whole project back to be mirrored.
 - **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
 
@@ -145,10 +147,10 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 |---|---|
 | `design-repo` | creates a design repository from one skeleton, in the layout every design repository keeps, and adopts the layout check in an existing one |
 | `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
-| `adopt-designs` | reads what the design project published — vendors the one generated bundle, reports what moved by selector, triages it — and hands the adoption to `design-curator` and any satisfied brief to `brief-closer` |
+| `adopt-designs` | reads what the design project published — vendors the one generated artefact under a revision stamp and digest, reports what moved by selector or by token name, triages it with each finding marked guarded or `NO GUARD` — and hands the adoption to `design-curator` and any satisfied brief to `brief-closer`; its `vendor-contract.md` states what every project's vendor command and guards must do |
 | `adopt-shared-release` | lands a shared design system's release in a product: moves the pin, fixes what the release removed, and deletes a stand-in only once the product's design-system copy is current |
 | `template-feedback` | proposes a reusable workflow improvement as an issue on this template |
-| `design-curator` (agent) | adopts a design that has shipped: deletes the application's copies of what the bundle now provides, and writes the components it ships but the application never uses |
+| `design-curator` (agent) | adopts a design that has shipped: deletes the application's copies of what the artefact now provides — a bundle's rules, a token set's colour and glyph literals — and uses what it ships in their place |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
 
 **The delivery pipeline, at user level** — the commands §4 lists, installed once per person and shared by every project (for instance a personal APM package installed with `apm install -g`), never copied into each one.
@@ -244,9 +246,10 @@ Install the commands §4 lists if you do not have them yet; without them, follow
 +-- .apm/                              the package's contents; an adopter deletes it and installs the package
 |   +-- agents/
 |   |   +-- brief-closer.agent.md      closes a brief once its surface ships
-|   |   +-- design-curator.agent.md    adopts a shipped design: the app's copy goes, the design's class gets written
+|   |   +-- design-curator.agent.md    adopts a shipped design: the app's copy goes, what the design ships is used
 |   +-- skills/
-|       +-- adopt-designs/SKILL.md     vendors the design's one bundle, triages it, hands adoption to design-curator
+|       +-- adopt-designs/SKILL.md     vendors the design's one artefact, triages it, hands adoption to design-curator
+|       +-- adopt-designs/vendor-contract.md the stamp, refusals, tests and guards every vendor command holds to
 |       +-- adopt-shared-release/SKILL.md lands a shared design system's release, stand-ins last
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder

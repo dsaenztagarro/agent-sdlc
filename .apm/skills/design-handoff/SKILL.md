@@ -23,7 +23,7 @@ If this project has no user interface, or its interface takes all its colours fr
 **Every name this skill and its neighbours read comes from the block of names in `AGENTS.md`'s design section, and from nowhere else.** A name the block does not give is asked for, never guessed; one that does not apply is written `none`. Who reads which:
 
 - design repository, design checkout, regenerate command, design suite — this skill, `adopt-designs`, `adopt-shared-release`, and the checkout for `design-curator` too;
-- artefact form — this skill (§2, §5);
+- artefact form — this skill (§2, §5), `adopt-designs`, `design-curator`;
 - artefact source, vendor command — `adopt-designs`;
 - artefact vendored at — `adopt-designs`, `design-curator`;
 - cascade layer — `design-curator`;
