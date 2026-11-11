@@ -157,7 +157,7 @@ A pull request:
 
 - **Has a Conventional Commit title:** `<type>(<scope>)!: <subject>`, with a sentence-style subject after the type. `.github/workflows/pr-title.yml` checks it, again whenever the title is edited, and the repository squashes with the PR title as the commit subject, so the release is versioned from what was reviewed.
 - **Compares with the base branch:** what the code did before and why that was wrong, never an earlier revision of the branch, which its reader never saw.
-- **Carries the evidence in its body:** the gate's output, the mutation checks, how to test it. Nothing is mirrored back to the issue; the closing reference closes it.
+- **Carries the evidence in its body:** the gate's output, the mutation checks, how to test it. The issue gets no copy of it: the closing reference closes the issue, and the close step ticks each done-when line against the evidence the pull request holds.
 
 **The CHANGELOG follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),** each release opening with a lead paragraph on what it brings, before its lists.
 
