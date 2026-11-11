@@ -41,7 +41,7 @@ chmod +x bin/sync bin/ds-status bin/shots bin/stand-ins bin/serve
 
 The skeleton keeps its scripts in `_bin/` because APM does not deploy a folder named `bin` inside a skill; the copy renames it.
 
-A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name, and in `bin/stand-ins` replaces `__SHARED_VAR__` and `__SHARED_CHECKOUT__` with the environment variable and default that the application's `AGENTS.md` design section declares for the shared system's checkout. A shared system, or a product bound to none, deletes `bin/ds-status`, `bin/stand-ins` and their tests.
+A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name, and in `bin/stand-ins` replaces `__SHARED_VAR__` with the name of the environment variable that the application's `AGENTS.md` design section declares for the shared system's checkout, without its leading `$`, and `__SHARED_CHECKOUT__` with its default. A shared system, or a product bound to none, deletes `bin/ds-status`, `bin/stand-ins` and their tests.
 A shared system deletes `bin/shots`, `lib/shots.js` and `test/shots_test.rb` too: it has no pages to shoot.
 
 Then resolve every `FILL` marker (`grep -rn FILL .`):
