@@ -212,7 +212,7 @@ gh issue create --label decision-log --title "decision-log: <theme>" --body "His
 
 Run the `design-repo` skill, and fill in the block of names in `AGENTS.md`'s design section, one per line, which the design skills and agents read.
 
-A surface whose colours belong to its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — needs no design repository: delete the design section and the design skills, and record why in the theme's decision record, with the condition that reopens it. Without a UI, delete them too.
+A surface whose colours belong to its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — needs no design repository: delete the design section, and record why in the theme's decision record, with the condition that reopens it. Without a UI, delete the section too. The design skills stay installed with the package and do not apply without it.
 
 ### 7. Copy the local settings
 
