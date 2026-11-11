@@ -175,14 +175,14 @@ A brief whose asks all landed closes. One where some did not stays, listing only
 
 ### Before a reshape, triage the queue
 
-A reshape — a sweep or redraw across many pages of the design project — starts only once every open brief has been checked against the current export. A brief is written against the pages as they stood; a reshape that moves them leaves each one describing a page that no longer exists, and nobody notices until someone pastes it. So, for every brief in `briefs/proposed/`, before the reshape is asked for:
+A reshape — a sweep or redraw across many pages of the design project — starts only once every open ask has been checked against the current export. An ask is written against the pages as they stood; a reshape that moves them leaves it describing a page that no longer exists, and nobody notices until someone pastes it. So, ask by ask, for every theme's brief in `briefs/proposed/`, before the reshape is asked for:
 
-- **landed** — delete it;
-- **outdated** — its premise is gone: delete it, or rewrite it against the current pages;
-- **in the wrong repository** — it changes a shared component: move it to the shared system's `briefs/proposed/`, rewritten for that project;
-- **still open** — carry it into the reshape's brief, or keep it and check it again once the reshape's export lands.
+- **landed** — it leaves its brief through `brief-closer`'s close-out, never a direct delete;
+- **outdated** — its premise is gone: drop it from its brief, or rewrite it against the current pages;
+- **in the wrong repository** — it changes a shared component: it joins the shared system's open brief for its theme, rewritten for that project, or opens one there only when none covers the theme;
+- **still open** — carry it into the brief of the reshape's theme, never a brief spanning themes, or keep it in its own brief and check it again once the reshape's export lands.
 
-A long queue is the signal to triage, not to reshape: the reshape waits until the queue holds only briefs that will survive it.
+A theme's brief left with no ask is deleted by the same close-out. A long queue is the signal to triage, not to reshape: the reshape waits until the queue holds only asks that will survive it.
 
 ## 9. What an agent must not do
 
