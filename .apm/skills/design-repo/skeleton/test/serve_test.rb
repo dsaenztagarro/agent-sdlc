@@ -28,7 +28,8 @@ class ServeTest < Minitest::Test
     write("pages/list.html", "<main>the list</main>")
     write("pages/_ds/shared/button.card.html", "<main>a button</main>")
     @port = free_port
-    @server = Process.spawn("ruby", File.join(@root, "bin/serve"), @port.to_s, out: File::NULL, err: File::NULL)
+    @log = File.join(@root, "serve.log")
+    @server = Process.spawn("ruby", File.join(@root, "bin/serve"), @port.to_s, %i[out err] => @log)
     wait_for_server
   end
 
@@ -104,14 +105,19 @@ class ServeTest < Minitest::Test
     server&.close
   end
 
+  # A server that dies at boot — a missing gem, a busy port — fails at once with what it printed.
   def wait_for_server
     50.times do
       TCPSocket.new("127.0.0.1", @port).close
       return
     rescue Errno::ECONNREFUSED
+      if Process.wait(@server, Process::WNOHANG)
+        @server = nil
+        flunk "bin/serve exited before listening:\n#{File.read(@log)}"
+      end
       sleep 0.1
     end
-    flunk "bin/serve did not listen on #{@port}"
+    flunk "bin/serve did not listen on #{@port}:\n#{File.read(@log)}"
   end
 
   def get(path)
