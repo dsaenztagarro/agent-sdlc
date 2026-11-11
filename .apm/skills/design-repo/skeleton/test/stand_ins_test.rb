@@ -44,6 +44,17 @@ class StandInsTest < Minitest::Test
     assert_match(/^requested +Callout /, out)
   end
 
+  test "a selector list split across lines lands only when every class in it does" do
+    stand_in = "/* STAND-IN — delete when the design system lands Callout */\n.callout,\n.callout-body { padding: 4px; }\n"
+    copy = { components: ["Callout"], css: ".callout-body { padding: 4px; }" }
+    project(stand_in: stand_in, copy: copy, shared: copy)
+
+    out, status = run_script
+
+    refute status.success?
+    refute_match(/^landed/, out)
+  end
+
   test "a stand-in with no brief is unrequested" do
     project(stand_in: callout, copy: {}, shared: {}, briefs: { "feedback.brief.md" => "# Feedback\n\n## Callouts row\n" })
 

@@ -60,11 +60,10 @@ def rules_after(lines, index)
   lines.drop(index + 1).take_while { |line| !line.strip.empty? && !line.start_with?("/*") }
 end
 
+# Read as one text, since a selector list is often split across lines ahead of its brace.
 def classes_in(rules)
-  rules.flat_map do |rule|
-    rule.scan(/([^{}]+)\{/).flatten.reject { |selector| selector.strip.start_with?("@") }
-        .flat_map { |selector| selector.scan(CLASS).flatten }
-  end.uniq
+  rules.join.scan(/([^{}]+)\{/).flatten.reject { |selector| selector.strip.start_with?("@") }
+       .flat_map { |selector| selector.scan(CLASS).flatten }.uniq
 end
 
 stand_ins = Dir.glob(File.join(root, "pages/**/*.{css,js,jsx,html}")).reject { |path| path.include?("/_ds/") }.sort.flat_map do |path|
