@@ -8,7 +8,7 @@ description: The Claude Design handoff loop — which repository is which, how a
 How a design change gets from an idea to something this application renders, and what an agent may and may not touch on the way.
 This is an operating procedure — the order matters, and two of its steps exist to stop a class of silent loss.
 
-If this project has no user interface, this skill does not apply.
+If this project has no user interface, or its interface takes all its colours from its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — this skill does not apply, and the theme's decision record says why, with the condition that reopens it.
 
 ## 1. Three names, and which one you are in
 
@@ -20,15 +20,17 @@ If this project has no user interface, this skill does not apply.
 
 `AGENTS.md`'s design section names the real repositories, and the shared design system vendored into the design repository when there is one — a fourth name, edited only in its own repository, where a request for a shared widget is a brief.
 
-**The names a project fills in**, in that section, and the skills and agents that read them. A name the section does not give is asked for, never guessed; one that does not apply is written `none`.
+**Every name this skill and its neighbours read comes from the block of names in `AGENTS.md`'s design section, and from nowhere else.** A name the block does not give is asked for, never guessed; one that does not apply is written `none`. Who reads which:
 
-- the design repository, its checkout path, the command that regenerates its artefact, and its suite — this skill, `adopt-designs`, `adopt-shared-release`, and the checkout for `design-curator` too;
-- the artefact that crosses, its path in the design repository, and the command that vendors it — `adopt-designs`;
-- its vendored path here — `adopt-designs`, `design-curator`;
-- the cascade layer it is loaded in — `design-curator`;
-- the command that triages it against the markup — `adopt-designs`, `design-curator`;
-- where the application's own component styles live — `adopt-designs`, `design-curator`, `adopt-shared-release`;
-- for a shared design system: its name, its package, its repository's checkout path, the ref of that repository a released version corresponds to, where it publishes release notes, the command that moves its pin, and the one that syncs its tokens — `adopt-shared-release`, and the checkout path for `adopt-designs` too.
+- design repository, design checkout, regenerate command, design suite — this skill, `adopt-designs`, `adopt-shared-release`, and the checkout for `design-curator` too;
+- artefact form — this skill (§2, §5), `adopt-designs`;
+- artefact source, vendor command — `adopt-designs`;
+- artefact vendored at — `adopt-designs`, `design-curator`;
+- cascade layer — `design-curator`;
+- triage command — `adopt-designs`, `design-curator`;
+- own component styles — `adopt-designs`, `design-curator`, `adopt-shared-release`;
+- shared design system, its channel, its checkout, its release ref and release notes, the pin command and the token sync command — `adopt-shared-release`, and the shared system's checkout for `adopt-designs` too;
+- decision records — this skill (§7), `brief-closer`.
 
 **A design project is named for the codebase it draws for** — `<project>-ds` beside `<project>` — so the name says which checkout its export syncs into.
 A design system shared by several projects is named for its brand or the package that ships it, never for its platform: a `web-ds` points at no repository, and stops being true the day a second web system exists.
@@ -42,7 +44,8 @@ Design content lives outside this repository because it grows without bound, and
 ## 2. What crosses, and by which route
 
 **Exactly one generated artefact reaches this application**, and it is data — a token set, or a stylesheet bundle.
-`AGENTS.md`'s design section names it, its path here, and the command that vendors it.
+`AGENTS.md`'s design section names it, its form, its path here, and the command that vendors it.
+**"Nothing is vendored yet, and why" is a valid state of that line** — a design still being drawn, a surface that renders the shared system's components alone — and the skills that vendor or triage skip what needs the artefact, saying so. A blank line is not that state: it is a missing name.
 A page is read by a person designing or building a surface; it is never a build input, and code never cites one.
 
 The design project holds its own files and nothing else — it cannot open either repository. Everything it knows arrives by one of three routes, each started by a person:
@@ -50,11 +53,11 @@ The design project holds its own files and nothing else — it cannot open eithe
 | route | carries | lifetime |
 |---|---|---|
 | **a brief**, pasted into the project | one ask | spent on arrival; deleted when its surface ships (§8) |
-| **`/design-sync`**, from Claude Code | named files, under a plan the person approves | until overwritten |
-| **the export**, downloaded as a zip | the whole project, back to the design repository | a commit of the mirror |
+| **`/design-sync`**, from Claude Code | a repository's files, uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
+| **the export**, the project's Export menu, *Download as .zip* | the whole project, back to the design repository | a commit of the mirror |
 
-`/design-sync` needs a claude.ai login in Claude Code, and is unavailable on Bedrock, Vertex and Foundry. It writes one change at a time, never as a wholesale replace.
-It never writes `CLAUDE.md` or `.claude/`, which instruct the design agent: a repository that authors its system pushes `AGENTS.md` alone and commits no `CLAUDE.md` beside it, and only a project that authors its own files can create the import.
+`/design-sync` needs a claude.ai login in Claude Code (`/design-login`), and is unavailable where Claude Code does not contact claude.ai — Amazon Bedrock, Google Cloud, Microsoft Foundry.
+Observed, not documented: it writes one change at a time, never as a wholesale replace, and it never writes `CLAUDE.md` or `.claude/`, which instruct the design agent: a repository that authors its system pushes `AGENTS.md` alone and commits no `CLAUDE.md` beside it, and only a project that authors its own files can create the import.
 
 - **A rule that must hold for every future export goes into the project's own `readme.md` through `/design-sync`**, which the project reads before it draws. Pasted into a brief, the same rule dies with the brief.
 - **The project's agent context holds principles, never decisions about particular elements.** A principle — shape names the field, colour flags attention, absence is calm — holds for elements not drawn yet. A decision about one chip or one column is drawn in its page, and changes without the agent context changing; written into it, the decision becomes a second copy of the page that drifts, and the file grows with the elements instead of with the product's ideas. A ruling that is a principle amends the agent context; a ruling about one element is drawn in that element's page. An index that only names what exists — components, pages, tokens — is not a decision, and stays: it carries no rule to drift.
@@ -96,9 +99,9 @@ Only where a shared design system is vendored (§1).
 
 ### Promoting a component: one stand-in, landed by deletion
 
-The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and class names, byte for byte. The application keeps writing those classes.
+The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined locally until the shared token set carries it.
 
-- **Byte-identical is the point.** When the component lands, the stand-in is deleted and no markup changes; a stand-in that drifted from its brief turns landing into a migration.
+- **Byte-identical is the point.** When the component lands, the stand-in is deleted — the classes, or the local definition of the token or glyph — and no markup or renderer call changes; a stand-in that drifted from its brief turns landing into a migration.
 - **The request lives with the system that will draw it.** One brief per component, attached to the shared system's project one at a time, and deleted once it lands.
 - **Delete the stand-in only against a snapshot that carries the component.** Removed against a stale copy of the shared system, the surface loses its styling and nothing fails.
 
@@ -156,7 +159,7 @@ The copy does not follow the shared system: a request that lands there reaches t
 
 ## 7. Writing a brief
 
-1. **State the constraint; do not cite the artefact.** A decision's ruling is written out as a sentence, with its theme named beside it. A link out of the design repository resolves to nothing at the far end.
+1. **State the constraint; do not cite the artefact.** A decision's ruling is written out as a sentence, with its theme named beside it; the record itself lives where `AGENTS.md`'s design section says decision records do. A link out of the design repository resolves to nothing at the far end.
 2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no.
 3. **A brief never cites another brief.** Each is deleted on its own schedule.
 4. **A technical decision belongs in a decision record here, not in the design.** The brief asks Design to *depict* a ruling, never to make it. A behaviour the page must show that nothing has settled is drawn and labelled as an **open question**, never as a rule.
@@ -181,7 +184,7 @@ A long queue is the signal to triage, not to reshape: the reshape waits until th
 ## 9. What an agent must not do
 
 - **Edit the export mirror**, or the vendored artefact here.
-- **Style anything outside the vendored artefact** — a colour, a spacing, a component neither the product's design nor the shared system ships. The fix is a brief, not a local rule.
+- **Style anything outside the vendored artefact** — a colour, a spacing, a glyph, a component neither the product's design nor the shared system ships. The fix is a brief, not a local rule.
 - **Cite a brief or a design page from code.** Cite the decision record for *why* and the test for *what*.
 - **Answer a behaviour question on a page.** Behaviour is decided here, in a test.
 - **Start a route that §2 says a person starts.**

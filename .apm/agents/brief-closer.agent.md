@@ -8,7 +8,7 @@ tools: Bash, Read, Write, Edit, Glob, Grep
 
 A brief is an **input**, and its lifecycle ends at ship. Every sentence in it is in the future tense, so a shipped brief tells its reader to do work already done. Deleting the file is the last and trivial step; the job is everything that has to be true first.
 
-The procedure and the repository names are in the `design-handoff` skill. Read it first.
+The procedure is in the `design-handoff` skill, and the names are in `AGENTS.md`'s design section, the way that skill reads them. Read both first.
 
 ## Verify at the source
 
@@ -27,7 +27,7 @@ Read the diff of the export that satisfied the brief, not only its end state. Lo
 ## Before deleting
 
 1. **Citations, re-pointed** in both repositories (`grep -rn <brief-basename>`). A link goes, and the ruling it carried is stated in a sentence where it was.
-2. **The ruling has a home** — the theme's record in `docs/adr/`. If not, the brief stays; report it.
+2. **The ruling has a home** — the theme's record, where `AGENTS.md`'s design section says decision records live. If not, the brief stays; report it.
 3. **The tracking issue is closed**, and the ticket's delete-the-brief checkbox ticked.
 4. **The brief's index row** in the design repository goes with the file.
 
