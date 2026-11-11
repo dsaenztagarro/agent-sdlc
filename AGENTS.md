@@ -92,7 +92,7 @@ The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the 
 - **Artefact vendored at:** <!-- FILL: its path here, or `nothing is vendored yet` and why -->
 - **Cascade layer:** <!-- FILL: the layer the bundle is loaded in; `none` for a token set -->
 - **Vendor command:** <!-- FILL: the command that vendors the artefact under the stamp `adopt-designs`' vendor contract states -->
-- **Triage command:** <!-- FILL: the command that reads the vendored artefact against the markup, or the code that reads its tokens, and edits nothing -->
+- **Triage command:** <!-- FILL: the command that reads the vendored artefact against the application (a bundle against the markup and the styles that read its custom properties, a token set against the code that reads its names) and edits nothing -->
 - **Own component styles:** <!-- FILL: where this application's own component styles live -->
 - **Shared design system:** <!-- FILL: the system this design extends, or `none` -->
 - **Shared system channel:** <!-- FILL: the package that brings it here; it never arrives through this application's design repository -->

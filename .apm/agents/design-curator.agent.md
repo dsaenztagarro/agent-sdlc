@@ -94,7 +94,7 @@ Watch every new golden fail once, against a deliberately broken composition: a f
 Nothing is finished on a screenshot.
 
 - The triage command again, where there is one: its count moved the right way, or you know why not.
-- The project's gate, and in it the guards it has written: for a bundle, the cascade layers and the ownership of each selector; for a token set, the unknown-name check, the literal ban outside the token loader, the precedence test and the golden frames, or the decision record that defers them.
+- The project's gate, and in it the guards it has written: for a bundle, the triage guard over classes and custom properties, the cascade layers and the ownership of each selector; for a token set, the unknown-name check, the literal ban outside the token loader, the precedence test and the golden frames, or the decision record that defers them.
 - Where the change was meant to be structural only, build the application's stylesheet or render every golden frame before and after and show the output is byte-identical.
 - The suite can carry failures that predate you. Baseline against the default branch before claiming one.
 
