@@ -106,8 +106,8 @@ The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the 
 ### Who owns what
 
 ```
-  <project>-ds  (design repository)            <project>  (this repository)
-  owns how a surface LOOKS and is COMPOSED     owns how it BEHAVES
+  <project>-ds  (design repository)             <project>  (this repository)
+  owns how a surface LOOKS and is COMPOSED      owns how it BEHAVES
   +----------------------------------+          +-------------------------------------+
   | briefs/proposed/                 |          | code                                |
   | pages, components, tokens        |   one    | tests               -> what         |
