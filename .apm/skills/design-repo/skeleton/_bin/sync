@@ -33,7 +33,7 @@ UPSTREAM=()
 REQUIRED_ROOT_FILES=()
 
 # Authoring noise a designer leaves in a project, referenced by nothing.
-EXCLUDES=(uploads/ scraps/ screenshots/ '*.png' '*.jpg' .thumbnail)
+EXCLUDES=(uploads/ scraps/ screenshots/ '*.png' .thumbnail)
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 case "$KIND" in

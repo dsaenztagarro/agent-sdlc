@@ -123,13 +123,24 @@ class SyncTest < Minitest::Test
     FileUtils.mkdir_p(File.join(@export, "screenshots"))
     File.write(File.join(@export, "screenshots/list.txt"), "")
     File.write(File.join(@export, "draft.png"), "")
-    File.write(File.join(@export, "draft.jpg"), "")
 
     status, out = sync
 
     assert status.success?, out
     assert_path_exists File.join(@root, "pages/surface.html")
-    assert_empty Dir.glob("{screenshots,*.png,*.jpg}", base: File.join(@root, "pages"))
+    assert_empty Dir.glob("{screenshots,*.png}", base: File.join(@root, "pages"))
+  end
+
+  test "a photograph a page draws is mirrored with it" do
+    checkout(kind: "project")
+    project_export
+    write(File.join(@export, "assets/photo.jpg"), "")
+    File.write(File.join(@export, "surface.html"), %(<main><img src="assets/photo.jpg"></main>))
+
+    status, out = sync
+
+    assert status.success?, out
+    assert_path_exists File.join(@root, "pages/assets/photo.jpg")
   end
 
   test "a symlinked snapshot is replaced by the export's own" do
