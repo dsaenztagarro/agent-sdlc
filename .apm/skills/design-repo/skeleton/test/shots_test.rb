@@ -35,7 +35,7 @@ class ShotsTest < Minitest::Test
     FileUtils.rm_rf(@dir)
   end
 
-  test "every state a page names is shot from its state bar and named for it" do
+  test "every state a page names is shot at its address and named for it" do
     page "surface.html", states: ["Empty", "Long data"]
 
     out, status = shots
