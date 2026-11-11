@@ -100,10 +100,10 @@ Only where a shared design system is vendored (§1).
 
 ### Promoting a component: one stand-in, landed by deletion
 
-The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and a brief goes in the **shared system's repository**, `briefs/proposed/<component>.brief.md`, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
+The product's leaf becomes a stand-in, under a `STAND-IN — delete when the design system lands <Component>` marker, and the request goes in the **shared system's repository**: it amends that repository's open brief for the component's theme in `briefs/proposed/`, or opens `<theme>.brief.md` when none covers it, carrying the same rules and names, byte for byte. The application keeps writing the same names: on the web, the stand-in is a set of classes the markup writes; for a terminal client, it is a token or glyph name the renderer reads, defined in the product's design token set until the shared token set carries it.
 
 - **Byte-identical is the point.** When the component lands, the stand-in is deleted — the classes, or the local definition of the token or glyph — and no markup or renderer call changes; a stand-in that drifted from its brief turns landing into a migration.
-- **The request lives with the system that will draw it.** One brief per component, attached to the shared system's project one at a time, and deleted once it lands.
+- **The request lives with the system that will draw it.** It joins the shared system's open brief for its theme, one theme attached to that project at a time, and leaves the brief once it lands.
 - **Delete the stand-in only against a snapshot that carries the component.** Removed against a stale copy of the shared system, the surface loses its styling and nothing fails.
 
 ### The project's copy of the shared system, and how it stays current
@@ -144,7 +144,7 @@ The copy does not follow the shared system: a request that lands there reaches t
   a drawing gone with the prose around it? a page bin/shots named?
         |
         v
-  commit the mirror, as produced; a defect becomes a new brief
+  commit the mirror, as produced; a defect joins its theme's brief
         |
         v
   in this repository: vendor the artefact         adopt-designs
@@ -160,6 +160,8 @@ The copy does not follow the shared system: a request that lands there reaches t
 
 ## 7. Writing a brief
 
+**One open brief per theme, named for the theme and amended in place.** A new ask joins the open brief for its theme; a brief opens only for a theme none covers. Briefs opened request by request grow with the work and stop being read. The design repository's `briefs/README.md` carries the house format and the reader rule.
+
 1. **State the constraint; do not cite the artefact.** A decision's ruling is written out as a sentence, with its theme named beside it; the record itself lives where `AGENTS.md`'s design section says decision records do. A link out of the design repository resolves to nothing at the far end.
 2. **Every proper noun must resolve inside the design project.** Pages, components, tokens — yes. File paths, commands, frameworks, issue numbers — no.
 3. **A brief never cites another brief.** Each is deleted on its own schedule.
@@ -169,7 +171,7 @@ The copy does not follow the shared system: a request that lands there reaches t
 
 A brief ends when its surface ships here, so the ticket that ships a surface carries a checkbox to delete its brief. Before the deletion: verify each ask in the design project's export, re-point everything that cited the brief, rewrite future-tense prose about it, and close the tracking issue.
 
-A brief whose asks all landed closes. One where some did not stays, with the remainder reported. One that got what it asked for while the doing broke something else closes, and owes a follow-up brief. The **`brief-closer`** agent does this, and verifies before it deletes.
+A brief whose asks all landed closes. One where some did not stays, listing only the remainder. One that got what it asked for while the doing broke something else stays too, listing only what broke: what remains for a theme never opens a brief of its own. The **`brief-closer`** agent does this, in a fixed order that deletes last, when an export lands that may satisfy an open brief as well as at a ticket's delete-the-brief checkbox.
 
 ### Before a reshape, triage the queue
 
