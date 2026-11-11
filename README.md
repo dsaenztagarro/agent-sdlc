@@ -2,7 +2,7 @@
 
 A project-agnostic scaffold for **agentic engineering** — building software with coding agents — on any codebase.
 
-It is the connective tissue that makes heavy AI workflows reliable: a single source of truth agents read (`AGENTS.md`), a decision/knowledge system that survives closed pull requests (`docs/`), a **design → epic → ship** pipeline that turns a design into merged code one ticket at a time, and the **Claude Design** step that produces the design in the first place.
+It is the connective tissue that makes heavy AI workflows reliable: a single source of truth agents read (`AGENTS.md`), a decision/knowledge system that survives closed pull requests (`docs/`), a **plan → build → review → fix → close → release** delivery pipeline that runs on the issue tracker and turns a design into merged code one ticket at a time, and the **Claude Design** step that produces the design in the first place.
 
 Drop it into a new repo (or click **Use this template**), fill in the handful of project-specific placeholders in `AGENTS.md`, and your project inherits the whole workflow.
 
@@ -17,11 +17,13 @@ This template fixes that with **written, discoverable institutional memory** and
 ## The workflow at a glance
 
 ```
-  a design brief       Claude Design        AGENTS.md          /epic skill
-  (<project>-ds)  -->  draws the page  -->  the rules     -->  design -> GitHub epic
-                       (<project>-ds)       every agent        -> phased sub-issues
-                                            obeys              -> one ticket at a time
-                                                               -> branch, test, PR, merge
+  a design brief       Claude Design        AGENTS.md          the tracker pipeline
+  (<project>-ds)  -->  draws the page  -->  the rules     -->  plan    -> the epic's description
+                       (<project>-ds)       every agent        build   -> a worktree per ticket
+                                            obeys              review  -> PR threads + QA: note
+                                                               fix     -> a commit per finding
+                                                               close   -> evidence per ticket
+                                                               release -> CHANGELOG + tag
                                                                         |
                                                                         v
                               docs/  (bounded memory)  <-------  tests state the rules;
@@ -29,10 +31,10 @@ This template fixes that with **written, discoverable institutional memory** and
 ```
 
 1. **Design.** For UI, a short **brief** goes to a **Claude Design** project, which draws the page. Briefs, pages and the export live in a sibling **`<project>-ds`** repository; one generated artefact crosses into the application. For backend work, write a markdown design — an input, deleted when it ships.
-2. **Decompose & ship.** Run **`/epic`** on the design. It opens a GitHub epic, splits the design into dependency-ordered sub-issues, pauses once for your approval, then implements them **one ticket at a time** — branch → tests → PR → squash-merge.
+2. **Deliver.** One pipeline takes the design to a release, through the issue tracker: the plan is published on an epic, its tickets are built **one worktree each** into a pull request, the pull request is reviewed and fixed, each ticket closes with evidence, and the release is versioned from the commits. §4 states what each step reads and leaves where.
 3. **Remember, within a bound.** Behaviour is stated by tests. The *why* amends one of a few broad **themed decision records**, once, at close-out. Commands live in the README and procedures in skills. Nothing in `docs/` grows one file per ticket, decision or feature.
 
-The human's only mid-run touch point is the single approval gate before issues are created; the finished work is reviewed at the end.
+The human approves the plan and merges; the finished work is reviewed at the end.
 
 ## What's in the box
 
@@ -60,18 +62,50 @@ An agent reads the repository at the start of every task, and its context is fin
 - **Inputs are deleted when what they produced ships** — briefs, backend designs, reviews.
 - **Themes are drawn wide, and named rather than numbered.** A new record argues why no existing theme fits; nothing counts the files or their lines, because a count cannot tell a broad theme from a narrow one.
 
-### 4. The `/epic` workflow skill
+### 4. The delivery pipeline — required at user level
 
-`.apm/skills/epic/SKILL.md` is a complete, user-invoked orchestration for taking one design doc to shipped code:
+Work ships through one pipeline on the issue tracker: **plan, build, review, fix, close, release.** Its skills and workflows are **required at user level and never shipped in this package**: a copy per project drifts, and the pipeline works the same across projects and trackers (GitHub Issues or Jira). The tracker is the only record of what is planned and what is done; nothing in the pipeline writes a plan or a status file to the repository.
 
-- opens a GitHub **epic** issue and decomposes the design into **self-contained, phased sub-issues**;
-- **one approval gate**, then runs autonomously;
-- implements **strictly one ticket at a time** — branch → implement per `AGENTS.md` → the project's **test/lint gate** → PR → squash-merge;
-- carries every pragmatic decision forward on the epic's **Decisions Log** (the shared memory between tickets), and promotes architectural ones to **ADRs**;
-- **re-diff / resume modes** reconcile against the *current code*, never a stale checklist, so re-running on an edited design finds exactly what changed;
-- **design fidelity is verified, not assumed** — every behaviour the design specifies must have a test.
+**The contract** — what holds whoever runs the step:
 
-The skill names no language or tool: it defers to the gate and conventions in *your* `AGENTS.md`.
+- **A plan is a marked section of the epic's description**, replaced in place when the design or the order changes.
+- **Every ticket and every pull request opens with `## Sequence`:** the previous and the next, and the ticket's pull requests; the tracker's blocking link backs the order.
+- **One worktree per ticket, one pull request per batch** of tickets; a person merges.
+- **Review findings are pull request threads, each with a stable id,** plus one `QA:` comment on the ticket for what no line of the diff shows. A `QA:` comment is a correction a builder applies before its next commit, or rejects with a stated reason.
+- **A ticket closes only with evidence:** each done-when line against a named test or a command's real output; a live check the agent cannot run goes to a person as exact commands.
+- **A release versions from the Conventional Commit types** since the last tag into a CHANGELOG entry and an annotated tag whose message is that entry.
+
+**An adopter without the pipeline follows that contract by hand.** Each command below states what it reads and what it leaves where, so a person can do the same step without it:
+
+| | Reads | Leaves |
+|---|---|---|
+| `tracker-plan` | the confirmed plan, the tickets, the decision records | the epic's marked `Implementation plan` section; amended tickets and new sub-issues, each opening with `## Sequence` |
+| `tracker-batch` (workflow) | the epic's plan and tickets, the gate `AGENTS.md` names | a worktree and branch per ticket, integrated onto one batch branch; one pull request for the batch, opening with `## Sequence`; after the merge, each ticket closed with evidence |
+| `tracker-review` (skill, and a workflow for an epic or several repositories) | the pull request's diff, the ticket's done-when and tests | one review per pull request, an inline thread per finding labelled with a stable id; one `QA:` comment on the ticket |
+| `tracker-fix` (workflow) | the unresolved threads and the `QA:` comments | one commit per finding, test first, naming its id, on the feature branch; stops before pushing, and a thread is resolved per pushed fix |
+| `tracker-close` | the ticket's done-when lines, the tests, the commands' output | the proven lines ticked, a comment in fixed fields, the ticket closed only when every line holds; live checks handed to a person |
+| `tracker-release` | the Conventional Commit types since the last tag | a CHANGELOG entry in the file's own shape, one release pull request or direct commit, an annotated tag whose message is the entry; no issue |
+| `tracker-amend` | new requirements raised on near-ready work, the current ticket | the new scope written into the ticket or epic that owns it, for a clean session to build; the current pull request finishes only its own ticket |
+| `tracker-pause` | the branch, the uncommitted files, any running workflows | a "Where I stopped" section of the in-progress ticket's description, replaced on every pause; each workflow's branches pushed and its relaunch recorded |
+| `tracker-resume` | the pause note, the tracker, git | nothing: a brief, the mismatches between the note and the branch, and the one next action |
+| `tracker-roadmap` | the roadmap issue, its epics and their tickets | the roadmap issue's phase order and each epic's `## Sequence`; shipped tickets labelled `live-check`; finished epics closed with evidence; audit findings as tickets under one Housekeeping epic |
+| `tracker-audit` (workflow) | shipped code, subsystem by subsystem | nothing in the code: the confirmed findings in one file, which `tracker-roadmap` files as tickets |
+| `workflow-orchestration` | the user-level workflow scripts, a run's journal | a run launched by script path; a correction as a `QA:` comment on the ticket, never a message to a running agent; merging and publishing kept with the orchestrator |
+
+**Where each phase of the work lives:**
+
+```
+  Plan      research, then /tracker-plan            -> the epic's description
+  Build     tracker-batch, one worktree per ticket   -> one pull request per batch
+  Verify    the ticket's own procedure, lower levels first; a live check goes to a person
+  Review    tracker-review                           -> PR threads + one QA: note
+  Fix       tracker-fix, a commit per finding        -> a thread resolved per pushed fix
+  Close     /tracker-close; amend the theme's record; brief-closer deletes a shipped brief
+  Release   /tracker-release                         -> CHANGELOG entry + annotated tag
+  Resume    /tracker-resume; /tracker-pause before stopping; /tracker-amend for new scope
+```
+
+Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is published as a public APM package; until then each person installs it at user level.
 
 ### 5. Claude Design — where the design comes from
 
@@ -103,13 +137,12 @@ A template only gets better if the improvements people discover while *using* it
 
 ### 10. Skills and agents — what ships, and what to create
 
-A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses two kinds.
+A procedure an agent follows is a skill: its body loads only when invoked, so it costs nothing on the tasks that do not need it. The workflow uses three kinds: the package shipped here, the delivery pipeline required at user level (§4), and optional user-level skills.
 
 **Shipped here** — generic, as an [APM](https://github.com/microsoft/apm) package in `.apm/`. A project depends on it in its own `apm.yml`, and `apm install` deploys the skills to `.claude/skills/` and the agents to `.claude/agents/`; `apm.lock.yaml` pins the commit, and `apm update` takes a newer one. Nothing in the package names the project: what it needs to know about one, it reads from that project's `AGENTS.md`.
 
 | | Does |
 |---|---|
-| `/epic` | turns a design into a GitHub epic of dependency-ordered tickets, then ships them one at a time |
 | `design-repo` | creates a design repository from one skeleton, in the layout every design repository keeps, and adopts the layout check in an existing one |
 | `design-handoff` | the Claude Design procedure: which repository is which, how a design repository is laid out, the three routes into the project, writing a brief, reading an export back |
 | `adopt-designs` | reads what the design project published — vendors the one generated bundle, reports what moved by selector, triages it — and hands the adoption to `design-curator` and any satisfied brief to `brief-closer` |
@@ -118,43 +151,77 @@ A procedure an agent follows is a skill: its body loads only when invoked, so it
 | `design-curator` (agent) | adopts a design that has shipped: deletes the application's copies of what the bundle now provides, and writes the components it ships but the application never uses |
 | `brief-closer` (agent) | closes a brief once its surface ships, verifying each ask before deleting anything |
 
-**Create once, at user level** — shared by every project (for instance a personal APM package installed with `apm install -g`), never copied into each one, because a copy per project drifts:
+**The delivery pipeline, at user level** — the commands §4 lists, installed once per person and shared by every project (for instance a personal APM package installed with `apm install -g`), never copied into each one.
+
+**Optional, at user level** — useful beside the pipeline, and nothing in it depends on them:
 
 | | Does |
 |---|---|
-| `tracker-plan` | publishes a confirmed plan as a marked section of the epic's description, and files or amends the sub-issues it calls for — the tracker is the only record of what is planned |
-| `tracker-resume` | briefs the project from the tracker and git at the start of a session, leading with the note the last pause left, and reports where the two disagree |
-| `tracker-pause` | writes a "where I stopped" note — branch, the step reached, the one next action, open questions — into the in-progress ticket, replaced on every pause |
-| `tracker-close` | closes a ticket only with evidence: each done-when line checked against a named test or a command's output, live checks handed to a person |
 | `deps-upgrade` | lands a backlog of dependency pull requests: audits the lock, sorts by risk, batches the safe ones through the real gate |
 | a knowledge-capture skill | files a reusable, project-agnostic lesson into a notes repository, so it outlives the project that taught it |
-| `tracker-review` (workflow) | reviews a ticket's or pull request's work against its requirements, tries to refute each gap, and publishes what holds: one review per pull request with an inline comment per finding, each labelled with a stable id, and one `QA:` comment on the ticket for what no line of the diff shows — never only a file in the session |
-| `tracker-fix` (workflow) | fixes published findings test first, one commit per finding naming its id, starting from the unresolved threads and the `QA:` notes, so a fresh session can run it |
-
-A `QA:` comment on a ticket is a correction a builder applies before its next commit, or rejects with a stated reason.
-
-**Where each phase of the work lives:**
-
-```
-  Plan      research, then /tracker-plan            -> the epic's description
-  Build     one ticket at a time, one worktree each  (claude --worktree issue-<N>)
-            /epic drives a multi-ticket design
-  Verify    the ticket's own procedure, lower levels first; a live check goes to a person
-  Review    tracker-review -> PR threads + one QA: note; tracker-fix closes them, a thread resolved per pushed fix
-  Close     /tracker-close; amend the theme's record; brief-closer deletes a shipped brief
-  Resume    /tracker-resume; /tracker-pause before stopping
-```
 
 ## Applying the template to a new project
 
-1. **Create the repo** from this template (GitHub **Use this template**, or clone and re-init git).
-2. **Fill in `AGENTS.md`** — every `<!-- FILL: … -->` marker: project overview, the build/test/lint gate commands, the architecture map, and any project-specific rules. Delete sections that don't apply (e.g. the design workflow for a headless service).
-3. **Keep `CLAUDE.md`** as `@AGENTS.md`.
-4. **Name your first themes** in `docs/adr/README.md` as the first decisions in each area are made, and open a decision-log issue per theme, titled `decision-log: <theme>` and labelled `decision-log` (`gh label create decision-log` once, then one issue per record), so `gh issue list --label decision-log` finds every theme's history.
-5. **Install the skills.** Delete `.apm/`, replace `apm.yml` with the project's own — `apm init`, then `apm install dsaenztagarro/agent-sdlc` — and commit `apm.yml`, `apm.lock.yaml` and what it deploys into `.claude/`, so a clone has the skills without APM. Add `apm_modules/` to `.gitignore` if `apm install` did not.
-6. **For a UI**, create the `<project>-ds` repository with the `design-repo` skill and fill in the names in `AGENTS.md`'s design section, which `design-handoff` reads; otherwise delete that section.
-7. Copy `.claude/settings.local.json.example` → `.claude/settings.local.json` and adjust.
-8. **Install the user-level skills** in §10 if you do not have them yet.
+### 1. Create the repository
+
+```bash
+# from this template, private unless it is meant to be public
+gh repo create <owner>/<project> --template dsaenztagarro/agent-sdlc --private --clone
+cd <project>
+```
+
+### 2. Fill in `AGENTS.md`
+
+Replace every `<!-- FILL: … -->` marker — the project overview, the gate commands, the architecture map, the project's own rules — and delete the sections that do not apply, such as the design workflow for a headless service.
+
+```bash
+# list the placeholders still to fill
+grep -n 'FILL' AGENTS.md
+```
+
+### 3. Keep `CLAUDE.md` as `@AGENTS.md`
+
+### 4. Install the package
+
+`apm.yml` records `claude` as the target, so every developer's `apm install` deploys to `.claude/`. Commit what it deploys, so a clone has the skills without APM.
+
+```bash
+# drop the template's own package
+rm -rf .apm apm.yml
+# declare the project's package, deploying to Claude Code
+apm init --yes --target claude
+# depend on a pinned release of the shared skills and agents
+apm install dsaenztagarro/agent-sdlc#v<version>
+# commit the manifest, the lock and what it deployed
+git add apm.yml apm.lock.yaml .gitignore .claude/
+git commit -m "chore: install agent-sdlc"
+```
+
+### 5. Open a decision log per theme
+
+Name the first themes in `docs/adr/README.md` as the first decision in each area is made; each gets one `decision-log` issue, so `gh issue list --label decision-log` finds every theme's history.
+
+```bash
+# once per repository
+gh label create decision-log
+# once per theme
+gh issue create --label decision-log --title "decision-log: <theme>" --body "History of docs/adr/<theme>.md"
+```
+
+### 6. Create the design repository, for a UI
+
+Run the `design-repo` skill, and fill in the names in `AGENTS.md`'s design section, which `design-handoff` reads. Without a UI, delete that section.
+
+### 7. Copy the local settings
+
+```bash
+# the real file is git-ignored; adjust it after copying
+cp .claude/settings.local.json.example .claude/settings.local.json
+```
+
+### 8. Install the delivery pipeline at user level
+
+Install the commands §4 lists if you do not have them yet; without them, follow §4's contract by hand.
 
 ## Layout
 
@@ -173,7 +240,6 @@ A `QA:` comment on a ticket is a correction a builder applies before its next co
 |       +-- design-handoff/SKILL.md    the Claude Design procedure
 |       +-- design-handoff/layout.md   how a design repository is organised, folder by folder
 |       +-- design-repo/SKILL.md       creates a design repository from skeleton/, held to the layout by its layout_test.rb
-|       +-- epic/SKILL.md              design -> epic -> ship
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- .claude/
 |   +-- settings.local.json.example    committed template; the real file is git-ignored
