@@ -40,7 +40,7 @@ The human approves the plan and merges; the finished work is reviewed at the end
 
 ### 1. `AGENTS.md` + `CLAUDE.md` — the rules every task needs
 
-`AGENTS.md` loads in every session, so it holds only what applies to every task — the rules an agent can break before it knows they exist — and a routing table to the rest: a procedure is a skill, loaded when invoked, and a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened. It states the project overview, the build/test/lint gate, the architecture map, the documentation and testing rules, the design workflow, and the development workflow. `CLAUDE.md` is a one-line pointer (`@AGENTS.md`) so Claude Code loads the same rules. **You fill in the project-specific placeholders once; everything else is portable.**
+`AGENTS.md` loads in every session, so it holds only what applies to every task — the rules an agent can break before it knows they exist — and a routing table to the rest: a procedure is a skill, loaded when invoked, and a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened. It states the project overview, the build/test/lint gate, the architecture map, the documentation rules, the design workflow, and the development workflow; the testing rules are the path-scoped rule §7 describes. `CLAUDE.md` is a one-line pointer (`@AGENTS.md`) so Claude Code loads the same rules. **You fill in the project-specific placeholders once; everything else is portable.**
 
 ### 2. Model selection & task tracking
 
@@ -125,9 +125,16 @@ Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is pub
 - **ASCII diagrams only** (`+ - | v ^ >`) — they render identically in every terminal, editor, and diff.
 - **Markdown prose is one line per paragraph** (or semantic line breaks), never fixed-column hard wraps — so diffs stay word-level and readable.
 
-### 7. Testing philosophy (framework-neutral)
+### 7. Testing rules — a path-scoped seed you keep and fill
 
-Test the real thing; don't mock the object under test. Prefer real collaborators and fixtures over test doubles — a test that stubs what it's checking proves the stub, not the code. Reserve doubles for genuine boundaries (the network, external services, infrastructure you can't stand up, forced-error injection). And when a change has a runtime surface, **drive it and observe the behaviour** — passing tests are necessary, not sufficient.
+The testing rules are a path-scoped rule, `.claude/rules/testing.md`, so they load when a test or a stateful component is opened rather than in every session. It comes with the template, not the package: you keep it and fill its `paths:` with the globs of your tests and of your interactive components. Each rule is one framework-neutral sentence, with a web and a terminal form where they differ:
+
+- **What a test runs against:** real collaborators and fixtures, doubles only at genuine boundaries, and one end-to-end smoke test per interactive surface asserting what should render.
+- **How a test finds what it checks:** by role and accessible name, then label, then visible text; a component's state is the accessible state its role defines, never a class alone.
+- **The shape of a stateful component's tests:** invariants after every command, in a few named journeys and one fixed-seed walk; a mutation check proves detection, not correctness; a source-invariant guard for a closed property of the code.
+- **Building a stateful component:** every reachable state legal, escapable and visible; no control hidden in reaction to a user action; one implementation for a question two surfaces ask.
+
+It is not in the package because APM deploys a package's instruction file to `.claude/rules/` with the package's own `applyTo:` as its `paths:`, and every `apm install` writes it again, discarding the globs you filled. Driving the runtime surface of a change before calling it done applies to every change, so it stays in `AGENTS.md`'s development workflow.
 
 ### 8. `.claude/` settings
 
@@ -172,13 +179,15 @@ gh repo create <owner>/<project> --template dsaenztagarro/agent-sdlc --private -
 cd <project>
 ```
 
-### 2. Fill in `AGENTS.md`
+### 2. Fill in `AGENTS.md` and the testing rule
 
 Replace every `<!-- FILL: … -->` marker — the project overview, the gate commands, the architecture map, the project's own rules — and delete the sections that do not apply, such as the design workflow for a headless service or a surface that takes all its colours from its host.
 
+`.claude/rules/testing.md` came with the template; it is the project's own file from here, and no install touches it. Fill its `paths:` with the globs of the test files and of the interactive components' source, since a rule whose globs match nothing never loads.
+
 ```bash
 # list the placeholders still to fill
-grep -n 'FILL' AGENTS.md
+grep -n 'FILL' AGENTS.md .claude/rules/testing.md
 ```
 
 ### 3. Keep `CLAUDE.md` as `@AGENTS.md`
@@ -256,6 +265,7 @@ Install the commands §4 lists if you do not have them yet; without them, follow
 |       +-- design-repo/SKILL.md       creates a design repository from skeleton/, held to the layout by its layout_test.rb
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- .claude/
+|   +-- rules/testing.md               the testing rules, kept by an adopter, who fills its paths:
 |   +-- settings.local.json.example    committed template; the real file is git-ignored
 +-- .github/
 |   +-- workflows/pr-title.yml         holds each pull request title to a Conventional Commit

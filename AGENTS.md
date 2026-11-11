@@ -2,13 +2,13 @@
 
 Instructions for AI agents working on this codebase. This file holds only what applies to **every** task — the rules an agent can break before it knows they exist — and a routing table to the rest. A procedure is a skill in `.claude/skills/`, loaded when it is invoked; a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened.
 
-> This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (model selection, documentation, testing, design workflow, development workflow) are portable as-is.
+> This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (model selection, documentation, design workflow, development workflow) are portable as-is, and so is the testing rule in `.claude/rules/testing.md` once its `paths:` is filled.
 
 ## Where the rest of the instructions live
 
 | when you are… | load | how it fires |
 |---|---|---|
-| <!-- FILL: writing or changing a test --> | <!-- FILL: `.claude/rules/testing.md` --> | <!-- FILL: opening `test/**` --> |
+| writing or changing a test, or building a component that holds state | `.claude/rules/testing.md` | opening a file its `paths:` names, which you fill |
 | planning multi-ticket work, or building, reviewing, fixing, closing or releasing its tickets | the user-level tracker pipeline: `/tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `/tracker-close`, `/tracker-release` | invoke it |
 | stopping, resuming, or taking new scope on near-ready work | `/tracker-pause`, `/tracker-resume`, `/tracker-amend` | invoke it |
 | handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
@@ -142,29 +142,6 @@ Claude Design ships surface only; the last rule below says where a behaviour it 
 
 If this project has no UI, or its UI takes all its colours from its host — a multiplexer plugin drawing in the host theme's levels, a command line on the terminal's ANSI slots — delete this section, and record why in the theme's decision record, with the condition that reopens it.
 
-## Testing Guidelines
-
-### Test the real thing; don't mock the object under test
-
-A test that stubs the very thing it is checking proves the stub, not the app — an over-mocked test stays green while the real code breaks. Default to **real collaborators and fixtures**: instantiate the actual units, let them exercise real (test) infrastructure, and assert on real outcomes.
-
-Reserve test doubles for **genuine boundaries**, never the object under test or its in-process collaborators:
-- **The network / external services.**
-- **Infrastructure you cannot stand up in a unit test.**
-- **Forced-error injection you cannot otherwise reproduce.**
-
-The tell for an over-coupled test: refactoring a method's implementation, without changing its behaviour, breaks the test. Rewrite it against real objects and observable outcomes.
-
-### Verify the runtime surface
-
-When a change has a runtime surface, **drive it and observe the behaviour** before considering it done — passing tests are necessary, not sufficient.
-
-### Smoke-test every interactive surface
-
-Every interactive frontend surface gets at least one end-to-end test proving the wiring connects — from the interaction through to the rendered result. Navigate to the page (via a real interaction, not a direct URL, when possible), trigger the interaction, and assert the **expected rendered outcome**. The goal is to confirm the gears connect, not to exercise every backend permutation — that belongs in unit/integration tests.
-
-**Assert what should render, not the absence of an error.** Prefer a positive assertion (the content, option, or row that should now be present or gone) over a negative one tied to a specific failure string. A positive assertion describes what the feature is supposed to do and still fails when the wiring breaks; negative error-string assertions are brittle regression guards that don't document the feature.
-
 ## No fallbacks to legacy values
 
 Read a fact from its **current owner only** — never with a `|| <legacy_source>` fallback. When a fact has moved to a new home, reads point at the new owner and stop there.
@@ -200,7 +177,7 @@ Rules that depend on the project's tooling, each a `FILL` with its rule beside i
 2. **Branch from a freshly fetched default branch**, in the issue's own worktree: `git fetch origin` first, then `claude --worktree issue-<issue>` checks out `.claude/worktrees/issue-<issue>`, and the same command re-enters it later. `git log origin/<default>..HEAD` prints nothing before the first commit, so no unpushed local commit rides into the squash. Two agents never share a checkout — they race on HEAD.
 3. **A worktree gets the untracked files it needs** — local keys, a `.env` — through `.worktreeinclude`, never by copying them by hand.
 4. **Check the branch name on the remote before the first push:** rename the branch to `<issue>-<slug>`, and `git ls-remote --heads origin <branch>` prints nothing, so the push cannot land on a branch an existing pull request uses.
-5. **Implement & test** — write tests alongside the change; run the gate frequently; drive the runtime surface.
+5. **Implement & test** — write tests alongside the change; run the gate frequently; when the change has a runtime surface, drive it and observe the behaviour before calling it done, since passing tests are necessary, not sufficient.
 6. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
 7. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
 
