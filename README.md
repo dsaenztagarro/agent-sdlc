@@ -129,7 +129,7 @@ Test the real thing; don't mock the object under test. Prefer real collaborators
 
 ### 8. `.claude/` settings
 
-`.claude/settings.local.json.example` is a committed template for local Claude Code permissions and attribution; the real `.claude/settings.local.json` is git-ignored. Copy the example to opt into an allowlist and to control commit/PR attribution.
+`.claude/settings.local.json.example` is a committed template for local Claude Code permissions, attribution, and a format-on-write hook slot to fill with the project's formatter; the real `.claude/settings.local.json` is git-ignored. Copy the example to opt into an allowlist and to control commit/PR attribution. A git-ignored file a worktree needs, such as a local key, is listed in `.worktreeinclude`, and Claude Code copies it into each new worktree.
 
 ### 9. The `template-feedback` skill — a self-improvement loop
 
@@ -219,7 +219,16 @@ Run the `design-repo` skill, and fill in the names in `AGENTS.md`'s design secti
 cp .claude/settings.local.json.example .claude/settings.local.json
 ```
 
-### 8. Install the delivery pipeline at user level
+### 8. Squash with the pull request title
+
+`.github/workflows/pr-title.yml` holds every pull request title to a Conventional Commit; this setting makes that reviewed title the squash commit's subject, so `/tracker-release` versions from it. Without it, a single-commit pull request takes its commit's subject.
+
+```bash
+# once per repository
+gh api -X PATCH repos/<owner>/<project> -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
+```
+
+### 9. Install the delivery pipeline at user level
 
 Install the commands §4 lists if you do not have them yet; without them, follow §4's contract by hand.
 
@@ -243,9 +252,14 @@ Install the commands §4 lists if you do not have them yet; without them, follow
 |       +-- template-feedback/SKILL.md raise reusable workflow improvements upstream
 +-- .claude/
 |   +-- settings.local.json.example    committed template; the real file is git-ignored
++-- .github/
+|   +-- workflows/pr-title.yml         holds each pull request title to a Conventional Commit
+|   +-- scripts/pr-title               the title check it runs
 +-- docs/
-    +-- SECURITY.md                    secret and key handling
-    +-- adr/                           one record per theme, named for it
+|   +-- SECURITY.md                    secret and key handling
+|   +-- adr/                           one record per theme, named for it
++-- test/
+    +-- pr_title_test.rb               the title check's rules: ruby test/pr_title_test.rb
 ```
 
 ## License
