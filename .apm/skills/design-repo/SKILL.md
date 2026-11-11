@@ -36,12 +36,12 @@ cd <name>
 mv _bin bin
 grep -rl '__NAME__' . | xargs sed -i '' 's/__NAME__/<name>/g'     # GNU sed: -i without ''
 sed -i '' 's/^KIND="__KIND__"$/KIND="<project|system>"/' bin/sync
-chmod +x bin/sync bin/ds-status bin/shots
+chmod +x bin/sync bin/ds-status bin/shots bin/stand-ins bin/serve
 ```
 
 The skeleton keeps its scripts in `_bin/` because APM does not deploy a folder named `bin` inside a skill; the copy renames it.
 
-A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name. A shared system, or a product bound to none, deletes `bin/ds-status` and `test/ds_status_test.rb`.
+A product bound to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name, and in `bin/stand-ins` replaces `__SHARED_VAR__` and `__SHARED_CHECKOUT__` with the environment variable and default that the application's `AGENTS.md` design section declares for the shared system's checkout. A shared system, or a product bound to none, deletes `bin/ds-status`, `bin/stand-ins` and their tests.
 A shared system deletes `bin/shots`, `lib/shots.js` and `test/shots_test.rb` too: it has no pages to shoot.
 
 Then resolve every `FILL` marker (`grep -rn FILL .`):
@@ -49,7 +49,7 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 - **`README.md`** — the opening paragraph, and the tree: keep the lines that apply, delete the rest.
 - **`AGENTS.md`** — the consuming application, and which paths flow which way.
 - **`briefs/README.md`** — what belongs here, for this kind.
-- **`bin/sync`** — `UPSTREAM` lists the authored paths; `EXCLUDES` keeps its default unless the project carries other authoring noise.
+- **`bin/sync`** — `REQUIRED_ROOT_FILES` lists what a complete export carries at its root: a web export's root stylesheet, nothing for a terminal client's. `UPSTREAM` lists each authored file as `<path in this repository>:<path in the export>`, so a product's palette authored under `system/` is compared with the copy its export carries. `EXCLUDES` keeps its default unless the project carries other authoring noise.
 - **`Rakefile`** — the generator's task and its `:check`, ahead of `:test`.
 
 ## 4. Add the generator
@@ -71,7 +71,7 @@ bin/sync       # mirror the first export; a product's also shoots every page int
 rake           # the generator's check, then every test — layout_test.rb included
 ```
 
-Commit the mirror as produced. The repository is done when `rake` passes and `grep -rn FILL .` finds nothing.
+Commit the mirror as produced, as the repository's `AGENTS.md` states the publish procedure and its commit conventions. The repository is done when `rake` passes and `grep -rn FILL .` finds nothing.
 
 ## Adopting the layout check in an existing design repository
 

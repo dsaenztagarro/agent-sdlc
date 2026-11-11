@@ -48,6 +48,8 @@ A product may also own a Design System project of its own, when it extends a sha
 |   +-- sync                mirror a fresh export
 |   +-- ds-status           whether pages/_ds/ carries what the shared system does   (product)
 |   +-- shots               every page in every state, the surface alone, into tmp/shots/   (product)
+|   +-- stand-ins           where each stand-in is on its way into the shared system   (product)
+|   +-- serve               every page from a real origin, with an index walked on each request
 |   +-- vendor-sync         refresh vendor/ from the shared system's checkout
 +-- .design-sync/           config.json and NOTES.md, when files are pushed up with /design-sync
 +-- .claude/skills/         skills that only make sense here, such as the contract's
@@ -83,7 +85,7 @@ The requests made **to this repository's Claude Design project**, and nothing el
 Two directions, and the README says which path goes which way:
 
 - **Downstream** — drawn in the project, exported, mirrored by `bin/sync`. A hand edit is reverted by the next sync.
-- **Upstream** — authored here, checked by `rake`, pushed to the project with `/design-sync` (a palette, a component tier, the project's own `readme.md`). `bin/sync` **refuses an export that disagrees** with an upstream file, because `--delete` would otherwise overwrite the only copy the checks ran against.
+- **Upstream** — authored here, checked by `rake`, pushed to the project with `/design-sync` (a palette, a component tier, the project's own `readme.md`). `bin/sync` **refuses an export whose copy of an upstream file differs or is missing**, because `--delete` would otherwise overwrite the only copy the checks ran against. Each upstream entry names the file's path in the repository and its path in the export, so a product repository's palette, authored under `system/` while its export lands in `pages/`, is compared with the copy its export carries.
 
 ### `references/`
 
@@ -109,13 +111,17 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
 
 ### `bin/`
 
-- **`sync`** mirrors a fresh export. Its refusals are the review gate, and each has a test:
-  - an export of the wrong kind or the wrong project — a consuming product's export into a shared system, a namespace that is not this repository's;
-  - an export that disagrees with a file this repository authors upstream;
+- **`sync`** mirrors a fresh export. Its refusals are the review gate, each leaves the mirror untouched, and each has a test:
+  - an incomplete export — no `_ds_manifest.json`, or a root file the repository lists as required missing: a web export's root stylesheet, while a terminal client's export lists none;
+  - an export of the wrong kind — a consuming product's export into a shared system;
+  - an export whose copy of a file this repository authors upstream differs or is missing;
   - a page that is not one canonical prototype per surface — a versioned copy, an audit, a rationale or an options page.
+- It never mirrors authoring screenshots, and replaces a symlinked snapshot with the export's own. Behaviour artefacts — a `spec-notes/` folder, a rulings page — are mirrored and reported as a regression of the surface-only contract, so their arrival is news rather than silently filtered.
 - It stages into a git-ignored `tmp/`, deletes only inside the checkout, mirrors, reports what changed, and leaves committing to a person.
 - **`ds-status`**, in a product's repository, compares the `_ds/` snapshot's manifest with the shared system's, and exits 1 when the snapshot lacks a token or component the shared system carries.
-- **`shots`**, in a product's repository, runs after every sync: it walks each page's state bar and screenshots the `[data-surface]` element in each state into the git-ignored `tmp/shots/`, with an `index.html` contact sheet, and exits 1 naming each page that breaks the page contract (§4 of the skill). The generator is `lib/shots.js`; Playwright drives the installed Chrome from a cache outside the repository, and its test skips, saying so, where node or a browser is missing.
+- **`shots`**, in a product's repository, runs after every sync: it reaches each state of each page at its address, `#state=<family>/<state>`, checks that the State row names it, hides `[data-design-chrome]`, and screenshots the `[data-surface]` element whole into the git-ignored `tmp/shots/`, with an `index.html` contact sheet; it exits 1 naming each page that breaks the page contract (§4 of the skill). The generator is `lib/shots.js`; Playwright drives the installed Chrome from a cache outside the repository, and its test skips, saying so, where node or a browser is missing.
+- **`stand-ins`**, in a product's repository bound to a shared system, reads each stand-in's stage — unrequested, requested, upstream, landed — from the shared system's open briefs and the two manifests, and exits 1 when one needs a step taken. Its shared checkout comes from the environment variable and default the application's `AGENTS.md` design section declares.
+- **`serve`** serves the checkout on a real origin, with an index of every page walked on each request, never committed; it is plain Ruby, with nothing to install.
 - **`vendor-sync`** refreshes `vendor/` from a checkout of the shared system.
 
 ### `.design-sync/`

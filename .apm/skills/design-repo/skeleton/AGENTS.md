@@ -18,3 +18,19 @@ The rules an agent working in this design repository needs. The consuming applic
 ## A request belongs to the project that will draw it
 
 A brief for this project goes in `briefs/proposed/`. A request for something a shared design system should own goes in that system's repository, as a brief there.
+
+## Publishing an export
+
+In this order, each step on what the one before it left:
+
+1. **`bin/sync`** mirrors the export, and a product's run shoots every page. A refusal mirrors nothing: fix the export in the design project and download it again.
+2. **Review the diff by rule and section**, `git diff` on the export folder: a rule changed or only a comment, every changed page well-formed, a removal that orphaned a heading, a drawing gone with the prose around it, a page `bin/shots` named, a behaviour artefact `bin/sync` reported.
+3. **Regenerate** `dist/` with the generator's task.
+4. **`rake`**, the gate.
+5. **Commit and push the mirror as produced**, defects included, each defect named in the commit message. A defect is fixed through a brief, never by an edit in the mirror.
+
+## Commit conventions
+
+- **A sync:** `chore(designs): sync the export that …`, naming what the export changed.
+- **A brief:** `brief(<theme>): …`, naming what it asks for or drops.
+- **A deleted brief:** `brief(<theme>): delete, drawn in the <sha> export`, where `<sha>` is the sync commit that mirrored the export which drew its last ask.

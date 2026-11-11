@@ -3,14 +3,15 @@
 require "minitest/autorun"
 require "open3"
 
-# Every design repository keeps one layout — the `design-handoff` skill's layout.md — so that an
-# agent who has worked in one finds its way around any other. Design repositories drift after they
-# are created, not when: a snapshot symlinked from a local checkout, an export folder named after
-# its repository. Each test below is one closed rule of that layout with a real failure behind it;
-# whether a given file exists is left to the skill that creates a repository.
+# Every design repository keeps one layout, so that an agent who has worked in one finds its way
+# around any other. Design repositories drift after they are created, not when: a snapshot
+# symlinked from a local checkout, an export folder named after its repository. Each test below is
+# one closed rule of that layout with a real failure behind it; whether a given file exists is left
+# to the skill that creates a repository.
 #
-# Copied from the agent-sdlc `design-repo` skill. Change it there and copy it
-# again; a local edit here forks the rule from every other design repository.
+# The agent-sdlc `design-repo` skill owns the layout, and this file is copied from its skeleton.
+# Change the rule there and copy it again; a local edit here forks it from every other design
+# repository.
 class LayoutTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
 
@@ -22,7 +23,7 @@ class LayoutTest < Minitest::Test
     entries = tracked.map { |path| path.split("/").first }.uniq
     folders, files = entries.partition { |entry| tracked.any? { |path| path.start_with?("#{entry}/") } }
 
-    assert_empty folders - ROOT_FOLDERS, "a folder the layout does not name — amend layout.md first, or move it"
+    assert_empty folders - ROOT_FOLDERS, "a folder the layout does not name — amend the layout in the design-repo skill first, or move it"
     assert_empty files - ROOT_FILES, "a root file the layout does not name"
   end
 
