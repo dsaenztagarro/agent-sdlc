@@ -19,7 +19,7 @@ class LayoutTest < Minitest::Test
   ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile Gemfile Gemfile.lock .gitignore LICENSE].freeze
   EXPORT_FOLDERS = %w[pages system].freeze
   RULE_LENGTH = 80
-  BRIEF_HEADER = /\A(?:[-*]\s+)?(?:\*\*)?(?:For|Produces|Do[- ]not[- ]edit|Status):/i
+  BRIEF_HEADER = /\A(?:[-*]\s+)?(?:\*\*)?(?:For|Produces|Do[- ]not[- ]edit|Status)(?::|\*\*)/i
 
   def test_every_top_level_entry_is_one_the_layout_names
     entries = tracked.map { |path| path.split("/").first }.uniq

@@ -48,6 +48,16 @@ class LayoutCheckTest < Minitest::Test
 
     assert status.success?, out
     assert_includes out, "1 runs, ", "the check ran"
+
+    line = "**Do not edit** the exported copy of this project by hand — it is mirrored from the design project."
+    checkout(
+      "board.brief.md" => "# Board\n\n#{line}\n\nDraw the board's columns.\n",
+      "composer.brief.md" => "# Composer\n\n#{line}\n\nDraw the composer.\n"
+    )
+
+    status, out = check
+
+    assert status.success?, "a header field may be bold without a colon:\n#{out}"
   end
 
   # A request may carry a component's complete files, and two such files can share a long line.
