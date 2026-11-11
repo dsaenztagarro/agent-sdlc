@@ -56,7 +56,7 @@ class LayoutTest < Minitest::Test
     briefs = tracked.select { |path| path.start_with?("briefs/") && File.file?(File.join(ROOT, path)) } - ["briefs/README.md"]
     found_in = Hash.new { |hash, line| hash[line] = [] }
     briefs.each do |path|
-      File.readlines(File.join(ROOT, path)).map(&:strip).uniq
+      prose_lines(File.join(ROOT, path)).uniq
           .select { |line| line.length >= RULE_LENGTH && !line.match?(BRIEF_HEADER) }
           .each { |line| found_in[line] << path }
     end
@@ -87,6 +87,16 @@ class LayoutTest < Minitest::Test
   end
 
   private
+
+  # A brief may quote a component's files, and two files can share a line no rule wrote.
+  def prose_lines(path)
+    fenced = false
+    File.readlines(path).map(&:strip).reject do |line|
+      fence = line.start_with?("```", "~~~")
+      fenced = !fenced if fence
+      fence || fenced
+    end
+  end
 
   def tracked
     @tracked ||= git("ls-files").lines.map(&:strip)

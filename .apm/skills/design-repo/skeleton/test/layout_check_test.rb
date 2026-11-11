@@ -50,6 +50,20 @@ class LayoutCheckTest < Minitest::Test
     assert_includes out, "1 runs, ", "the check ran"
   end
 
+  # A request may carry a component's complete files, and two such files can share a long line.
+  test "code quoted in two briefs is not a repeated rule" do
+    code = "```css\n/* #{'-' * 80} */\n@layer product { .callout { padding: var(--space-2); border-color: var(--border-subtle); } }\n```"
+    checkout(
+      "board.brief.md" => brief("Board", "Draw the board's columns.", code),
+      "composer.brief.md" => brief("Composer", "Draw the composer.", code)
+    )
+
+    status, out = check
+
+    assert status.success?, out
+    assert_includes out, "1 runs, ", "the check ran"
+  end
+
   private
 
   def brief(theme, *body, do_not_edit: "this is an input")
