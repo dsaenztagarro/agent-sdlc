@@ -115,7 +115,7 @@ Left open: the pipeline goes under `apm.yml`'s `dependencies.apm` once it is pub
 - **A page draws the surface, never the application.** Every state of a screen on one page, reached through a state switcher and animated where it helps — but no validation, save rule or data model, because the application changes and the page does not. A sentence someone could find false in the running application comes out.
 - **Every design repository has one layout** — `briefs/`, `pages/` or `system/` for the export, `references/`, `dist/`, `bin/sync` — whether it holds a product's design or a shared design system; [`layout.md`](.apm/skills/design-handoff/layout.md) states it folder by folder.
 - **Exactly one generated artefact crosses** into the application — a token set or a stylesheet bundle — and code never cites a page or a brief.
-- **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** writes named files, including the project's own `readme.md` for rules that must hold in every export; and the downloaded **export** brings the whole project back to be mirrored.
+- **Three routes reach the design project**, each started by a person: a pasted **brief** carries one ask; **`/design-sync`** uploads a repository's React design system, and is the route meant for rules that must hold in every export, though no documentation says it writes the project's own `readme.md`; and the downloaded **export** brings the whole project back to be mirrored.
 - **A brief is deleted when its surface ships.** The `brief-closer` agent verifies each ask before it deletes anything.
 
 ### 6. Documentation style
