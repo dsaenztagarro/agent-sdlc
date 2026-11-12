@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-12
+
+A shared system's standing rules, and what each token is for, each have one home outside the briefs.
+
+### Changed
+
+- **`design-handoff` §2 says where a standing rule and a token's purpose live.** A shared system's rules reach each linked Project through the readme in its `_ds/` copy, and the Project's own readme points at them. What a token is for is written beside its definition in the token file the project holds. A brief restates neither.
+
 ## [1.0.1] - 2026-11-12
 
 A comment fix in the skeleton.
@@ -172,7 +180,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...v1.0.0
 [0.7.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.6.0...v0.7.0
