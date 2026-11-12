@@ -8,11 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [1.0.3] - 2026-11-12
 
-A width or a colour depth is a frame, drawn once per project, never a state on every page.
+A width is a frame, drawn once per project, never a state on every page, and no page is drawn again without colour.
 
 ### Changed
 
-- **`design-handoff` §4 states that a dimension every state shares is a frame, never a state.** Every page draws at the default frame. One Layout page per project shows how each surface recomposes in every other frame, one family per frame, so a page's state bar lists only its situations.
+- **`design-handoff` §4 states that a width is a frame, never a state.** Every page draws at the default width. One Layout page per project shows how each surface recomposes at the others, one family per width, so a page's state bar lists only its situations.
+- **`design-handoff` §4 states that no page is drawn again without colour.** The token set's check that no two states share a glyph holds what a monochrome copy was meant to show.
 
 ## [1.0.2] - 2026-11-12
 
