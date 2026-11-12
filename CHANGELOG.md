@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-11-12
+
+Pages are designed for layouts, not widths.
+
+### Changed
+
+- **design-handoff: a layout is a frame, never a state.** A layout is named for what it shows, never for a width, and one Layout page per project draws each surface in each of its layouts, at the narrowest width the layout takes, one family per layout. It drew one family per width before, so one layout was drawn several times and named for a column count.
+
 ## [1.0.4] - 2026-11-12
 
 A Project's own files reach it by hand, because `/design-sync` reaches Design System projects only.
