@@ -1,20 +1,20 @@
 ---
 name: design-repo
-description: Create a design repository — a product's design or a shared design system — from one skeleton, so it starts in the layout every design repository keeps and states its Claude Design kind; or adopt the layout check and `bin/sync` in an existing one. Use when a project first needs a design repository, when a shared design system gets its own, or when an existing design repository should be held to the layout.
+description: Create a design repository — a product's design or a shared design system — from one skeleton, so it starts in the layout every design repository keeps and states its Claude Design kind; or adopt the skeleton in an existing one. Use when a project first needs a design repository, when a shared design system gets its own, or when an existing design repository should take the current skeleton.
 ---
 
 # Creating a design repository
 
 Every design repository keeps one layout, stated folder by folder in the `design-handoff` skill's `layout.md`. Read it first.
-This skill starts a repository in that layout from `skeleton/`, and `skeleton/common/test/layout_test.rb` keeps it there: copied into the repository, it fails `rake` when the repository drifts.
+This skill starts a repository in that layout from `skeleton/`; review keeps it there.
 
 The skeleton states each kind by its files: `common/` holds what every design repository carries, and one overlay per kind adds the rest, its README included.
 
 ```
 skeleton/
 +-- common/          AGENTS.md, CLAUDE.md, Rakefile, Gemfile, .gitignore, CI, briefs/README.md,
-|                    bin/sync, bin/serve, the layout check and their tests
-+-- project/         README.md, bin/shots, lib/shots.js, bin/ds-status, bin/stand-ins, their tests
+|                    bin/sync and its tests, bin/serve
++-- project/         README.md, bin/shots, lib/shots.js, bin/ds-status, their tests
 +-- design-system/   README.md, .design-sync/config.json and NOTES.md
 ```
 
@@ -60,7 +60,7 @@ bundle install     # writes Gemfile.lock, which is committed
 
 The skeleton keeps its scripts in `_bin/` because APM does not deploy a folder named `bin` inside a skill; the copy renames it.
 
-A Project linked to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name, and in `bin/stand-ins` replaces `__SHARED_VAR__` with the name of the environment variable that the application's `AGENTS.md` design section declares for the shared system's checkout, without its leading `$`, and `__SHARED_CHECKOUT__` with its default. A Project linked to none deletes `bin/ds-status`, `bin/stand-ins` and their tests.
+A Project linked to a shared system replaces `__SHARED__` in `bin/ds-status` with that system's repository name. A Project linked to none deletes `bin/ds-status` and its test.
 
 Then resolve every `FILL` marker (`grep -rn FILL .`):
 
@@ -68,7 +68,7 @@ Then resolve every `FILL` marker (`grep -rn FILL .`):
 - **`.design-sync/`**, a Design System's — the system's id in `config.json`, and in `NOTES.md` the paths that flow each way.
 - **`AGENTS.md`** — the consuming application, and which paths flow which way.
 - **`briefs/README.md`** — what belongs here, for this kind.
-- **`bin/sync`** — `REQUIRED_ROOT_FILES` lists what a complete export carries at its root: a web export's root stylesheet, nothing for a terminal client's. `UPSTREAM` lists each authored file as `<path in this repository>:<path in the export>`, so a product's palette authored under `system/` is compared with the copy its export carries. `PROJECT_FILES` lists the Markdown files the project keeps as its own — by default `readme.md`, `AGENTS.md` and `CLAUDE.md` — each a path in the export or a pattern; a shared system adds the patterns its export uses for its component and skill documents. Any other Markdown outside `_ds/` is a note, and the export is refused. `EXCLUDES` keeps its default unless the project carries other authoring noise.
+- **`bin/sync`** — `REQUIRED_ROOT_FILES` lists what a complete export carries at its root: a web export's root stylesheet, nothing for a terminal client's. `UPSTREAM` lists each authored file as `<path in this repository>:<path in the export>`, so a product's palette authored under `system/` is compared with the copy its export carries. `PROJECT_FILES` lists the Markdown files the project keeps as its own — by default `readme.md`, `AGENTS.md` and `CLAUDE.md` — and a shared system adds the patterns of its component and skill documents; any other Markdown outside `_ds/` is a note, and the export is refused. `EXCLUDES` keeps its default unless the project carries other authoring noise.
 - **`Rakefile`** — the generator's task and its `:check`, ahead of `:test`.
 
 ## 4. Add the generator
@@ -87,26 +87,23 @@ Seed its own `readme.md` through `/design-sync` with the rules that must hold in
 
 - for a product's project, the surface-only rule and its markup contract (`design-handoff` §4), so that `bin/shots` can shoot every page;
 - for every project, that it never writes a request, a note or a plan into its files: a component it thinks every application should share is raised in the design chat, and `bin/sync` refuses an export carrying such a file;
-- for a product's project bound to a shared system, that a stand-in's marker reads `STAND-IN — delete when the design system lands <Component>`, where `<Component>` is the one PascalCase name the shared system will list it under, so that `bin/stand-ins` looks it up by that name.
+- for a product's project bound to a shared system, that a stand-in's marker reads `STAND-IN — delete when the design system lands <Component>`, where `<Component>` is the one PascalCase name the shared system will list it under.
 A Design System records its id in `.design-sync/config.json`, and what a future `/design-sync` must know in `.design-sync/NOTES.md`; a Project whose palette flows upstream adds both too.
 
 ## 6. First export, then the gate
 
 ```bash
 bin/sync       # mirror the first export; a product's also shoots every page into tmp/shots/
-rake           # the generator's check, then every test — layout_test.rb included
+rake           # the generator's check, then every test
 ```
 
 Commit the mirror as produced, as the repository's `AGENTS.md` states the publish procedure and its commit conventions. The repository is done when `rake` passes and `grep -rn FILL .` finds nothing.
 
-## Adopting the layout check in an existing design repository
+## Adopting the skeleton in an existing design repository
 
-1. Copy `skeleton/common/test/layout_test.rb` into its `test/`.
-2. Replace its `bin/sync` with `skeleton/common/_bin/sync`, filled in as §3 says — `NAME`, `KIND` from the export folder it mirrors, and the arrays carried over from the old script — and copy `skeleton/common/test/sync_test.rb` beside it, with `test_helper.rb` if the repository has none.
-3. Run `rake`. Each failure is drift: fix it in the same change when it is small, or open an issue per failure on that repository.
-4. A folder the layout does not name is either moved, or argued into `layout.md` first — never allowed by editing the copy. A refusal the old `bin/sync` had and the skeleton's lacks is raised on this template, never kept in a local copy.
-5. State the kind as the README's first line, as the overlay's README does.
+1. Copy `common/` and the kind's overlay over the repository, as §3 does, keeping its own README, briefs, `lib/`, `dist/` and generator tasks.
+2. Carry the old `bin/sync`'s `UPSTREAM`, `REQUIRED_ROOT_FILES`, `PROJECT_FILES` and `EXCLUDES` into the new one. A refusal the old script had and the skeleton lacks is raised on this template, never kept in a local copy.
+3. Delete what the skeleton does not ship, unless the repository's own generator needs it.
+4. Run `rake`, and fix what fails in the same change.
 
-## Refreshing the check
-
-`layout_test.rb` and `bin/sync` are copied, not shared: when a rule changes here, copy them again into each design repository, and fix what the new rule finds there. A local edit forks the rule from every other repository. `layout_check_test.rb`, which runs the check against throwaway checkouts, is copied with it wherever the repository carries `test_helper.rb`.
+The scripts and their tests are copied, not shared: when the skeleton changes, copy them again. A local edit forks the repository from every other one.

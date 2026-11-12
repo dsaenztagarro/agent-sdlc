@@ -53,15 +53,9 @@ The previous revision, read from the stamp it replaces (`none` on a first vendor
 
 Whether the new revision is the current one is not the vendor command's to say: comparing it with the design repository's default branch stays a human step.
 
-## The five tests
+## Its tests
 
-Each adopter writes these, in its own stack, under these names, against a real temporary git repository with a bare remote standing in for the design repository — never a stubbed git:
-
-- `the vendored bytes match the digest` — every file other than a sidecar at or under the path the design section gives as the artefact's vendored path carries a stamp, on its first line or in its sidecar, whose digest matches the bytes it covers. It runs in the gate, so an unstamped file a second path writes there fails it too. Every vendored file lives at that path; one written elsewhere is invisible to this test, and the one-writer rule is then held by review alone.
-- `an edit breaks the digest` — one byte of the stamped content changed, and the digest check fails.
-- `vendoring pins HEAD` — vendoring from the fixture stamps its `HEAD`'s full revision and the design repository's name.
-- `a dirty artefact is refused` — an uncommitted change to the published artefact is refused, and the vendored file is left as it was.
-- `a stderr warning is not read as dirty` — a git that writes a warning to stderr and a clean status to stdout vendors normally. A wrapper on `PATH` that writes the warning and then runs the real git is the one double this needs: the warning cannot be produced otherwise.
+Against a real temporary git repository with a bare remote standing in for the design repository, never a stubbed git: the vendored bytes match their stamp's digest (this one runs in the gate), one edited byte breaks it, vendoring stamps `HEAD`'s full revision, and each refusal above writes nothing.
 
 ## The guards an adopter writes
 

@@ -8,9 +8,9 @@
 #
 # The mirror is `rsync -a --delete`: a hand edit inside it is reverted without warning, and
 # whatever the export carries becomes this repository's truth. So the export is checked first,
-# and refused — with nothing copied — when it is incomplete, when it is the wrong kind, when a
-# page is not one canonical prototype per surface, or when it disagrees with a file this
-# repository authors and pushes up (UPSTREAM below). Every delete is confined to this checkout.
+# and refused — with nothing copied — when it is incomplete, when it is the wrong kind, when it
+# carries a note beside its pages, or when it disagrees with a file this repository authors and
+# pushes up (UPSTREAM below). Every delete is confined to this checkout.
 #
 # Authoring screenshots never cross.
 #
@@ -114,22 +114,10 @@ for file in "${REQUIRED_ROOT_FILES[@]+"${REQUIRED_ROOT_FILES[@]}"}"; do
   fi
 done
 
-# --- One canonical prototype per surface -------------------------------------
+# --- No note beside the pages ------------------------------------------------
 # Only what the mirror copies is judged: the snapshot and everything EXCLUDES drops are skipped.
 skipped=(-name _ds)
 for pattern in "${EXCLUDES[@]}"; do skipped+=(-o -name "${pattern%/}"); done
-off_format=$(cd "$export_root" && find . \( "${skipped[@]}" \) -prune -o \
-  -type f \( -name '*-v[0-9]*' -o -name '* v[0-9]*' -o -name '*-audit.*' \
-  -o -name '*-rationale.*' -o -name '*-options.*' \) -print | sed 's|^\./||' | sort)
-if [[ -n "$off_format" ]]; then
-  echo "error: the export carries pages that are not one canonical prototype per surface:" >&2
-  printf '%s\n' "$off_format" | sed 's/^/    /' >&2
-  echo "  Keep the chosen version under its canonical name in Claude Design, delete the rest, re-export." >&2
-  echo "  Nothing was mirrored." >&2
-  exit 1
-fi
-
-# --- No note beside the pages ------------------------------------------------
 notes=()
 shopt -s nocasematch
 while IFS= read -r path; do

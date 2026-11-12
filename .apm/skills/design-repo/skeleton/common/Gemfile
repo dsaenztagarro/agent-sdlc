@@ -2,11 +2,6 @@
 
 source "https://rubygems.org"
 
-# bin/serve
-gem "puma"
-gem "rackup"
-gem "sinatra"
-
 # rake, the gate
 gem "minitest"
 gem "rake"

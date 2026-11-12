@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-12
+
+The template keeps only the rules and checks that pay for themselves. One coherent change is one pull request, with no issue required for work done now and no issue per idea upstream. Decision records keep their history in git rather than in a tracker issue per theme. The design-repository skeleton drops the checks that tested repository housekeeping or listed forbidden spellings, serves pages with the standard library, and runs its gate on every pull request. Each design repository adopts this skeleton in one pull request.
+
+### Changed
+
+- **One pull request per coherent change.** `AGENTS.md`'s development workflow opens an issue only for work someone will build later, and drops the branch-renaming and remote-check steps. `## Sequence` stays.
+- **A decision record's history is its git log.** `docs/adr/` drops the `decision-log` issue per theme, its label and its procedure; the amendment's commit message says what changed and why.
+- **`template-feedback` appends one checklist item to the template's open feedback issue**, never an issue per idea.
+- **The pull request title check is `amannn/action-semantic-pull-request`**, in place of a hand-written script and its tests.
+- **The skeleton's `bin/serve` is `python3 -m http.server`**, and its `Gemfile` holds only `minitest` and `rake`.
+- **The skeleton's CI runs `rake` on every pull request and push**, not weekly.
+- **A brief's commit is `docs(briefs): …`**, a Conventional Commit type.
+- **The README states the template once**, leaving procedures to the skills and rules to `AGENTS.md`.
+
+### Removed
+
+- **The `complexity · model · why` tag on every task.**
+- **`layout_test.rb` and `layout_check_test.rb`.** They tested where folders sit in a design repository, which review holds; `bin/sync` already refuses an export of the other kind.
+- **`bin/stand-ins`.** A stand-in is found by its marker and has landed once both manifests list its component.
+- **`bin/sync`'s refusal of a page whose file name looks versioned**, a list of forbidden spellings that the next variant walks past.
+- **`bin/shots`' family-ordering refusals** — a split family, a bare family not first, a state repeating its family.
+- **`brief-closer`'s tracker steps:** a tracking issue per ask, ticking the epic, and retiring guard exemptions.
+- **The vendor contract's five mandated test names**, replaced by what the tests must cover.
+
 ## [0.7.0] - 2026-11-12
 
 A check now has to earn its place. The testing seed states the rule, that a check earns its place by the realistic mistake that fails it, named beside it, and the design skills and agents that write checks point at it. The design-repository skeleton's layout check keeps only the checks a real mistake fails.
@@ -139,7 +164,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...v1.0.0
 [0.7.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.4.2...v0.5.0
