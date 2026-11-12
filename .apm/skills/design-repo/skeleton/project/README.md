@@ -18,7 +18,7 @@ pages/_ds/<id>/        the snapshot of the linked Design System the pages render
 ```
 
 <!-- FILL: keep this paragraph when the Project draws against a file authored here, else delete it. -->
-A file the Project draws against but this repository authors — a checked palette — lives under `system/`, flows up with `/design-sync`, and `bin/sync` refuses an export whose copy of it differs.
+A file the Project draws against but this repository authors — a checked palette — lives under `system/`, is added to the Project by a person — `/design-sync` reaches only a Design System — and `bin/sync` refuses an export whose copy of it differs.
 `system/` holds only those files, and `bin/sync`'s `UPSTREAM` lists them.
 
 A hand edit inside `pages/` is reverted by the next `bin/sync`: a change to what the Project draws starts as a brief in `briefs/proposed/`.

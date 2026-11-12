@@ -29,7 +29,7 @@ One repository mirrors one Claude Design project, so it is one kind: an applicat
 | **name** | `<project>-ds` beside the application `<project>`; a shared system `<brand>-ds`, for its brand or package, never its platform | derived; confirm |
 | **linked Design System** | for a Project, the shared system it renders against, or none | the person |
 | **the artefact that crosses** | a stylesheet bundle, a token file — what the application vendors from `dist/` | the person, if not already clear |
-| **upstream paths** | files authored here and pushed with `/design-sync` (a palette, a component tier) | none by default |
+| **upstream paths** | files authored here and handed to the project — pushed with `/design-sync` to a Design System, added by a person to a Project (a palette, a component tier) | none by default |
 
 ## 2. Create the repository
 
@@ -83,12 +83,12 @@ Each refusal or guarantee it adds gets a test named for the rule, and earns its 
 Same name as the repository, and of the kind `bin/sync` names: a Project, linked to the Design System chosen in §1, or a Design System.
 The README states the kind and the link, never the clicks that make them: the standalone Claude Design site closes on December 14, 2026, and steps written against it go stale.
 
-Seed its own `readme.md` through `/design-sync` with the rules that must hold in every export, so that no brief has to restate them:
+Seed its own `readme.md` with the rules that must hold in every export, so that no brief has to restate them — through `/design-sync` for a Design System; for a Project, which `/design-sync` does not reach, a person adds the file:
 
 - for a product's project, the surface-only rule and its markup contract (`design-handoff` §4), so that `bin/shots` can shoot every page;
 - for every project, that it never writes a request, a note or a plan into its files: a component it thinks every application should share is raised in the design chat, and `bin/sync` refuses an export carrying such a file;
 - for a product's project bound to a shared system, that a stand-in's marker reads `STAND-IN — delete when the design system lands <Component>`, where `<Component>` is the one PascalCase name the shared system will list it under.
-A Design System records its id in `.design-sync/config.json`, and what a future `/design-sync` must know in `.design-sync/NOTES.md`; a Project whose palette flows upstream adds both too.
+A Design System records its id in `.design-sync/config.json`, and what a future `/design-sync` must know in `.design-sync/NOTES.md`. A Project keeps neither: nothing reaches it through `/design-sync`.
 
 ## 6. First export, then the gate
 

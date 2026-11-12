@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-11-12
+
+A Project's own files reach it by hand, because `/design-sync` reaches Design System projects only.
+
+### Fixed
+
+- **The design skills, `layout.md` and the skeleton say how a file reaches each kind of project.** A Design System gets it through `/design-sync`. A Project — a product's design — gets its palette and its own `readme.md` added by a person: `/design-sync` lists and writes Design System projects only. `design-handoff` §2's route table gains that route, and a Project keeps no `.design-sync/`.
+
 ## [1.0.3] - 2026-11-12
 
 A width is a frame, drawn once per project, never a state on every page, and no page is drawn again without colour.
@@ -189,7 +197,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...v1.0.1

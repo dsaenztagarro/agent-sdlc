@@ -5,7 +5,7 @@ The rules an agent working in this design repository needs. The consuming applic
 
 ## Which files flow which way
 
-<!-- FILL: name every path that is authored here and pushed up with /design-sync; everything else in the export folder is drawn in the project and mirrored down, and is never edited here. -->
+<!-- FILL: name every path that is authored here and handed up — pushed with /design-sync to a Design System, added by a person to a Project; everything else in the export folder is drawn in the project and mirrored down, and is never edited here. -->
 
 ## Generated, not copied
 
