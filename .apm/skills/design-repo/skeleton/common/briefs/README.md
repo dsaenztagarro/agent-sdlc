@@ -54,7 +54,7 @@ Then:
 - **Design depicts, never decides.** The brief states the ruling in a sentence and asks the project to draw it; a ruling nobody has recorded is written down first, and a behaviour nothing has settled is drawn as an open question.
 - **Never cite another brief.** Each is deleted on its own schedule.
 - **Ask for the surface, never the application's behaviour.**
-- **A rule that must hold for every export is never written into a brief.** It goes into the design project's own `readme.md` through `/design-sync`, which the project reads before it draws; pasted into briefs, each copy dies with its brief and the copies drift.
+- **A rule that must hold for every export is never written into a brief.** It goes into the design project's own `readme.md`, which the project reads before it draws — pushed with `/design-sync` to a Design System, added by a person to a Project; pasted into briefs, each copy dies with its brief and the copies drift.
 
 ## Write for the reader, who sees only the design project
 

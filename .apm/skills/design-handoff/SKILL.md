@@ -53,14 +53,15 @@ The design project holds its own files and nothing else — it cannot open eithe
 | route | carries | lifetime |
 |---|---|---|
 | **a brief**, pasted into the project | its theme's pending asks | spent on arrival; each ask leaves it when its surface ships, and the brief is deleted when none remains (§8) |
-| **`/design-sync`**, from Claude Code | a repository's React design system, converted and uploaded to the design project once the person confirms what it will upload or delete | until overwritten |
+| **`/design-sync`**, from Claude Code | a repository's React design system, converted and uploaded to a **Design System** project once the person confirms what it will upload or delete; it reaches no other kind of project | until overwritten |
+| **a file added by hand**, in the project | a file a Project draws against but the design repository authors — its palette, its own `readme.md` | until replaced |
 | **the export**, the project's Export menu, *Download as .zip* | the whole project, back to the design repository | a commit of the mirror |
 
 `/design-sync` needs a claude.ai login in Claude Code (`/design-login`), and is unavailable where Claude Code does not contact claude.ai — Amazon Bedrock, Google Cloud, Microsoft Foundry.
 It uploads to the standalone claude.ai/design site, which closes on December 14, 2026; design systems move into Claude, and where `/design-sync` uploads after that date is not documented yet.
 Observed, not documented: it writes one change at a time, never as a wholesale replace, and it never writes `CLAUDE.md` or `.claude/`, which instruct the design agent: a repository that authors its system pushes `AGENTS.md` alone and commits no `CLAUDE.md` beside it, and only a project that authors its own files can create the import.
 
-- **A rule that must hold for every future export goes into the project's own `readme.md` through `/design-sync`**, which the project reads before it draws. Pasted into a brief, the same rule dies with the brief. Not documented: that `/design-sync` writes the project's `readme.md` is stated by no documentation, so check the project shows the rule after the sync.
+- **A rule that must hold for every future export goes into the project's own `readme.md`**, which the project reads before it draws: through `/design-sync` for a Design System, added by a person for a Project. Pasted into a brief, the same rule dies with the brief. Not documented: that `/design-sync` writes the project's `readme.md` is stated by no documentation, so check the project shows the rule after the sync.
 - **The project's agent context holds principles, never decisions about particular elements.** A principle — shape names the field, colour flags attention, absence is calm — holds for elements not drawn yet. A decision about one chip or one column is drawn in its page, and changes without the agent context changing; written into it, the decision becomes a second copy of the page that drifts, and the file grows with the elements instead of with the product's ideas. A ruling that is a principle amends the agent context; a ruling about one element is drawn in that element's page. An index that only names what exists — components, pages, tokens — is not a decision, and stays: it carries no rule to drift.
 - **The mirror is refreshed only through the export** and the design repository's sync script, whose refusals — an export of the other kind, a file the repository owns that the project edited, a note beside the pages — are the review gate.
 - **The export carries no request.** A request or a plan the project writes into its files reaches no brief, and the next export can delete it unseen: the project raises it in the design chat, the sync script refuses an export carrying one, and its content goes to the open brief of the repository whose project will draw it.
@@ -71,7 +72,7 @@ Observed, not documented: it writes one change at a time, never as a wholesale r
 The sync script mirrors the export with `rsync -a --delete`. A hand-edit there is destroyed by the next sync, silently, and it makes the record lie: the mirror is committed so its diff shows what Design produced.
 Commit the mirror as produced, defects included, with what you found named in the commit message — and fix it through a brief.
 
-If the design repository authors a file the project draws against — a checked palette — that file flows **up** through `/design-sync`, and the sync script refuses an export whose copy of it differs or is missing. It compares the file where the repository authors it, which in a product's repository is outside the export folder, with the copy at the path the export carries it.
+If the design repository authors a file the project draws against — a checked palette — that file flows **up** — through `/design-sync` into a Design System, added by a person to a Project — and the sync script refuses an export whose copy of it differs or is missing. It compares the file where the repository authors it, which in a product's repository is outside the export folder, with the copy at the path the export carries it.
 
 ## 4. A page draws the surface, never the application
 
@@ -92,7 +93,7 @@ A sentence on a page about how the application behaves is true the day it is dra
 - **Sweeping claims out of a page removes sentences, never drawings.** An artboard asserts nothing about the application; one that goes out with the prose around it is a defect, sent back through a brief.
 - **A component's example page is a page too.** It shows the component in each case it has, as states, and nothing else. Each of its rules has one home: the shared system's component file once it has landed there, which is where most of them already are; the comment beside the class for a difference only this product has; a request to the shared system when every product should follow it. Options weighed, research and rollout sweeps belong in the design chat and the tracker. Keeping a page does not exempt it from this rule.
 
-**This rule, its markup contract included, goes into the design project's own `readme.md` through `/design-sync`** when the project is created: it must hold in every export, and a rule pasted into a brief dies with the brief (§2). A project created before the contract gets it once, as a brief that redraws every page to it; after that no brief restates it.
+**This rule, its markup contract included, goes into the design project's own `readme.md`** when the project is created — added by a person, since a product's design is a Project, which `/design-sync` does not reach: it must hold in every export, and a rule pasted into a brief dies with the brief (§2). A project created before the contract gets it once, as a brief that redraws every page to it; after that no brief restates it.
 
 ## 5. A component the product needs: owned by the product, promoted only when generic
 

@@ -79,7 +79,7 @@ The requests made **to this repository's Claude Design project**, and nothing el
 - **A request belongs to the repository whose project will draw it.** A product that needs a shared component writes the brief in the shared system's `briefs/proposed/`, not its own, and not inside its project.
 - **One open brief per theme**, a self-contained `<theme>.brief.md` named for the theme and amended in place: a new ask joins the open brief for its theme, and a brief opens only for a theme none covers. A request that carries code — a component's complete files — is still a brief.
 - A theme that landed partly, or landed with a defect, keeps its brief, listing only what remains.
-- **A rule that must hold for every export is never written into a brief**: it lives in the design project's own `readme.md`, pushed with `/design-sync`.
+- **A rule that must hold for every export is never written into a brief**: it lives in the design project's own `readme.md`: pushed with `/design-sync` to a Design System, added by a person to a Project.
 - Deleted once everything it asked for has landed and its durable half has a home elsewhere (the `brief-closer` agent and §8 of the skill). `git log --diff-filter=D -- briefs/` finds one again.
 - `briefs/README.md` states what belongs here, the lifecycle, the house format and the reader rule, in the words of this repository.
 
@@ -96,7 +96,7 @@ The requests made **to this repository's Claude Design project**, and nothing el
 Two directions, and the README says which path goes which way. By default everything but `templates/` is authored here, and `templates/` is drawn in the Design System:
 
 - **Downstream** — drawn in the project, exported, mirrored by `bin/sync`. A hand edit is reverted by the next sync.
-- **Upstream** — authored here, checked by `rake`, pushed to the project with `/design-sync` (a palette, a component tier, the project's own `readme.md`). `bin/sync` **refuses an export whose copy of an upstream file differs or is missing**, because `--delete` would otherwise overwrite the only copy the checks ran against. Each upstream entry names the file's path in the repository and its path in the export, so a product repository's palette, authored under `system/` while its export lands in `pages/`, is compared with the copy its export carries.
+- **Upstream** — authored here, checked by `rake`, and handed to the project: pushed with `/design-sync` to a Design System, added by a person to a Project, which `/design-sync` does not reach (a palette, a component tier, the project's own `readme.md`). `bin/sync` **refuses an export whose copy of an upstream file differs or is missing**, because `--delete` would otherwise overwrite the only copy the checks ran against. Each upstream entry names the file's path in the repository and its path in the export, so a product repository's palette, authored under `system/` while its export lands in `pages/`, is compared with the copy its export carries.
 
 ### `references/`
 

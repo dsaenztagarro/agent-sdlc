@@ -23,7 +23,8 @@ set -euo pipefail
 KIND="__KIND__"
 NAME="__NAME__"
 
-# Files this repository authors and pushes up with /design-sync, each as
+# Files this repository authors and hands up (pushed with /design-sync to a Design System, added
+# by a person to a Project), each as
 # "<path in this repository>:<path in the export>". An export whose copy differs, or lacks one,
 # is refused. Empty when nothing flows upstream.
 UPSTREAM=()
@@ -157,7 +158,7 @@ for entry in "${UPSTREAM[@]+"${UPSTREAM[@]}"}"; do
   fi
   if ! cmp -s "$repo_root/$authored" "$export_root/$exported"; then
     echo "error: the export's $exported differs from $authored, which this repository authors." >&2
-    echo "  It flows up with /design-sync; the design project must not edit it. Nothing was mirrored." >&2
+    echo "  It flows up from this repository; the design project must not edit it. Nothing was mirrored." >&2
     exit 1
   fi
 done
