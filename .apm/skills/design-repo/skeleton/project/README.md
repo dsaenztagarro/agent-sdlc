@@ -19,7 +19,7 @@ pages/_ds/<id>/        the snapshot of the linked Design System the pages render
 
 <!-- FILL: keep this paragraph when the Project draws against a file authored here, else delete it. -->
 A file the Project draws against but this repository authors — a checked palette — lives under `system/`, flows up with `/design-sync`, and `bin/sync` refuses an export whose copy of it differs.
-`system/` holds only those files: `bin/sync`'s `UPSTREAM` lists them, and the layout check refuses anything else there.
+`system/` holds only those files, and `bin/sync`'s `UPSTREAM` lists them.
 
 A hand edit inside `pages/` is reverted by the next `bin/sync`: a change to what the Project draws starts as a brief in `briefs/proposed/`.
 
@@ -28,29 +28,27 @@ A hand edit inside `pages/` is reverted by the next `bin/sync`: a change to what
 Everything else wraps the export in git: the requests that go in, the generator that reads it, and the checks that hold it.
 
 ```
-<!-- FILL: keep the lines that apply, delete the rest; the layout check refuses a folder not listed in the layout. -->
+<!-- FILL: keep the lines that apply, delete the rest. -->
 briefs/proposed/       the requests to the __NAME__ Project, one open brief per theme, handed over by copy-paste
 references/            hand-authored material the Project draws on; never touched by bin/sync
 vendor/<shared>-ds/    the shared system's build inputs, copied whole by bin/vendor-sync
 docs/                  the contract dist/ keeps
 lib/                   the generators, shots.js among them
 dist/                  what crosses into the application — generated, committed
-test/                  the generators' tests, bin/sync's, and the layout check
+test/                  the generators' tests, and bin/sync's
 bin/sync               mirror a fresh export into pages/
 bin/ds-status          whether pages/_ds/ carries what the linked Design System does
 bin/shots              every page in every state, the application surface alone, into tmp/shots/
-bin/stand-ins          where each stand-in is on its way into the linked Design System
-bin/serve              every page from a real origin, with an index walked on each request
+bin/serve              every page from a real origin, with a directory listing at /
 ```
 
 ## Working on it
 
 ```bash
-bundle install  # once: the gems rake and bin/serve need
-bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, a Design System's, an off-format page, a note, or an edited upstream file
+bundle install  # once: the gems rake needs
+bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, a Design System's, a note, or an edited upstream file
 rake            # every check, then the tests — the gate before each merge
 bin/ds-status   # what pages/_ds/ lacks, from the two manifests
-bin/stand-ins   # each stand-in's stage — unrequested, requested, upstream or landed
 bin/shots       # screenshot every page in every state, and name each page that breaks the page contract
-bin/serve       # browse every page on http://localhost:4000
+bin/serve       # browse every page on http://localhost:8000
 ```

@@ -11,9 +11,9 @@ The rules an agent working in this design repository needs. The consuming applic
 
 `dist/` is generated from the export by `rake`, and `rake` fails when the two disagree. Never edit `dist/` or the export folder by hand.
 
-## The layout is fixed
+## The layout is shared
 
-`test/layout_test.rb` holds this repository to the layout every design repository keeps. It is a copy: change the rule where the copy comes from, never here.
+This repository keeps the layout every design repository keeps, and `bin/sync` and its tests are copies of the `design-repo` skill's skeleton: change them there, never here.
 
 ## A request belongs to the project that will draw it
 
@@ -24,7 +24,7 @@ A brief for this project goes in `briefs/proposed/`. A request for something a s
 In this order, each step on what the one before it left:
 
 1. **`bin/sync`** mirrors the export, and a product's run shoots every page. A refusal mirrors nothing: fix the export in the design project and download it again. A note beside the pages is refused too: its content goes to the open brief of the repository whose project will draw it, and the note is deleted in the design project.
-2. **`bin/stand-ins`**, in a product bound to a shared system. Settle each stand-in it reports `unrequested` before the commit, through the `design-handoff` skill's rule for a promotion Design proposes: it amends the shared system's open brief for its theme when the component is generic, or loses its marker through this repository's brief when it is not. An amendment not merged yet is read by passing its checkout: `bin/stand-ins <path>`.
+2. **Settle each new stand-in**, in a product bound to a shared system (`grep -rn 'STAND-IN' pages/ --exclude-dir=_ds`): a generic component amends the shared system's open brief for its theme; one that is not loses its marker through this repository's brief.
 3. **Review the diff by rule and section**, `git diff` on the export folder: a rule changed or only a comment, every changed page well-formed, a removal that orphaned a heading, a drawing gone with the prose around it and a page `bin/shots` named.
 4. **Regenerate** `dist/` with the generator's task.
 5. **`rake`**, the gate.
@@ -33,5 +33,5 @@ In this order, each step on what the one before it left:
 ## Commit conventions
 
 - **A sync:** `chore(designs): sync the export that …`, naming what the export changed.
-- **A brief:** `brief(<theme>): …`, naming what it asks for or drops.
-- **A deleted brief:** `brief(<theme>): delete, drawn in the <sha> export`, where `<sha>` is the sync commit that mirrored the export which drew its last ask.
+- **A brief:** `docs(briefs): …`, naming the theme and what it asks for or drops.
+- **A deleted brief:** `docs(briefs): delete <theme>, drawn in the <sha> export`, where `<sha>` is the sync commit that mirrored the export which drew its last ask.

@@ -9,8 +9,7 @@ require "tmpdir"
 #
 # The mirror is `rsync --delete`, so whatever an export carries becomes this repository's truth,
 # and every refusal has to happen before anything is copied: an incomplete export, the other kind,
-# a page that is not one canonical prototype, a note beside the pages, an edit to a file this
-# repository authors. Authoring screenshots never cross.
+# a note beside the pages, an edit to a file this repository authors. Authoring screenshots never cross.
 # Each test runs a copy of bin/sync in a throwaway checkout, set to the export kind under test,
 # because the script resolves its target from its own location and a real run would mirror over
 # this repository.
@@ -116,19 +115,6 @@ class SyncTest < Minitest::Test
     refute_path_exists File.join(@root, "pages")
   end
 
-  test "a page that is not one canonical prototype per surface is refused" do
-    checkout(kind: "project")
-    project_export
-    pages = ["surface-v2.html", "timer v1.html", "parity-audit.html", "tab-rationale.html", "back-link-options.html"]
-    pages.each { |page| File.write(File.join(@export, page), "") }
-
-    status, out = sync
-
-    refute status.success?
-    pages.each { |page| assert_includes out, page }
-    refute_path_exists File.join(@root, "pages")
-  end
-
   # A request written into the export reaches no brief, and the next export can delete it unseen.
   test "an export carrying a note beside its pages is refused, and nothing is mirrored" do
     checkout(kind: "project")
@@ -205,12 +191,11 @@ class SyncTest < Minitest::Test
     assert_path_exists File.join(@root, "system/components/buttons/Button.prompt.md")
   end
 
-  test "a file the mirror never copies is not judged as a prototype" do
+  test "a note in a folder the mirror never copies is not judged" do
     checkout(kind: "project")
     project_export
-    FileUtils.mkdir_p(File.join(@export, "screenshots"))
-    File.write(File.join(@export, "screenshots/surface-v2.txt"), "")
-    File.write(File.join(@export, "surface-v2.png"), "")
+    FileUtils.mkdir_p(File.join(@export, "scraps"))
+    File.write(File.join(@export, "scraps/idea.md"), "")
 
     status, out = sync
 

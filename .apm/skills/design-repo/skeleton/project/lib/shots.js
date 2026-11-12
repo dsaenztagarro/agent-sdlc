@@ -10,8 +10,7 @@
 //   [data-surface]                            exactly one: the application as it renders, chrome included
 //   [data-state="<Family> · <state>"]         one per state, inside the surface, one shown at a time; the
 //                                             family is the name before " · ", or the whole name for the
-//                                             family's first state. A family's states sit together, the
-//                                             bare one first, and a state never repeats its family
+//                                             family's first state
 //   #state=<family>/<state>                   the address that shows a state, as the design system's state
 //                                             switcher writes it
 //   [role="tablist"][aria-label="State"]      the switcher's State row, required once a page has two states:
@@ -80,8 +79,6 @@ async function contract(page) {
   }, BAR);
 }
 
-const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 // A state's family and the part after it, null for the bare family.
 function parse(name) {
   const i = name.indexOf(SEP);
@@ -95,27 +92,11 @@ const address = (name) => {
 };
 const label = (name) => parse(name).part ?? "Default";
 
-function familyBreaches(states) {
-  const found = [];
-  const parsed = states.map(parse);
-  for (const family of new Set(parsed.map((s) => s.family))) {
-    const at = parsed.flatMap((s, i) => (s.family === family ? [i] : []));
-    if (at[at.length - 1] - at[0] + 1 !== at.length) found.push(`its "${family}" family is split: its states do not sit together`);
-    const bare = at.find((i) => parsed[i].part === null);
-    if (bare !== undefined && bare !== at[0]) found.push(`its state "${states[bare]}" is the bare family but not the "${family}" family's first`);
-  }
-  for (const [i, { family, part }] of parsed.entries()) {
-    if (part !== null && new RegExp(`\\b${escape(family)}\\b`, "i").test(part)) found.push(`its state "${states[i]}" repeats its family`);
-  }
-  return found;
-}
-
 function breaches({ surfaces, states, hasBar }) {
   const found = [];
   if (surfaces !== 1) found.push(`has ${surfaces} [data-surface] elements; it needs exactly one`);
   if (states.length === 0) found.push("names no state: no [data-state] element");
   if (states.length > 1 && !hasBar) found.push(`has ${states.length} states and no state bar`);
-  found.push(...familyBreaches(states));
   return found;
 }
 

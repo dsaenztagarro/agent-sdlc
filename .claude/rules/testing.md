@@ -35,7 +35,7 @@ Each rule is one sentence, followed where it helps by why it holds or how to tel
 
 ## The shape of a stateful component's tests
 
-- **Assert invariants after every command:** the tests drive the real component through a sequence of commands beside a model of what its state should be, and after each command check that every control the state implies is usable, the render matches the model, no value is silently lost and no shape the backend rejects is held — in a few named journeys, one of them recovery from every filled state, plus one fixed-seed walk whose failing sequence is promoted to a journey.
+- **Assert invariants after every command:** the tests drive the real component through a sequence of commands beside a model of what its state should be, and after each command check that every control the state implies is usable, the render matches the model, no value is silently lost and no shape the backend rejects is held — in a few named journeys, one of them recovery from every filled state.
 - **A mutation check proves detection, not correctness:** a surviving mutation is a finding, and a killed one is no guarantee that the behaviour is the right one.
 - **Prefer a source-invariant guard** for a closed property of the code — every one of a kind declares something, every path named resolves — and keep the slow end-to-end test for the wiring only it can prove.
 

@@ -13,7 +13,7 @@ Read this file before creating a design repository, adding a folder to one, or r
 
 **A product's design is a Project linked to the shared Design System; anything several applications share is a Design System, in a repository of its own.**
 One `bin/sync` mirrors one Claude Design project, so a repository is one kind: a Project export lands in `pages/`, a Design System export in `system/`.
-The kind is stated three times, each checked against the others: `bin/sync`'s `KIND`, the README's first line, and the export folder — the layout check fails when the repository holds the other kind's folder.
+The kind is stated in `bin/sync`'s `KIND`, the README's first line, and the export folder; `bin/sync` refuses an export of the other kind.
 A Project's repository may keep files under `system/` only when it authors them and `bin/sync` pushes them upstream, such as a checked palette.
 
 **What a Design System export holds**, as observed in exports:
@@ -39,10 +39,10 @@ A Project's repository may keep files under `system/` only when it authors them 
 +-- AGENTS.md               the rules an agent working here needs; CLAUDE.md is `@AGENTS.md`
 +-- CLAUDE.md
 +-- Rakefile                `rake` is the gate: every check, then the tests
-+-- Gemfile                 the gems `rake` and `bin/serve` need; Gemfile.lock beside it, committed
++-- Gemfile                 the gems `rake` needs; Gemfile.lock beside it, committed
 +-- Gemfile.lock
 +-- .gitignore              tmp/ (the sync's staging and the shots), .DS_Store, .claude/worktrees/
-+-- .github/workflows/      the gate, weekly on the default branch and by hand
++-- .github/workflows/      the gate, on every pull request and push
 +-- briefs/
 |   +-- README.md           what belongs here, the lifecycle, how to write one
 |   +-- proposed/           <theme>.brief.md, one open brief per theme
@@ -59,8 +59,7 @@ A Project's repository may keep files under `system/` only when it authors them 
 |   +-- sync                mirror a fresh export
 |   +-- ds-status           whether pages/_ds/ carries what the shared system does   (product)
 |   +-- shots               every page in every state, the surface alone, into tmp/shots/   (product)
-|   +-- stand-ins           where each stand-in is on its way into the shared system   (product)
-|   +-- serve               every page from a real origin, with an index walked on each request
+|   +-- serve               every page from a real origin, with a directory listing
 |   +-- vendor-sync         refresh vendor/ from the shared system's checkout
 +-- .design-sync/           config.json and NOTES.md, when files are pushed up with /design-sync
 +-- .claude/skills/         skills that only make sense here, such as the contract's
@@ -68,7 +67,7 @@ A Project's repository may keep files under `system/` only when it authors them 
 
 A folder that does not apply is absent, never empty. A folder not in this tree is not added without amending this file first.
 
-**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, the export folder matching the kind `bin/sync` names, no symlinks, nothing in an export ignored, how briefs are named, `CLAUDE.md` as an import, scratch kept untracked. Each one earns its place by a realistic mistake in a design repository that fails it, as the testing seed's rule in `.claude/rules/testing.md` states. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
+**Review holds a repository to this layout**; no test does, since a folder in the wrong place breaks nothing a check could see.
 
 ## Folder by folder
 
@@ -119,7 +118,7 @@ The contract the generated artefact keeps — what each field carries and why it
 
 ### `lib/` and `test/`
 
-The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses; and the layout check's own, each running a copy of `layout_test.rb` against throwaway export folders.
+The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses.
 
 ### `bin/`
 
@@ -127,14 +126,12 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
   - an incomplete export — no `_ds_manifest.json`, or a root file the repository lists as required missing: a web export's root stylesheet, while a terminal client's export lists none;
   - an export of the other kind — a Project's export into a Design System's repository, or a Design System's into a Project's;
   - an export whose copy of a file this repository authors upstream differs or is missing;
-  - a page that is not one canonical prototype per surface — a versioned copy, an audit, a rationale or an options page;
   - a note beside the pages — any Markdown file outside `_ds/` other than the project's own files the repository lists, by default `readme.md`, `AGENTS.md` and `CLAUDE.md`: a request it carries belongs in the open brief of the repository whose project will draw it.
 - It never mirrors authoring screenshots, and replaces a symlinked snapshot with the export's own.
 - It stages into a git-ignored `tmp/`, deletes only inside the checkout, mirrors, reports what changed, and leaves committing to a person.
 - **`ds-status`**, in a product's repository, compares the `_ds/` snapshot's manifest with the shared system's, and exits 1 when the snapshot lacks a token or component the shared system carries.
 - **`shots`**, in a product's repository, runs after every sync: it reaches each state of each page at its address, `#state=<family>/<state>`, checks that the State row names it, hides `[data-design-chrome]`, and screenshots the `[data-surface]` element whole into the git-ignored `tmp/shots/`, with an `index.html` contact sheet; it exits 1 naming each page that breaks the page contract (§4 of the skill). The generator is `lib/shots.js`; Playwright drives the installed Chrome from a cache outside the repository, and its test skips, saying so, where node or a browser is missing.
-- **`stand-ins`**, in a product's repository bound to a shared system, reads each stand-in's stage — unrequested, requested, upstream, landed — from the shared system's open briefs and the two manifests, and exits 1 when one needs a step taken. Its shared checkout comes from the environment variable and default the application's `AGENTS.md` design section declares.
-- **`serve`** serves the checkout on a real origin, with an index of every page walked on each request, never committed. It is a Sinatra application, from the `Gemfile`; its index template is `lib/serve/index.erb`.
+- **`serve`** serves the checkout on a real origin with `python3 -m http.server`, so a page that fetches anything works as it does in Claude Design.
 - **`vendor-sync`** refreshes `vendor/` from a checkout of the shared system.
 
 ### `.design-sync/`
@@ -145,7 +142,7 @@ The generators, and their tests. `test/` also holds `bin/sync`'s tests, each run
 
 - **`README.md`** opens with its Claude Design kind — a Project and the Design System it is linked to, or a Design System — then what the repository is and who consumes it, then two parts: the Claude Design content, the export folder and which paths flow which way; and the git wrapper, each folder around the export and what it does. Then the commands. It states the kind and the link, never the clicks that create them in Claude Design.
 - **`AGENTS.md`** holds the rules an agent needs here and nowhere else — which files flow which way, what the generator guarantees; `CLAUDE.md` is the one line `@AGENTS.md`. The application's own rules stay in the application's `AGENTS.md`, linked.
-- **`Rakefile`**: `rake` runs every check, then the tests, and is the gate before every merge. CI runs the same `rake`, weekly and by hand; the local run is what guards a merge.
+- **`Rakefile`**: `rake` runs every check, then the tests, and is the gate before every merge. CI runs the same `rake` on every pull request and push.
 
 ## What is never in a design repository
 

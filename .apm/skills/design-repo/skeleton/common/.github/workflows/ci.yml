@@ -1,10 +1,9 @@
 name: CI
 
-# Weekly on the default branch, and by hand. The local `rake` is what guards each merge;
-# this is the backstop that catches a gate nobody ran.
 on:
-  schedule:
-    - cron: "0 8 * * 1" # Monday 08:00 UTC
+  push:
+    branches: [main, master]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -12,7 +11,7 @@ jobs:
     name: rake
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:

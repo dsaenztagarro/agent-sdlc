@@ -33,23 +33,23 @@ Its files flow two ways:
 Everything else wraps the system in git: the requests that go in, the generator that reads it, and the checks that hold it.
 
 ```
-<!-- FILL: keep the lines that apply, delete the rest; the layout check refuses a folder not listed in the layout. -->
+<!-- FILL: keep the lines that apply, delete the rest. -->
 briefs/proposed/       the requests to the __NAME__ Design System, one open brief per theme, handed over by copy-paste
 references/            hand-authored material the system draws on; never touched by bin/sync
 docs/                  the contract dist/ keeps
 lib/                   the generators
 dist/                  what crosses into applications — generated, committed
-test/                  the generators' tests, bin/sync's, and the layout check
+test/                  the generators' tests, and bin/sync's
 bin/sync               mirror a fresh export into system/
-bin/serve              every page from a real origin, with an index walked on each request
+bin/serve              every page from a real origin, with a directory listing at /
 .design-sync/          the Design System's id, and the notes /design-sync reads
 ```
 
 ## Working on it
 
 ```bash
-bundle install  # once: the gems rake and bin/serve need
-bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, a Project's, an off-format page, a note, or an edited upstream file
+bundle install  # once: the gems rake needs
+bin/sync        # mirror ~/Downloads/__NAME__.zip; refuses an incomplete export, a Project's, a note, or an edited upstream file
 rake            # every check, then the tests — the gate before each merge
-bin/serve       # browse every page on http://localhost:4000
+bin/serve       # browse every page on http://localhost:8000
 ```

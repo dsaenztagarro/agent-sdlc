@@ -145,33 +145,6 @@ class ShotsTest < Minitest::Test
                  Dir.children(File.join(@out, "surface")).sort
   end
 
-  test "a family whose states do not sit together is refused" do
-    page "surface.html", states: ["List", "Record · Read", "List · Filtered"]
-
-    out, status = shots
-
-    assert_equal 1, status.exitstatus
-    assert_match(/surface\.html: its "List" family is split/, out)
-  end
-
-  test "a bare family that is not its family's first state is refused" do
-    page "surface.html", states: ["List · Filtered", "List"]
-
-    out, status = shots
-
-    assert_equal 1, status.exitstatus
-    assert_match(/surface\.html: its state "List" is the bare family but not the "List" family's first/, out)
-  end
-
-  test "a state repeating its family is refused" do
-    page "surface.html", states: ["Record", "Record · Sparse record", "List"]
-
-    out, status = shots
-
-    assert_equal 1, status.exitstatus
-    assert_match(/surface\.html: its state "Record · Sparse record" repeats its family/, out)
-  end
-
   private
 
   # The bar behaves as a design system's state switcher does, in design chrome above the surface: the

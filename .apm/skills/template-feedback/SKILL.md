@@ -1,102 +1,44 @@
 ---
 name: template-feedback
-description: Raise a reusable, project-agnostic improvement to the AI-engineering workflow itself back to the template. Use when you discover a better convention, a gap or clearer wording in AGENTS.md, a skill that could be sharper, or a docs-taxonomy fix that would help ANY project using this template — not for project-specific code, config, or content. It surfaces the improvement to the user with a concrete proposal, and on the user's OK opens a GitHub issue on the upstream template repo (never edits the template silently). May be user-invoked as `/template-feedback [idea]`, or reached for proactively the moment such an improvement surfaces during other work.
+description: Raise a reusable, project-agnostic improvement to the agent-sdlc workflow itself — a rule AGENTS.md should state, a skill step that misfires, a docs-taxonomy gap — as one checklist item on the template's open feedback issue. Not for project-specific code, config or content. Surfaces the proposal first and writes upstream only on the user's OK. May be user-invoked as `/template-feedback [idea]`, or reached for when such an improvement surfaces during other work.
 argument-hint: "[short description of the improvement]"
 ---
 
 # Propose a template improvement upstream
 
-This skill closes a feedback loop: when working on a project that adopted the **agent-sdlc** template, you will occasionally discover a way the *workflow itself* could be better — a rule that should exist in `AGENTS.md`, a skill step that misfires, a docs folder whose purpose blurs, a principle worth stating. Those improvements are worthless if they die in one project's chat. This skill routes them back to the canonical template so **every** adopter benefits.
+An improvement to the workflow found while using it is worth something only if it reaches every adopter. This skill sends it to `dsaenztagarro/agent-sdlc`, or to the upstream the user names if this project tracks a fork.
 
-**Upstream target:** `dsaenztagarro/agent-sdlc` (the canonical template). If this repo is a fork of the template or you maintain your own canonical copy, confirm the correct upstream slug with the user before creating anything.
+## 1. Confirm it generalizes
 
-## When to use it — and when NOT to
+Restate it in one sentence that names no project, language or framework. If you cannot, it is local: apply it to this repository's `AGENTS.md`, a rule, or the theme's decision record, and stop.
 
-Use it **only for generalizable, project-agnostic** improvements to the agentic workflow: things that would help an arbitrary project that adopts the template.
+## 2. Surface the proposal
 
-| Use the skill | Do NOT use the skill (handle locally instead) |
-|---|---|
-| A missing/weak rule in `AGENTS.md`'s portable sections, or in the testing rule `.claude/rules/testing.md` | A project-specific rule → edit *this* repo's `AGENTS.md` or rule |
-| A skill (`design-handoff`, this one, …) whose steps could be clearer/safer | A bug in this project's code or tests |
-| A docs-taxonomy gap (what belongs in a record, a test, the README or a skill) | A one-off decision → the theme's record in *this* repo |
-| A portable principle worth adding (testing, model selection, docs style) | Project content, copy, or config |
+Show the user, in the conversation:
 
-The tell for "generalizable": the improvement is phrased without naming this project, its language, or its framework. If you cannot state it project-agnostically, it belongs in this repo's `AGENTS.md`, not upstream — apply it there and stop.
+- **Problem:** what misfires today, with the one instance where it bit.
+- **Change:** the wording or diff, ready to apply, and the template file it lands in.
+- **Why it generalizes**, and any trade-off.
 
-## Operating principles
+Finish the task at hand first; do not drop it to chase the idea.
 
-- **Never edit the template silently.** The default output is a *proposed* GitHub **issue** on the upstream repo, opened only after the user approves. Do not open a PR or push to the template unless the user explicitly asks for a PR.
-- **Raise the hand promptly, but don't derail.** When an improvement surfaces mid-task, note it and finish the current unit of work first; then run this skill. Don't silently pocket the idea, and don't abandon the task to chase it.
-- **One coherent improvement per issue; related changes from one review are one issue.** An issue is triaged and accepted as a whole, so it carries one idea — but the findings one review makes about the same idea land together, not split across many issues.
-- **Propose, don't decide.** You surface the change and the reasoning; the human triages. Show the evaluation, not just the outcome.
+## 3. On the user's OK, append it to the open feedback issue
 
-## 1. Confirm it's generalizable
-
-Restate the improvement in one project-agnostic sentence. If you can't (it names this project/language/framework), it's local: apply it to this repo's `AGENTS.md` or the theme's decision record and **stop** — do not take it upstream.
-
-## 2. Locate the artifact it touches
-
-Identify the template files the change lands in, e.g.:
-
-```
-AGENTS.md                                  # a rule/principle every task needs
-.claude/rules/testing.md                   # a testing rule, or one for building a stateful component
-.apm/skills/<name>/SKILL.md                # a skill's steps
-.apm/agents/<name>.agent.md                # an agent's prompt
-docs/adr/README.md                         # decision-record conventions
-docs/adr/decision-records.md               # what goes where, and why it is bounded
-.apm/skills/design-handoff/SKILL.md        # the Claude Design procedure
-README.md                                  # the template's own overview
-```
-
-## 3. Dedupe against existing issues
-
-Before proposing, check the upstream repo so you don't file a duplicate:
+Every proposal joins **one open issue labelled `template-feedback`** as a `- [ ]` item, never an issue of its own: the maintainer works the list in one pull request.
 
 ```bash
-gh issue list --repo dsaenztagarro/agent-sdlc --search "<keywords>" --state all
+gh issue list --repo dsaenztagarro/agent-sdlc --label template-feedback --state open
+# none open: create it once
+gh issue create --repo dsaenztagarro/agent-sdlc --label template-feedback \
+  --title "Template feedback" --body "Workflow improvements raised from downstream projects, one item each."
 ```
 
-If a matching issue exists, add a comment to it (with the user's OK) instead of opening a new one.
+First search the issue and the closed ones for the same idea (`gh issue list --repo dsaenztagarro/agent-sdlc --search "<keywords>" --state all`); if it is there, add to that item instead.
+Then append the item with `gh issue edit <n> --body-file`, keeping the body as it was: the problem, the change, the file, why it generalizes.
 
-## 4. Draft the proposal and surface it
-
-Present to the user, in-conversation, a compact proposal:
-
-- **Problem** — what's missing or misfiring today, and where it bit you (one concrete instance).
-- **Why it's better** — the improvement and the reasoning; note any trade-off.
-- **Affected file** — from step 2.
-- **Proposed change** — the concrete wording or diff, ready to drop in.
-
-Then ask whether to open the issue upstream.
-
-## 5. On the user's OK, open the issue
-
-```bash
-gh issue create --repo dsaenztagarro/agent-sdlc \
-  --title "<concise improvement title>" \
-  --body "$(cat <<'EOF'
-## Problem
-<what's missing / misfiring, with the concrete instance>
-
-## Proposed change
-<the wording or diff, ready to apply>
-
-## Affected file
-<path in the template>
-
-## Why it generalizes
-<the project-agnostic rationale>
-
-_Raised via the template-feedback skill while working on a downstream project._
-EOF
-)"
-```
-
-Report the issue URL back. If the user instead asks for a **PR**, branch the upstream repo, apply the exact proposed change, run the template's own gate if any, and `gh pr create` — but that is opt-in, never the default.
+Report the issue URL. A pull request instead of an item is opt-in, only when the user asks for one.
 
 ## Guardrails
 
-- No upstream write (issue or PR) without explicit user approval in the current turn.
-- Never rewrite a decision record or a skill's contract as a "fix" — propose the change and let the human decide.
-- If unsure whether an idea is generalizable or project-local, ask the user rather than guessing.
+- Nothing is written upstream without the user's OK in the current turn.
+- Never rewrite a decision record or a skill's contract as a "fix": propose it, and let the maintainer decide.
