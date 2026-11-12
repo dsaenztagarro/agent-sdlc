@@ -16,9 +16,7 @@ require "zlib"
 #
 # A state is named "<Family> · <state>", or the bare family for its family's first, and its family
 # is the name before the separator: the markup carries no other grouping. Each state is reached at
-# its address, #state=<family>/<state>, and the State row must then name it. A family split apart, a
-# bare family that is not its family's first state, or a state repeating its family is named, since
-# the switcher steps through them in page order.
+# its address, #state=<family>/<state>, and the State row must then name it.
 #
 # It needs node and a browser, which a fresh clone and CI may not have; then it skips and says so.
 class ShotsTest < Minitest::Test

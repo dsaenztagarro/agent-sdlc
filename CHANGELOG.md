@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-12
+
+A comment fix in the skeleton.
+
+### Fixed
+
+- **The skeleton's `shots_test.rb` header no longer describes the family-ordering refusals** that v1.0.0 removed.
+
 ## [1.0.0] - 2026-11-12
 
 The template keeps only the rules and checks that pay for themselves. One coherent change is one pull request, with no issue required for work done now and no issue per idea upstream. Decision records keep their history in git rather than in a tracker issue per theme. The design-repository skeleton drops the checks that tested repository housekeeping or listed forbidden spellings, serves pages with the standard library, and runs its gate on every pull request. Each design repository adopts this skeleton in one pull request.
@@ -164,7 +172,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...v1.0.0
 [0.7.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.5.0...v0.6.0
