@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-11-12
+
+A width is a frame, drawn once per project, never a state on every page, and no page is drawn again without colour.
+
+### Changed
+
+- **`design-handoff` §4 states that a width is a frame, never a state.** Every page draws at the default width. One Layout page per project shows how each surface recomposes at the others, one family per width, so a page's state bar lists only its situations.
+- **`design-handoff` §4 states that no page is drawn again without colour.** The token set's check that no two states share a glyph holds what a monochrome copy was meant to show.
+
 ## [1.0.2] - 2026-11-12
 
 A shared system's standing rules, and what each token is for, each have one home outside the briefs.
@@ -180,7 +189,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/dsaenztagarro/agent-sdlc/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...v1.0.0
