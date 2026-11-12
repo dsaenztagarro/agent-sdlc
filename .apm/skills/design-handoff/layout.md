@@ -68,7 +68,7 @@ A Project's repository may keep files under `system/` only when it authors them 
 
 A folder that does not apply is absent, never empty. A folder not in this tree is not added without amending this file first.
 
-**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, the export folder matching the kind `bin/sync` names, no symlinks, nothing in an export ignored, how briefs are named, `CLAUDE.md` as an import, scratch kept untracked. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
+**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, the export folder matching the kind `bin/sync` names, no symlinks, nothing in an export ignored, how briefs are named, `CLAUDE.md` as an import, scratch kept untracked. Each one earns its place by a realistic mistake in a design repository that fails it, as the testing seed's rule in `.claude/rules/testing.md` states. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
 
 ## Folder by folder
 
