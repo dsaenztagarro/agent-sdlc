@@ -1,6 +1,6 @@
 # Decision records
 
-**Status:** Accepted · **Decision log:** <!-- FILL: this theme's decision-log issue -->
+**Status:** Accepted
 
 How this project writes things down: which artefact owns which fact, and why every corpus an agent reads has a bound.
 
@@ -30,7 +30,7 @@ Prose never records what the code currently does — no explainer, topic guide o
 
 ### Records are a few broad themes, named for the theme, and amended in place
 
-A decision amends its theme's record and never opens a sibling. The superseded reasoning moves to the theme's decision-log issue; git holds the text. [The README](README.md) carries the bar and the procedure.
+A decision amends its theme's record and never opens a sibling; git holds the superseded text. [The README](README.md) carries the bar and the procedure.
 
 What keeps the set small is the breadth of each theme, not a number: a theme is drawn wide enough that the next decision in its area lands in it, and a new record has to argue why no existing theme fits.
 

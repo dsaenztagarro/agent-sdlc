@@ -1,6 +1,6 @@
 # Theme name
 
-**Status:** Accepted · **Decision log:** <!-- FILL: the theme's decision-log issue -->
+**Status:** Accepted
 
 <One or two sentences: what this theme decides, and why it needed deciding.>
 
@@ -24,6 +24,6 @@
 
 ## References
 
-<The decision-log issue, and the tests that enforce these decisions.>
+<The tests that enforce these decisions.>
 
 <!-- Delete on sight: a schema, a list of files, a rollout plan, "not yet built", a ticket list, a rejected option nobody would reach for again. -->

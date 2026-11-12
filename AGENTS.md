@@ -2,7 +2,7 @@
 
 Instructions for AI agents working on this codebase. This file holds only what applies to **every** task — the rules an agent can break before it knows they exist — and a routing table to the rest. A procedure is a skill in `.claude/skills/`, loaded when it is invoked; a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened.
 
-> This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (model selection, documentation, design workflow, development workflow) are portable as-is, and so is the testing rule in `.claude/rules/testing.md` once its `paths:` is filled.
+> This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (documentation, design workflow, development workflow) are portable as-is, and so is the testing rule in `.claude/rules/testing.md` once its `paths:` is filled.
 
 ## Where the rest of the instructions live
 
@@ -14,21 +14,13 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
 | raising a workflow improvement upstream | the `template-feedback` skill | invoke it |
 
-The tracker pipeline is required at user level, never shipped in the agent-sdlc package. Without it, follow [its contract](https://github.com/dsaenztagarro/agent-sdlc#4-the-delivery-pipeline--required-at-user-level) by hand: what each step reads, and what it leaves where.
+The tracker pipeline is required at user level, never shipped in the agent-sdlc package. Without it, follow [its contract](https://github.com/dsaenztagarro/agent-sdlc#the-delivery-pipeline-at-user-level) by hand: what each step reads, and what it leaves where.
 
 A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
-## Model selection & task tracking
+## Improving this workflow
 
-Every task you plan or pick up carries an explicit **complexity** rating and the **model** it runs on — state both (`complexity · model · why`) in the plan, the parent ticket, or the task list so the choice is deliberate and reviewable, not implicit. When you decompose work, tag each piece; don't leave the model a running default nobody chose.
-
-- **Default to the most capable model.** Correctness-critical, interdependent, or context-heavy work — schema/data changes, multi-file refactors, anything where a subtle mistake compounds across the change — stays there even when it is large. Delegating hard work to a cheaper run because it's tedious is a false economy.
-- **Escalate to a cheaper/faster model only when the complexity genuinely pays off there** and the task isn't the correctness-critical / interdependent / context-heavy kind above. When it's a close call, stay on the capable model.
-- **Record the call, one clause of why.** e.g. `complexity: complex · model: <capable> · why: interdependent state machine`. The rating is about consequence and coupling, not line count.
-
-## Improving this workflow (raise the hand)
-
-This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. When you discover a **reusable, project-agnostic** improvement to the workflow itself — a rule that should exist here, a skill step that misfires, a docs-taxonomy gap, a principle worth stating — don't silently apply it only to this repo. **Raise the hand:** run the **`template-feedback`** skill (`.claude/skills/template-feedback/`) to surface a concrete proposal and, on the maintainer's OK, open an issue on the upstream template so every adopter benefits. Keep project-specific rules in this repo; send generalizable ones upstream.
+This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. A reusable, project-agnostic improvement to the workflow itself goes upstream through the `template-feedback` skill, as one checklist item on the template's open feedback issue; a project-specific rule stays here.
 
 ## Project Overview
 
@@ -55,7 +47,7 @@ This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdl
 
 ## Documentation Conventions
 
-- **Decision records** live in `docs/adr/` — **a few broad themes, one record each, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/decision-records.md`](docs/adr/decision-records.md). **A decision's history** is on its theme's decision-log issue: `gh issue list --label decision-log --state all` lists every one.
+- **Decision records** live in `docs/adr/` — **a few broad themes, one record each, amended in place.** A decision amends the record that owns its theme; it never opens a new file. A decision that fits no theme is the maintainer's call — stop and ask. The bar, the themes and the procedure are in [`docs/adr/README.md`](docs/adr/README.md); the reasoning is [`docs/adr/decision-records.md`](docs/adr/decision-records.md). **A decision's history** is the record's git log: `git log -p docs/adr/<theme>.md`.
 - **Tests are the specification.** What the code does is stated by tests named for the rules they hold. Before writing a behaviour rule in prose, name the test that would fail if it were broken — then write that test and stop. A test states what the product does, never what the repository contains: that a file exists, a document has a section, or a folder holds fewer than some number of files specifies nothing, and review holds it.
 - **How to run, set up or operate it** is a command in the README; a multi-step procedure an agent follows is a skill in `.claude/skills/`, loaded when it is invoked.
 - **An input is deleted when what it produced ships** — a brief, a backend design, a review. Its durable half moves to a record, a test or an issue first.
@@ -171,31 +163,29 @@ Rules that depend on the project's tooling, each a `FILL` with its rule beside i
 
 ## Development Workflow
 
-**One coherent change is the unit of work:** one issue, one branch, one pull request, sized for one review.
+**One coherent change is the unit of work:** one branch, one pull request, sized for one review. Related findings from one analysis ship together, never as a ticket each.
 
-1. **Open one issue for the change:** the problem, the done-when lines, the technical notes. Related tickets from one analysis are one issue, and the triage and review rows it produces stay inside it as checklist items, never a ticket each.
-2. **Branch from a freshly fetched default branch**, in the issue's own worktree: `git fetch origin` first, then `claude --worktree issue-<issue>` checks out `.claude/worktrees/issue-<issue>`, and the same command re-enters it later. `git log origin/<default>..HEAD` prints nothing before the first commit, so no unpushed local commit rides into the squash. Two agents never share a checkout — they race on HEAD.
-3. **A worktree gets the untracked files it needs** — local keys, a `.env` — through `.worktreeinclude`, never by copying them by hand.
-4. **Check the branch name on the remote before the first push:** rename the branch to `<issue>-<slug>`, and `git ls-remote --heads origin <branch>` prints nothing, so the push cannot land on a branch an existing pull request uses.
-5. **Implement & test** — write tests alongside the change; run the gate frequently; when the change has a runtime surface, drive it and observe the behaviour before calling it done, since passing tests are necessary, not sufficient.
-6. **Record decisions** — a decision that clears the bar amends its theme's record in `docs/adr/`.
-7. **Open a PR** with `gh pr create`, body ending `Closes #<issue>`; merge with `gh pr merge --squash` once the gate is green.
+1. **Open an issue only for work someone will build later.** Work done now needs none: the pull request states the problem.
+2. **Branch from a freshly fetched default branch, in a worktree of its own:** `git fetch origin`, then `claude --worktree <slug>`. Two agents never share a checkout — they race on HEAD. A worktree gets the untracked files it needs — local keys, a `.env` — through `.worktreeinclude`.
+3. **Implement and test:** tests alongside the change, the gate run often, and a change with a runtime surface driven and observed before it is called done, since passing tests are necessary, not sufficient.
+4. **Record decisions:** a decision that clears the bar amends its theme's record in `docs/adr/`.
+5. **Open the pull request** with `gh pr create`, closing any issue it finishes; merge with `gh pr merge --squash` once the gate is green.
 
-Every ticket and every pull request **opens with `## Sequence`**, one reference per line: a ticket names the previous ticket, the next and its pull requests; a pull request names its ticket, the previous pull request and the next.
+Every ticket and every pull request **opens with `## Sequence`**, one reference per line: a ticket names the previous ticket, the next and its pull requests; a pull request names its ticket, if any, the previous pull request and the next.
 
 A pull request:
 
-- **Has a Conventional Commit title:** `<type>(<scope>)!: <subject>`, with a sentence-style subject after the type. `.github/workflows/pr-title.yml` checks it, again whenever the title is edited, and the repository squashes with the PR title as the commit subject, so the release is versioned from what was reviewed.
+- **Has a Conventional Commit title:** `<type>(<scope>)!: <subject>`, with a sentence-style subject after the type. `.github/workflows/pr-title.yml` checks it, and the repository squashes with the PR title as the commit subject, so the release is versioned from what was reviewed.
 - **Compares with the base branch:** what the code did before and why that was wrong, never an earlier revision of the branch, which its reader never saw.
-- **Carries the evidence in its body:** the gate's output, the mutation checks, how to test it. The issue gets no copy of it: the closing reference closes the issue, and the close step ticks each done-when line against the evidence the pull request holds.
+- **Carries the evidence in its body:** the gate's output, the mutation checks, how to test it. Nothing is mirrored back to an issue.
 
 **The CHANGELOG follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),** each release opening with a lead paragraph on what it brings, before its lists.
 
-Work planned across several tickets is the one exception to the unit above, and is planned and built with the tracker pipeline (see the routing table): the plan is a marked section of the parent issue's description, each ticket gets its own worktree, and a batch of tickets ships as one pull request.
+Work too large for one review is planned with the tracker pipeline (see the routing table): the plan is a marked section of one parent issue, and a batch of its tickets ships as one pull request.
 
 ### Incidental minor findings → the `chore` accumulator
 
-While doing a task you'll notice **minor, unrelated** defects — a stale label, a typo, a dead file, a tiny inconsistency — out of scope for what you're shipping. Don't fix it inline (bloats an unrelated diff), don't drop it (it's lost), and don't open a dedicated issue for a one-line fix (pure ceremony). Instead capture it in one rolling paper-cuts list and keep working.
+A **minor, unrelated** defect noticed while doing a task — a stale label, a typo, a dead file — is neither fixed inline nor given an issue of its own: it joins one rolling list.
 
 One open **`chore`**-labelled issue pools these. Find it, append the finding, move on:
 

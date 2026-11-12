@@ -20,9 +20,9 @@ A decision record holds reasoning that is not recoverable from the code. Before 
 
 A decision **amends the record that owns its theme**. It never opens a second file — not for a reversal, not for an extension, not for a decision that builds on an earlier one.
 
-| Record | Owns | Decision log |
-|---|---|---|
-| [Decision records](decision-records.md) | how this project records decisions, what goes where, and why it is bounded | <!-- FILL: its decision-log issue --> |
+| Record | Owns |
+|---|---|
+| [Decision records](decision-records.md) | how this project records decisions, what goes where, and why it is bounded |
 
 <!-- FILL: one row per theme, added when the project's first decision in that area is made. Name a theme for an area of the product — storage, the wire contract, the terminal surface — never for a single decision, and name its file for the theme: `docs/adr/storage.md`. -->
 
@@ -32,30 +32,12 @@ A new record must argue, in its own context section, which themes were considere
 ## Amending a record
 
 1. Open the theme's record and change the rule. An amendment usually **replaces** a rule; it rarely appends one.
-2. Record the change as one line on the theme's `decision-log` issue — the date, what changed, why — linking the commit rather than pasting the displaced passage. Git holds the prose; the issue is the findable index.
-3. Keep it to what is currently decided. A record that keeps growing holds something that has stopped being a decision — a description of the code, which the code and its tests already give, or a lost option for the log — find it and move it out.
-
-The log lives on the tracker rather than at the foot of the record because a log inside the record grows for as long as the theme is alive, and every line of it is loaded by every reader who opens the record for its current position.
-
-## Finding a decision's history
-
-Every theme has one **decision-log issue**, and every one of them carries the **`decision-log` label**, so the whole history of the project's decisions is one filter away:
-
-```bash
-gh issue list --label decision-log --state all      # every theme's log
-gh issue view <n> --comments                         # one theme: an amendment per comment
-```
-
-- **Title** `decision-log: <theme>`, the record's file name without `.md`, so the list reads as the table above.
-- **Body**: which record it archives, and what goes on it. **Each amendment is one comment**: the date, the commit, what changed and why.
-- **It stays open** for as long as its record exists. A closed log drops out of the default `gh issue list`, and an agent looking for history must not have to know to ask for closed ones.
-- **The label is created once** (`gh label create decision-log --description "The archive of one decision record's amendments"`), with the first theme.
-
-Read the log before amending a record, and before re-proposing an option the record does not mention: it is where an option that lost to a condition no longer true was put.
+2. The commit message says what changed and why. `git log -p docs/adr/<theme>.md` is the record's history; read it before re-proposing an option the record does not mention.
+3. Keep it to what is currently decided. A record that keeps growing holds something that has stopped being a decision — a description of the code, which the code and its tests already give — find it and move it out.
 
 ## What earns a line
 
-- **A rejected option earns one line only if someone would reach for it tomorrow**: the option, and why it lost. Its job is stopping the rebuild. An option that lost to a condition no longer true goes to the decision-log issue.
+- **A rejected option earns one line only if someone would reach for it tomorrow**: the option, and why it lost. Its job is stopping the rebuild. An option that lost to a condition no longer true is dropped; git keeps it.
 - **A fork deliberately left open always stays**, with the condition that would reopen it. It is current state, not history, and the cheapest line in the record.
 
 ## Conventions
