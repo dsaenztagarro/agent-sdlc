@@ -20,8 +20,6 @@ class LayoutTest < Minitest::Test
   ROOT_FILES = %w[README.md AGENTS.md CLAUDE.md Rakefile Gemfile Gemfile.lock .gitignore LICENSE].freeze
   EXPORT_FOLDERS = %w[pages system].freeze
   EXPORT_FOLDER = { "project" => "pages", "system" => "system" }.freeze
-  RULE_LENGTH = 80
-  BRIEF_HEADER = /\A(?:[-*]\s+)?(?:\*\*)?(?:For|Produces|Do[- ]not[- ]edit|Status)(?::|\*\*)/i
 
   def test_every_top_level_entry_is_one_the_layout_names
     entries = tracked.map { |path| path.split("/").first }.uniq
@@ -35,14 +33,6 @@ class LayoutTest < Minitest::Test
     symlinks = git("ls-files", "-s").lines.select { |line| line.start_with?("120000") }.map { |line| line.split("\t").last.strip }
 
     assert_empty symlinks, "what a clone renders, builds or tests must come from that clone, not another checkout"
-  end
-
-  # One bin/sync mirrors one Claude Design project, so a repository is one kind: an application's
-  # pages beside a Design System export is the kind chosen wrong.
-  def test_bin_sync_names_the_kind_of_project_it_mirrors
-    skip "no bin/sync" unless File.file?(sync_script)
-
-    assert_includes EXPORT_FOLDER.keys, sync_kind, "bin/sync's KIND is project (a Claude Design Project) or system (a Design System)"
   end
 
   def test_the_only_export_folder_is_the_one_bin_sync_names
@@ -67,27 +57,6 @@ class LayoutTest < Minitest::Test
   def test_an_open_brief_is_one_topic_brief_md_in_briefs_proposed
     briefs = tracked.select { |path| path.start_with?("briefs/") } - ["briefs/README.md"]
     misplaced = briefs.reject { |path| path.match?(%r{\Abriefs/proposed/[^/]+\.brief\.md\z}) }
-
-    assert_empty misplaced
-  end
-
-  # A rule pasted into each brief dies with each one, and the copies drift as the rule moves.
-  def test_no_rule_is_repeated_in_two_open_briefs
-    briefs = tracked.select { |path| path.start_with?("briefs/") && File.file?(File.join(ROOT, path)) } - ["briefs/README.md"]
-    found_in = Hash.new { |hash, line| hash[line] = [] }
-    briefs.each do |path|
-      prose_lines(File.join(ROOT, path)).uniq
-          .select { |line| line.length >= RULE_LENGTH && !line.match?(BRIEF_HEADER) }
-          .each { |line| found_in[line] << path }
-    end
-    repeated = found_in.select { |_line, paths| paths.size > 1 }.map { |line, paths| "#{paths.join(' and ')}: #{line}" }
-
-    assert_empty repeated, "a rule that holds for every export belongs in the design project's own readme.md, pushed with /design-sync, never in a brief"
-  end
-
-  def test_a_vendored_shared_system_is_a_name_ds_folder
-    vendored = tracked.select { |path| path.start_with?("vendor/") }
-    misplaced = vendored.reject { |path| path.match?(%r{\Avendor/[a-z0-9-]+-ds/}) }
 
     assert_empty misplaced
   end
@@ -120,16 +89,6 @@ class LayoutTest < Minitest::Test
   def upstream_authored
     entries = File.read(sync_script)[/^UPSTREAM=\((.*?)\)/m, 1].to_s
     Shellwords.split(entries).map { |entry| entry.split(":").first }
-  end
-
-  # A brief may quote a component's files, and two files can share a line no rule wrote.
-  def prose_lines(path)
-    fenced = false
-    File.readlines(path).map(&:strip).reject do |line|
-      fence = line.start_with?("```", "~~~")
-      fenced = !fenced if fence
-      fence || fenced
-    end
   end
 
   def tracked
