@@ -9,6 +9,14 @@ paths:
 These rules load when a file the `paths:` above names is opened: the project's tests, and the source of the components that hold state between a user's actions.
 Each rule is one sentence, followed where it helps by why it holds or how to tell it is broken; where it differs by client, a web form and a terminal form follow it.
 
+## Whether a check earns its place
+
+- **A check earns its place by the realistic mistake that fails it, named beside it:** its name or the line above it says what someone working here could plausibly get wrong that turns it red, and a check no such mistake fails is not written.
+  - *Why:* a check nothing can fail costs a run and a read on every change and catches nothing, and a check red on a correct state teaches everyone to ignore red.
+  - *Where it lives:* a check on what this project only copies from another project its maintainers can commit to, such as files it vendors, lives in that project, beside what it judges; what arrives from a source no one here can check, such as a generator's export, is checked at the first boundary this project owns, where it is received.
+  - *Not twice:* a check that restates a runtime guard is not written; a test that proves the guard fires is that guard's test.
+  - *The tell:* it is red on a goal state of the lifecycle, a state the work is meant to reach, such as a queue emptied because its last item shipped, which makes it a defect; or it scans the prose of documents, to grade it or to compare it, which is review's job, so it is not written.
+
 ## What a test runs against
 
 - **Test the real thing; never mock the object under test or its in-process collaborators:** a test instantiates the real units with their real collaborators and fixtures, lets them exercise real test infrastructure, and asserts on real outcomes, with a double only at a genuine boundary — the network or an external service, infrastructure a unit test cannot stand up, or an error it cannot otherwise force.
