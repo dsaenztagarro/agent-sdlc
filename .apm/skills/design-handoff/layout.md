@@ -119,7 +119,7 @@ The contract the generated artefact keeps — what each field carries and why it
 
 ### `lib/` and `test/`
 
-The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses; and the layout check's own, each running a copy of `layout_test.rb` against throwaway briefs.
+The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses; and the layout check's own, each running a copy of `layout_test.rb` against throwaway export folders.
 
 ### `bin/`
 
