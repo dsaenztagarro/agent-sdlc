@@ -68,7 +68,7 @@ A Project's repository may keep files under `system/` only when it authors them 
 
 A folder that does not apply is absent, never empty. A folder not in this tree is not added without amending this file first.
 
-**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, `bin/sync` naming a kind and the export folder matching it, no symlinks, nothing in an export ignored, how briefs and vendored systems are named, no rule repeated across two open briefs, `CLAUDE.md` as an import, scratch kept untracked. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
+**`test/layout_test.rb` holds a repository to this layout** in its own `rake`: the closed rules below — the root's entries, the export folder matching the kind `bin/sync` names, no symlinks, nothing in an export ignored, how briefs are named, `CLAUDE.md` as an import, scratch kept untracked. Every design repository carries a copy of it, taken from the `design-repo` skill's skeleton and refreshed from there, never edited in place.
 
 ## Folder by folder
 
@@ -80,7 +80,7 @@ The requests made **to this repository's Claude Design project**, and nothing el
 - **A request belongs to the repository whose project will draw it.** A product that needs a shared component writes the brief in the shared system's `briefs/proposed/`, not its own, and not inside its project.
 - **One open brief per theme**, a self-contained `<theme>.brief.md` named for the theme and amended in place: a new ask joins the open brief for its theme, and a brief opens only for a theme none covers. A request that carries code — a component's complete files — is still a brief.
 - A theme that landed partly, or landed with a defect, keeps its brief, listing only what remains.
-- **A rule that must hold for every export is never written into a brief**: it lives in the design project's own `readme.md`, pushed with `/design-sync`. The layout check fails when a line of 80 characters or more, outside the briefs' headers and code blocks, appears in two open briefs.
+- **A rule that must hold for every export is never written into a brief**: it lives in the design project's own `readme.md`, pushed with `/design-sync`.
 - Deleted once everything it asked for has landed and its durable half has a home elsewhere (the `brief-closer` agent and §8 of the skill). `git log --diff-filter=D -- briefs/` finds one again.
 - `briefs/README.md` states what belongs here, the lifecycle, the house format and the reader rule, in the words of this repository.
 
@@ -119,7 +119,7 @@ The contract the generated artefact keeps — what each field carries and why it
 
 ### `lib/` and `test/`
 
-The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses; and the layout check's own, each running a copy of `layout_test.rb` against throwaway briefs.
+The generators, and their tests. `test/` also holds `bin/sync`'s tests, each running a copy of the script in a throwaway checkout: what a clean export mirrors, and each export it refuses; and the layout check's own, each running a copy of `layout_test.rb` against throwaway export folders.
 
 ### `bin/`
 
