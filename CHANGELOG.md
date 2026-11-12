@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-12
+
+A check now has to earn its place. The testing seed states the rule, that a check earns its place by the realistic mistake that fails it, named beside it, and the design skills and agents that write checks point at it. The design-repository skeleton's layout check keeps only the checks a real mistake fails.
+
+### Added
+
+- **The testing seed states when a check earns its place.** `.claude/rules/testing.md` opens with `## Whether a check earns its place`: a check is written only for a realistic mistake that fails it, and names that mistake beside it. A check on what the project only copies from another project its maintainers can commit to lives in that project. What arrives from a source no one here can check, such as a generator's export, is checked at the first boundary the project owns. A check that restates a runtime guard is not written, while a test that proves the guard fires is. A check red on a goal state of the lifecycle is a defect, and one that scans the prose of documents is not written. The `design-repo` skill's tests for a generator's refusals and guarantees, `design-handoff`'s layout check, and the guards `design-curator` writes all point at the rule. (#66)
+
+### Removed
+
+- **Three layout checks that no realistic mistake in a design repository fails.** `layout_test.rb` drops the check that no 80-character line repeats across two open briefs, which failed a repository whose own procedure requires every brief to open with the same preamble. It also drops the check on the `vendor/` folder's name, which only a vendoring script writes, and the check that `bin/sync` names its kind, which `bin/sync` already refuses on its first run. `layout_check_test.rb` loses their cases, and `layout.md` lists only the closed rules the check still holds. The rule that a standing rule never goes in a brief stays as guidance. (#65)
+
 ## [0.6.0] - 2026-11-11
 
 The delivery pipeline becomes a contract rather than a shipped copy, and `AGENTS.md` states the delivery rules every task needs, with a CI check that holds pull request titles to Conventional Commits so a release can be versioned from what was reviewed. Its design section becomes the one block of names the design skills read, and states each design rule with a web and a terminal form where they differ. `adopt-designs` reads a token set as well as a stylesheet bundle, under a vendor contract that ships with it, and a design repository keeps one open brief per theme, which `brief-closer` verifies and deletes in a fixed order. The design-repository skeleton catches up with the reference design repository: `bin/sync` refuses an incomplete export and compares an authored palette wherever it lives, the page contract reaches each state at its address, and `bin/serve` and `bin/stand-ins` join it. A request and a standing rule each keep their one home: an export carrying a note is refused, a promotion Design proposes is judged before the mirror is committed, and a rule repeated across briefs fails the layout check. A design repository states its Claude Design kind, in a skeleton split into a common part and one overlay per kind. The testing rules leave `AGENTS.md` for a path-scoped seed the adopter keeps, and gain the rules that decide whether a suite sees the defects that matter: locating by role, state as accessible state, invariants after every command, and stateful components built complete.
@@ -127,7 +139,8 @@ First tagged release of the AI-engineering template — the agent-driven workflo
 - **Skills** — `epic` (turn a design doc into a phased GitHub epic, shipped one ticket at a time) and `template-feedback` (raise a reusable, project-agnostic improvement back to this upstream template).
 - **MIT license** and project README.
 
-[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/dsaenztagarro/agent-sdlc/compare/v0.4.1...v0.4.2
