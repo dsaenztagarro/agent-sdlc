@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI agents working on this codebase. This file holds only what applies to **every** task — the rules an agent can break before it knows they exist — and a routing table to the rest. A procedure is a skill in `.claude/skills/`, loaded when it is invoked; a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened.
+Instructions for AI agents working on this codebase. This file holds only what applies to **every** task — the rules an agent can break before it knows they exist — and a routing table to the rest. A procedure is a skill — a plugin's, or this project's own in `.claude/skills/` — loaded when it is invoked; a rule for one kind of file is a path-scoped rule in `.claude/rules/`, loaded when a matching file is opened.
 
 > This file is a **template**. Replace every `<!-- FILL: … -->` with your project's specifics and delete any section that doesn't apply. The principle sections (documentation, design workflow, development workflow) are portable as-is, and so is the testing rule in `.claude/rules/testing.md` once its `paths:` is filled.
 
@@ -9,18 +9,18 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | when you are… | load | how it fires |
 |---|---|---|
 | writing or changing a test, or building a component that holds state | `.claude/rules/testing.md` | opening a file its `paths:` names, which you fill |
-| planning multi-ticket work, or building, reviewing, fixing, closing or releasing its tickets | the user-level tracker pipeline: `/tracker-plan`, `tracker-batch`, `tracker-review`, `tracker-fix`, `/tracker-close`, `/tracker-release` | invoke it |
-| stopping, resuming, or taking new scope on near-ready work | `/tracker-pause`, `/tracker-resume`, `/tracker-amend` | invoke it |
-| handing a design to Claude Design, or reading one back | the `design-handoff` skill | invoke it |
-| raising a workflow improvement upstream | the `template-feedback` skill | invoke it |
+| planning multi-ticket work, or building, reviewing, closing or releasing its tickets | the `sdlc` plugin: `/sdlc:plan`, `/sdlc:build-batch`, `/sdlc:review`, `/sdlc:close`, `/sdlc:release`, `/sdlc:roadmap` | invoke it |
+| stopping, resuming, or taking new scope on near-ready work | `/sdlc:pause`, `/sdlc:resume`, `/sdlc:amend` | invoke it |
+| handing a design to Claude Design, or reading one back | the `design` plugin: `/design:design-handoff` | invoke it |
+| raising a workflow improvement upstream | `/sdlc:template-feedback` | invoke it |
 
-The tracker pipeline is required at user level, never shipped in the agent-sdlc package. Without it, follow [its contract](https://github.com/dsaenztagarro/agent-sdlc#the-delivery-pipeline-at-user-level) by hand: what each step reads, and what it leaves where.
+The plugins are installed once per machine from the agent-sdlc marketplace, never copied into a project. Without them, follow [the pipeline's contract](https://github.com/dsaenztagarro/agent-sdlc#the-delivery-pipeline) by hand: what each step reads, and what it leaves where.
 
 A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
 ## Improving this workflow
 
-This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. A reusable, project-agnostic improvement to the workflow itself goes upstream through the `template-feedback` skill, as one checklist item on the template's open feedback issue; a project-specific rule stays here.
+This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. A reusable, project-agnostic improvement to the workflow itself goes upstream through `/sdlc:template-feedback`, as one checklist item on the template's open feedback issue; a project-specific rule stays here.
 
 ## Project Overview
 
@@ -69,7 +69,7 @@ Good (ASCII):
 
 ## Design workflow (Claude Design)
 
-**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the [`design-handoff`](.claude/skills/design-handoff/SKILL.md) skill.
+**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the design plugin's `/design:design-handoff` skill.
 
 ### The names the design skills read
 
