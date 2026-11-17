@@ -11,10 +11,10 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | writing or changing a test, or building a component that holds state | `.claude/rules/testing.md` | opening a file its `paths:` names, which you fill |
 | planning multi-ticket work, or building, reviewing, closing or releasing its tickets | the `sdlc` plugin: `/sdlc:plan`, `/sdlc:build`, `/sdlc:review`, `/sdlc:close`, `/sdlc:release`, `/sdlc:roadmap` | invoke it |
 | stopping, resuming, or taking new scope on near-ready work | `/sdlc:pause`, `/sdlc:resume`, `/sdlc:amend` | invoke it |
-| handing a design to Claude Design, or reading one back | the `design` plugin: `/design:design-handoff` | invoke it |
+| handing a design to Claude Design, or reading one back | the `ds` plugin: `/ds:handoff` | invoke it |
 | raising a workflow improvement upstream | `/sdlc:template-feedback` | invoke it |
 
-The plugins are installed once per machine from the agent-sdlc marketplace, never copied into a project. Without them, follow [the pipeline's contract](https://github.com/dsaenztagarro/agent-sdlc#the-delivery-pipeline) by hand: what each step reads, and what it leaves where.
+The plugins are installed once per machine from the agent-sdlc marketplace, never copied into a project. Without them, follow [the pipeline's contract](https://github.com/dsaenztagarro/agent-sdlc/blob/master/plugins/sdlc/README.md#the-contract-by-hand) by hand: what each step reads, and what it leaves where.
 
 A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
@@ -69,11 +69,11 @@ Good (ASCII):
 
 ## Design workflow (Claude Design)
 
-**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the design plugin's `/design:design-handoff` skill.
+**Do not hand-build UI without a design.** Design content — briefs, the pages Claude Design returns, the export mirror — lives in the **`<project>-ds`** design repository, and exactly one generated artefact crosses into this one. The procedure, and the three routes into the Claude Design project, are the design plugin's `/ds:handoff` skill.
 
 ### The names the design skills read
 
-The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the `design-curator` and `brief-closer` agents read these names and no others. One name per line; write `none` for one that does not apply. A name missing here is asked for, never guessed.
+The `ds:handoff`, `ds:adopt` and `ds:adopt-shared-release` skills and the `curator` and `brief-closer` agents read these names and no others. One name per line; write `none` for one that does not apply. A name missing here is asked for, never guessed.
 
 - **Design repository:** <!-- FILL: its name, `<project>-ds` -->
 - **Design checkout:** <!-- FILL: its path on disk -->
@@ -83,7 +83,7 @@ The `design-handoff`, `adopt-designs` and `adopt-shared-release` skills and the 
 - **Artefact source:** <!-- FILL: its path in the design repository -->
 - **Artefact vendored at:** <!-- FILL: its path here, or `nothing is vendored yet` and why -->
 - **Cascade layer:** <!-- FILL: the layer the bundle is loaded in; `none` for a token set -->
-- **Vendor command:** <!-- FILL: the command that vendors the artefact under the stamp `adopt-designs`' vendor contract states -->
+- **Vendor command:** <!-- FILL: the command that vendors the artefact under the stamp `ds:adopt`' vendor contract states -->
 - **Triage command:** <!-- FILL: the command that reads the vendored artefact against the application (a bundle against the markup and the styles that read its custom properties, a token set against the code that reads its names) and edits nothing -->
 - **Own component styles:** <!-- FILL: where this application's own component styles live -->
 - **Shared design system:** <!-- FILL: the system this design extends, or `none` -->
