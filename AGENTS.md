@@ -9,7 +9,7 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | when you are… | load | how it fires |
 |---|---|---|
 | writing or changing a test, or building a component that holds state | `.claude/rules/testing.md` | opening a file its `paths:` names, which you fill |
-| planning multi-ticket work, or building, reviewing, closing or releasing its tickets | the `sdlc` plugin: `/sdlc:plan`, `/sdlc:build-batch`, `/sdlc:review`, `/sdlc:close`, `/sdlc:release`, `/sdlc:roadmap` | invoke it |
+| planning multi-ticket work, or building, reviewing, closing or releasing its tickets | the `sdlc` plugin: `/sdlc:plan`, `/sdlc:build`, `/sdlc:review`, `/sdlc:close`, `/sdlc:release`, `/sdlc:roadmap` | invoke it |
 | stopping, resuming, or taking new scope on near-ready work | `/sdlc:pause`, `/sdlc:resume`, `/sdlc:amend` | invoke it |
 | handing a design to Claude Design, or reading one back | the `design` plugin: `/design:design-handoff` | invoke it |
 | raising a workflow improvement upstream | `/sdlc:template-feedback` | invoke it |

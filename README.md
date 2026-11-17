@@ -52,12 +52,11 @@ claude plugin install design@agent-sdlc
 | | Does |
 |---|---|
 | `/sdlc:plan` | publishes a confirmed plan as a marked section of the epic, with the tickets it calls for |
-| `/sdlc:build-batch` | a workflow: builds a batch of tickets in dependency waves, each in its own worktree, into one pull request |
+| `/sdlc:build` | builds a ticket, or an epic's next batch one ticket at a time, to a reviewed and walked pull request, then closes it once merged |
 | `/sdlc:review` | reviews a pull request, proves each finding by walking the product, fixes what pays for itself, and posts the rest on the pull request |
-| `/sdlc:review-epic` | a workflow: the review for an epic or a change across several repositories, traced against every requirement source |
 | `/sdlc:amend` | moves new scope on near-ready work into the ticket or epic that owns it |
 | `/sdlc:close` | closes a ticket with evidence for each done-when line |
-| `/sdlc:pause`, `/sdlc:resume` | leave and pick up a "Where I stopped" note on the ticket, including workflow runs in flight |
+| `/sdlc:pause`, `/sdlc:resume` | leave and pick up a "Where I stopped" note on the ticket, including runs in flight |
 | `/sdlc:release` | versions merged work from its Conventional Commit types, with a CHANGELOG entry and a tag |
 | `/sdlc:roadmap` | says where the project stands across its epics, and housekeeps and audits on request |
 | `/sdlc:git-push` | pushes with a rebase first, never forcing past a refusal |
