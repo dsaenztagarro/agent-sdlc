@@ -17,6 +17,8 @@ Thumbs.db
 .idea/
 .vscode/
 
+plugins/sdlc/**/node_modules/
+
 # Add project build artifacts / dependency dirs below, e.g.:
 # target/
 # node_modules/
