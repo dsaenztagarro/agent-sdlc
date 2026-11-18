@@ -1,6 +1,6 @@
 # agent-sdlc
 
-My Claude Code plugins, and the project template they run on.
+A project template for building software with coding agents, and the rules the [`sdlc` and `ds` plugins](https://github.com/dsaenztagarro/claude-plugins) read from it.
 
 The template gives an agent one set of rules to read (`AGENTS.md`), a bounded place for decisions (`docs/adr/`), a delivery loop that runs on the issue tracker, and the **Claude Design** step that produces a UI's design before anyone builds it.
 Use it as a GitHub template, fill the `<!-- FILL: … -->` placeholders in `AGENTS.md`, and install the plugins once per machine.
@@ -9,18 +9,13 @@ Use it as a GitHub template, fill the `<!-- FILL: … -->` placeholders in `AGEN
 
 ## The plugins
 
-Installed once per machine from this repository's marketplace, never copied into a project: every project on the machine reads the same copy, and `claude plugin update` moves them all.
+Installed once per machine from the [`dsaenztagarro` marketplace](https://github.com/dsaenztagarro/claude-plugins), never copied into a project: every project on the machine reads the same copy, and `claude plugin update` moves them all.
 
 ```bash
-claude plugin marketplace add dsaenztagarro/agent-sdlc
+claude plugin marketplace add dsaenztagarro/claude-plugins
+claude plugin install sdlc@dsaenztagarro    # the delivery pipeline on the issue tracker
+claude plugin install ds@dsaenztagarro      # the Claude Design handoff, for a UI whose colours the product owns
 ```
-
-| Plugin | Does | Install |
-|---|---|---|
-| [`sdlc`](plugins/sdlc/README.md) | the delivery pipeline on the issue tracker: plan, build, amend, review, close, pause, resume, release and roadmap | `claude plugin install sdlc@agent-sdlc` |
-| [`ds`](plugins/ds/README.md) | the Claude Design handoff: design repositories, briefs, reading an export back and adopting it | `claude plugin install ds@agent-sdlc` |
-
-Each plugin's README lists its skills and agents.
 
 ## The workflow at a glance
 
@@ -50,7 +45,6 @@ A person approves the plan and merges; the finished work is reviewed at the end.
 | `docs/SECURITY.md` | Where secrets live and what is never committed. |
 | `.github/workflows/pr-title.yml` | Holds every pull request title to a Conventional Commit, so the squash subject versions the release. |
 | `.claude/settings.local.json.example` | Local permissions, attribution and a format-on-write hook slot; the real file is git-ignored. |
-| `.claude-plugin/marketplace.json`, `plugins/` | The `agent-sdlc` marketplace and its plugins, above. |
 
 ## Applying the template to a new project
 
@@ -62,15 +56,12 @@ cd <project>
 # 2. fill the placeholders, and the testing rule's paths:
 grep -n 'FILL' AGENTS.md .claude/rules/testing.md docs/SECURITY.md
 
-# 3. drop the template's own marketplace and its distribution record (and that record's row in docs/adr/README.md):
-#    the plugins install per machine, above
-rm -rf .claude-plugin plugins docs/adr/distribution.md
 git commit -am "chore: start from agent-sdlc"
 
-# 4. squash with the pull request title, so the reviewed title versions the release
+# 3. squash with the pull request title, so the reviewed title versions the release
 gh api -X PATCH repos/<owner>/<project> -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
 
-# 5. local settings; the real file is git-ignored
+# 4. local settings; the real file is git-ignored
 cp .claude/settings.local.json.example .claude/settings.local.json
 ```
 

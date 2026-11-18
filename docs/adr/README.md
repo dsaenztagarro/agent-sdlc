@@ -23,7 +23,6 @@ A decision **amends the record that owns its theme**. It never opens a second fi
 | Record | Owns |
 |---|---|
 | [Decision records](decision-records.md) | how this project records decisions, what goes where, and why it is bounded |
-| [Distribution](distribution.md) | how the kit reaches a machine and a project, and what ships at all — this template's own record, deleted by an adopter |
 
 <!-- FILL: one row per theme, added when the project's first decision in that area is made. Name a theme for an area of the product — storage, the wire contract, the terminal surface — never for a single decision, and name its file for the theme: `docs/adr/storage.md`. -->
 

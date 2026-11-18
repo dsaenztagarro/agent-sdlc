@@ -14,13 +14,13 @@ Instructions for AI agents working on this codebase. This file holds only what a
 | handing a design to Claude Design, or reading one back | the `ds` plugin: `/ds:handoff` | invoke it |
 | raising a workflow improvement upstream | `/sdlc:template-feedback` | invoke it |
 
-The plugins are installed once per machine from the agent-sdlc marketplace, never copied into a project. Without them, follow [the pipeline's contract](https://github.com/dsaenztagarro/agent-sdlc/blob/master/plugins/sdlc/README.md#the-contract-by-hand) by hand: what each step reads, and what it leaves where.
+The plugins are installed once per machine from the `dsaenztagarro` marketplace, never copied into a project. Without them, follow [the pipeline's contract](https://github.com/dsaenztagarro/claude-plugins/blob/master/plugins/sdlc/README.md#the-contract-by-hand) by hand: what each step reads, and what it leaves where.
 
 A path-scoped rule fires only when a matching file is read, so a rule that must hold before any file is opened stays in this file.
 
 ## Improving this workflow
 
-This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. A reusable, project-agnostic improvement to the workflow itself goes upstream through `/sdlc:template-feedback`, as one checklist item on the template's open feedback issue; a project-specific rule stays here.
+This project runs on the [agent-sdlc](https://github.com/dsaenztagarro/agent-sdlc) template. A reusable, project-agnostic improvement to the workflow itself goes upstream through `/sdlc:template-feedback`, as one checklist item on the open feedback issue of [claude-plugins](https://github.com/dsaenztagarro/claude-plugins); a project-specific rule stays here.
 
 ## Project Overview
 
